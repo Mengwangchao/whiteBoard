@@ -6,13 +6,198 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/purple_200"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/writeboard">
 
+        <ImageView
+            android:id="@+id/size_two"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="@+id/size_one"
+            app:layout_constraintEnd_toStartOf="@+id/size_three"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/size_one"
+            app:layout_constraintTop_toTopOf="@+id/size_one"
+            app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+
+        <ImageView
+            android:id="@+id/size_three"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toBottomOf="@+id/size_two"
+            app:layout_constraintEnd_toStartOf="@+id/size_four"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/size_two"
+            app:layout_constraintTop_toTopOf="@+id/size_two"
+            app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+
+        <ImageView
+            android:id="@+id/size_four"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/size_three"
+            app:layout_constraintEnd_toStartOf="@+id/size_five"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/size_three"
+            app:layout_constraintTop_toTopOf="@+id/size_three"
+            app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+
+        <ImageView
+            android:id="@+id/size_five"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/size_four"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/size_four"
+            app:layout_constraintTop_toTopOf="@+id/size_four"
+            app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+
+        <ImageView
+            android:id="@+id/size_one"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toStartOf="@+id/size_two"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.example.writeboard.view.WriteBoardView
+        android:id="@+id/writeboard"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/reset_bt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/reset_bt"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@color/purple_200"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <ImageView
+            android:id="@+id/paint_bt"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintEnd_toStartOf="@+id/size_bt"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/undo_bt"
+            app:layout_constraintTop_toTopOf="@+id/size_bt"
+            app:srcCompat="@drawable/ic_baseline_brush_24" />
+
+        <ImageView
+            android:id="@+id/save_bt"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintEnd_toStartOf="@+id/undo_bt"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/undo_bt"
+            app:srcCompat="@drawable/ic_baseline_folder_24" />
+
+        <ImageView
+            android:id="@+id/undo_bt"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintEnd_toStartOf="@+id/paint_bt"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/save_bt"
+            app:layout_constraintTop_toTopOf="@+id/paint_bt"
+            app:srcCompat="@drawable/ic_baseline_undo_24" />
+
+        <ImageView
+            android:id="@+id/size_bt"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/paint_bt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_format_paint_24" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <ImageView
+        android:id="@+id/forth_color"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:tint="@color/teal_200"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/color_bt"
+        app:layout_constraintEnd_toEndOf="@+id/color_bt"
+        app:layout_constraintStart_toStartOf="@+id/color_bt"
+        app:layout_constraintTop_toTopOf="@+id/color_bt"
+        app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+
+    <ImageView
+        android:id="@+id/third_color"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:tint="@color/purple_700"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/color_bt"
+        app:layout_constraintEnd_toEndOf="@+id/color_bt"
+        app:layout_constraintStart_toStartOf="@+id/color_bt"
+        app:layout_constraintTop_toTopOf="@+id/color_bt"
+        app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+
+    <ImageView
+        android:id="@+id/second_color"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:tint="@color/purple_500"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/color_bt"
+        app:layout_constraintEnd_toEndOf="@+id/color_bt"
+        app:layout_constraintStart_toStartOf="@+id/color_bt"
+        app:layout_constraintTop_toTopOf="@+id/color_bt"
+        app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+
+    <ImageView
+        android:id="@+id/first_color"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:tint="@color/purple_200"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/color_bt"
+        app:layout_constraintEnd_toEndOf="@+id/color_bt"
+        app:layout_constraintStart_toStartOf="@+id/color_bt"
+        app:layout_constraintTop_toTopOf="@+id/color_bt"
+        app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
+
+
+    <ImageView
+        android:id="@+id/color_bt"
+        android:padding="0dp"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_marginBottom="76dp"
+        android:tint="#E91E63"
+        android:background="@color/purple_200"
+        app:layout_constraintBottom_toTopOf="@+id/reset_bt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.951"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_baseline_palette_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>
