@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/WriteBroadHelper.iml" filepath="$PROJECT_DIR$/.idea/modules/WriteBroadHelper.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/WriteBroadHelper.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/WriteBroadHelper.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/WriteBroadHelper.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/WriteBroadHelper.app.androidTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/WriteBroadHelper.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/WriteBroadHelper.app.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/WriteBroadHelper.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/WriteBroadHelper.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/WriteBoard.iml" filepath="$PROJECT_DIR$/.idea/modules/WriteBoard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/WriteBoard.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/WriteBoard.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/WriteBoard.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/WriteBoard.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/WriteBoard.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/WriteBoard.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/WriteBoard.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/WriteBoard.app.unitTest.iml" />
     </modules>
   </component>
 </project>
