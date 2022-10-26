@@ -18,6 +18,13 @@
 		5076C9A62908D061007763E7 /* whiteBoardUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9A52908D061007763E7 /* whiteBoardUITests.m */; };
 		5076C9A82908D061007763E7 /* whiteBoardUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9A72908D061007763E7 /* whiteBoardUITestsLaunchTests.m */; };
 		5076C9B62908D0F4007763E7 /* DrawView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9B52908D0F4007763E7 /* DrawView.m */; };
+		5076C9BC2908E8B2007763E7 /* BoardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9BB2908E8B2007763E7 /* BoardViewController.m */; };
+		5076C9C32908EBFF007763E7 /* JoinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9C22908EBFF007763E7 /* JoinViewController.m */; };
+		5076C9C92908EC4C007763E7 /* CreateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9C82908EC4C007763E7 /* CreateViewController.m */; };
+		5076C9CC2909055C007763E7 /* WordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9CB2909055C007763E7 /* WordModel.m */; };
+		5076C9CF2909061A007763E7 /* DrawBoardModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9CE2909061A007763E7 /* DrawBoardModel.m */; };
+		5076C9D5290908F7007763E7 /* UpdateToMQTT.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9D4290908F7007763E7 /* UpdateToMQTT.m */; };
+		F15CCF00B6BDFE528EFFE3AB /* libPods-whiteBoard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 374F5A6ED3151E0530800835 /* libPods-whiteBoard.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		374F5A6ED3151E0530800835 /* libPods-whiteBoard.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-whiteBoard.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5076C97C2908D057007763E7 /* whiteBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = whiteBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5076C97F2908D057007763E7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5076C9802908D057007763E7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -58,6 +66,19 @@
 		5076C9B42908D0F4007763E7 /* DrawView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawView.h; sourceTree = "<group>"; };
 		5076C9B52908D0F4007763E7 /* DrawView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DrawView.m; sourceTree = "<group>"; };
 		5076C9B72908D1D2007763E7 /* PublicHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PublicHeader.h; sourceTree = "<group>"; };
+		5076C9BA2908E8B2007763E7 /* BoardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BoardViewController.h; sourceTree = "<group>"; };
+		5076C9BB2908E8B2007763E7 /* BoardViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BoardViewController.m; sourceTree = "<group>"; };
+		5076C9C12908EBFF007763E7 /* JoinViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JoinViewController.h; sourceTree = "<group>"; };
+		5076C9C22908EBFF007763E7 /* JoinViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JoinViewController.m; sourceTree = "<group>"; };
+		5076C9C72908EC4C007763E7 /* CreateViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CreateViewController.h; sourceTree = "<group>"; };
+		5076C9C82908EC4C007763E7 /* CreateViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CreateViewController.m; sourceTree = "<group>"; };
+		5076C9CA2909055C007763E7 /* WordModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WordModel.h; sourceTree = "<group>"; };
+		5076C9CB2909055C007763E7 /* WordModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WordModel.m; sourceTree = "<group>"; };
+		5076C9CD2909061A007763E7 /* DrawBoardModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawBoardModel.h; sourceTree = "<group>"; };
+		5076C9CE2909061A007763E7 /* DrawBoardModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DrawBoardModel.m; sourceTree = "<group>"; };
+		5076C9D3290908F7007763E7 /* UpdateToMQTT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UpdateToMQTT.h; sourceTree = "<group>"; };
+		5076C9D4290908F7007763E7 /* UpdateToMQTT.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UpdateToMQTT.m; sourceTree = "<group>"; };
+		5076C9D629090B1C007763E7 /* libMQTTClient.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libMQTTClient.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F15CCF00B6BDFE528EFFE3AB /* libPods-whiteBoard.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,6 +114,7 @@
 				5076C99A2908D061007763E7 /* whiteBoardTests */,
 				5076C9A42908D061007763E7 /* whiteBoardUITests */,
 				5076C97D2908D057007763E7 /* Products */,
+				7CED0737E4340CB1CE8B13AB /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -114,8 +137,9 @@
 				5076C9832908D057007763E7 /* SceneDelegate.m */,
 				5076C9852908D057007763E7 /* ViewController.h */,
 				5076C9862908D057007763E7 /* ViewController.m */,
-				5076C9B42908D0F4007763E7 /* DrawView.h */,
-				5076C9B52908D0F4007763E7 /* DrawView.m */,
+				5076C9BD2908E8BE007763E7 /* controller */,
+				5076C9B92908E59E007763E7 /* model */,
+				5076C9B82908E57F007763E7 /* view */,
 				5076C9B72908D1D2007763E7 /* PublicHeader.h */,
 				5076C9882908D057007763E7 /* Main.storyboard */,
 				5076C98B2908D060007763E7 /* Assets.xcassets */,
@@ -141,6 +165,50 @@
 				5076C9A72908D061007763E7 /* whiteBoardUITestsLaunchTests.m */,
 			);
 			path = whiteBoardUITests;
+			sourceTree = "<group>";
+		};
+		5076C9B82908E57F007763E7 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				5076C9B42908D0F4007763E7 /* DrawView.h */,
+				5076C9B52908D0F4007763E7 /* DrawView.m */,
+			);
+			path = view;
+			sourceTree = "<group>";
+		};
+		5076C9B92908E59E007763E7 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				5076C9CA2909055C007763E7 /* WordModel.h */,
+				5076C9CB2909055C007763E7 /* WordModel.m */,
+				5076C9CD2909061A007763E7 /* DrawBoardModel.h */,
+				5076C9CE2909061A007763E7 /* DrawBoardModel.m */,
+				5076C9D3290908F7007763E7 /* UpdateToMQTT.h */,
+				5076C9D4290908F7007763E7 /* UpdateToMQTT.m */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		5076C9BD2908E8BE007763E7 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				5076C9BA2908E8B2007763E7 /* BoardViewController.h */,
+				5076C9BB2908E8B2007763E7 /* BoardViewController.m */,
+				5076C9C12908EBFF007763E7 /* JoinViewController.h */,
+				5076C9C22908EBFF007763E7 /* JoinViewController.m */,
+				5076C9C72908EC4C007763E7 /* CreateViewController.h */,
+				5076C9C82908EC4C007763E7 /* CreateViewController.m */,
+			);
+			path = controller;
+			sourceTree = "<group>";
+		};
+		7CED0737E4340CB1CE8B13AB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5076C9D629090B1C007763E7 /* libMQTTClient.a */,
+				374F5A6ED3151E0530800835 /* libPods-whiteBoard.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,10 +341,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5076C9C32908EBFF007763E7 /* JoinViewController.m in Sources */,
 				5076C9872908D057007763E7 /* ViewController.m in Sources */,
 				5076C9812908D057007763E7 /* AppDelegate.m in Sources */,
 				5076C9922908D060007763E7 /* main.m in Sources */,
+				5076C9C92908EC4C007763E7 /* CreateViewController.m in Sources */,
+				5076C9BC2908E8B2007763E7 /* BoardViewController.m in Sources */,
+				5076C9CF2909061A007763E7 /* DrawBoardModel.m in Sources */,
+				5076C9D5290908F7007763E7 /* UpdateToMQTT.m in Sources */,
 				5076C9842908D057007763E7 /* SceneDelegate.m in Sources */,
+				5076C9CC2909055C007763E7 /* WordModel.m in Sources */,
 				5076C9B62908D0F4007763E7 /* DrawView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -451,14 +525,27 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = G69WKMC5FC;
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = arm64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_ROOT}",
+				);
 				GCC_PREFIX_HEADER = "$(SRCROOT)/whiteBoard/PublicHeader.h";
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/whiteBoard/controller\"",
+					"\"$(SRCROOT)/whiteBoard/model\"",
+					"\"$(SRCROOT)/whiteBoard/view\"",
+				);
 				INFOPLIST_FILE = whiteBoard/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -468,6 +555,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -479,14 +567,27 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = G69WKMC5FC;
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = arm64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_ROOT}",
+				);
 				GCC_PREFIX_HEADER = "$(SRCROOT)/whiteBoard/PublicHeader.h";
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/whiteBoard/controller\"",
+					"\"$(SRCROOT)/whiteBoard/model\"",
+					"\"$(SRCROOT)/whiteBoard/view\"",
+				);
 				INFOPLIST_FILE = whiteBoard/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -496,6 +597,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};

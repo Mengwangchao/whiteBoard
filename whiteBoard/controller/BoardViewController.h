@@ -1,5 +1,5 @@
 //
-//  DrawView.h
+//  BoardViewController.h
 //  whiteBoard
 //
 //  Created by 王声禄 on 2022/10/26.
@@ -9,8 +9,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DrawView : UIView
-- (instancetype)initWithFrame:(CGRect)frame;
+@interface BoardViewController : UIViewController
+
+@property (nonatomic)BOOL isCreater;
 @end
 
 NS_ASSUME_NONNULL_END

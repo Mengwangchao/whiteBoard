@@ -47,7 +47,7 @@
 {
     if(!_testImage)
     {
-        _testImage = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"avatar01"]];
+        _testImage = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"LOGO"]];
         _testImage.frame = CGRectMake(80, 250, 200, 300);
         _testImage.userInteractionEnabled = YES;
         //添加拖动shous
@@ -90,19 +90,18 @@
     sender.view.transform = CGAffineTransformScale(sender.view.transform, sender.scale, sender.scale);
     sender.scale = 1;
 }
-
-#pragma mark --点击事件----随机改变颜色
-- (void) btnClicked
-{
-    _blackColor = [UIColor colorWithRed:(float)rand()/RAND_MAX green:(float)rand()/RAND_MAX blue:(float)rand()/RAND_MAX alpha:1.0];
-    [self setNeedsDisplay];
-}
+#pragma  mark - 对外接口
+//回滚
 - (void) btnCanCelDrawClicked
 {
-    [self.arrayLine removeObjectAtIndex:self.arrayLine.count-1];//注意清除画笔这里数组超出范围会导致崩溃
+    [self.arrayLine removeLastObject];
     [self setNeedsDisplay];
 }
-
+//设置线条颜色
+-(void)setLineColor:(UIColor*)color{
+    self.blackColor = color;
+    [self setNeedsDisplay];
+}
 #pragma mark --重新绘制
 - (void)drawRect:(CGRect)rect
 {
@@ -131,6 +130,12 @@
             }
         }
     }
+    
+//    UIFont *helvetica = [UIFont fontWithName:@"HelveticaNeue-Bold"size:30.0f];
+//    NSString *string =@"李先森";
+//
+//    [string drawAtPoint:CGPointMake(25,190)withFont:helvetica];
+//    [string drawAtPoint:CGPointMake(25,190)withAttributes:helvetica];
     
     if(self.pointArray.count>0)
     {
