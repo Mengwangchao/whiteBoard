@@ -19,8 +19,6 @@
 		5076C9A82908D061007763E7 /* whiteBoardUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9A72908D061007763E7 /* whiteBoardUITestsLaunchTests.m */; };
 		5076C9B62908D0F4007763E7 /* DrawView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9B52908D0F4007763E7 /* DrawView.m */; };
 		5076C9BC2908E8B2007763E7 /* BoardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9BB2908E8B2007763E7 /* BoardViewController.m */; };
-		5076C9C32908EBFF007763E7 /* JoinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9C22908EBFF007763E7 /* JoinViewController.m */; };
-		5076C9C92908EC4C007763E7 /* CreateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9C82908EC4C007763E7 /* CreateViewController.m */; };
 		5076C9CC2909055C007763E7 /* WordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9CB2909055C007763E7 /* WordModel.m */; };
 		5076C9CF2909061A007763E7 /* DrawBoardModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9CE2909061A007763E7 /* DrawBoardModel.m */; };
 		5076C9D5290908F7007763E7 /* UpdateToMQTT.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9D4290908F7007763E7 /* UpdateToMQTT.m */; };
@@ -83,10 +81,6 @@
 		5076C9B72908D1D2007763E7 /* PublicHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PublicHeader.h; sourceTree = "<group>"; };
 		5076C9BA2908E8B2007763E7 /* BoardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BoardViewController.h; sourceTree = "<group>"; };
 		5076C9BB2908E8B2007763E7 /* BoardViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BoardViewController.m; sourceTree = "<group>"; };
-		5076C9C12908EBFF007763E7 /* JoinViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JoinViewController.h; sourceTree = "<group>"; };
-		5076C9C22908EBFF007763E7 /* JoinViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JoinViewController.m; sourceTree = "<group>"; };
-		5076C9C72908EC4C007763E7 /* CreateViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CreateViewController.h; sourceTree = "<group>"; };
-		5076C9C82908EC4C007763E7 /* CreateViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CreateViewController.m; sourceTree = "<group>"; };
 		5076C9CA2909055C007763E7 /* WordModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WordModel.h; sourceTree = "<group>"; };
 		5076C9CB2909055C007763E7 /* WordModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WordModel.m; sourceTree = "<group>"; };
 		5076C9CD2909061A007763E7 /* DrawBoardModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawBoardModel.h; sourceTree = "<group>"; };
@@ -210,10 +204,6 @@
 			children = (
 				5076C9BA2908E8B2007763E7 /* BoardViewController.h */,
 				5076C9BB2908E8B2007763E7 /* BoardViewController.m */,
-				5076C9C12908EBFF007763E7 /* JoinViewController.h */,
-				5076C9C22908EBFF007763E7 /* JoinViewController.m */,
-				5076C9C72908EC4C007763E7 /* CreateViewController.h */,
-				5076C9C82908EC4C007763E7 /* CreateViewController.m */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -357,11 +347,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5076C9C32908EBFF007763E7 /* JoinViewController.m in Sources */,
 				5076C9872908D057007763E7 /* ViewController.m in Sources */,
 				5076C9812908D057007763E7 /* AppDelegate.m in Sources */,
 				5076C9922908D060007763E7 /* main.m in Sources */,
-				5076C9C92908EC4C007763E7 /* CreateViewController.m in Sources */,
 				5076C9BC2908E8B2007763E7 /* BoardViewController.m in Sources */,
 				5076C9CF2909061A007763E7 /* DrawBoardModel.m in Sources */,
 				5076C9D5290908F7007763E7 /* UpdateToMQTT.m in Sources */,
