@@ -38,7 +38,7 @@
     [sendButton setTitle:@"发送消息" forState:UIControlStateNormal];
     sendButton.titleLabel.font = FONT_MEDIUM(14);
     [self.view addSubview:sendButton];
-    self.update = [[UpdateToMQTT alloc]init];
+    self.update = [[UpdateToMQTT alloc]initWithTopic:@"userid"];
     [self.update connectMQTT:@"" port:0 userName:@"" password:@""];
     // Do any additional setup after loading the view.
 }
@@ -51,6 +51,9 @@
     [dic setValue:msg forKey:@"key"];
     
     NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+    UIColor *color = [UIColor colorWithRed:1/255.0 green:2/255.0 blue:3/255.0 alpha:0.6];
+//    self.update.topic = @"userid";
+    [self.update sendPoint:CGPointMake(1, 1) userId:@"test" color:[UIColor grayColor]];
     [self.update sendMassage:data topic:@"saf22"];
 }
 - (void)createBoardAction:(UIButton *)button {
