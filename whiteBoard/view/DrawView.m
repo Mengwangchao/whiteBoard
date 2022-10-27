@@ -8,10 +8,10 @@
 #import "DrawView.h"
 #define SCREEN_SIZE self.frame.size
 @interface DrawView()<UIGestureRecognizerDelegate>
- 
+
 //每次触摸结束前经过的点用来连成线
 @property (nonatomic,strong) NSMutableArray *pointArray;
- 
+
 //保存线条的数组
 @property (nonatomic,strong) NSMutableArray *arrayLine;
 
@@ -20,16 +20,16 @@
 @property (nonatomic,strong) NSMutableDictionary *arrayLineConfig;
 //保存线条对应的配置
 @property (nonatomic,strong) NSMutableArray *arrayLineConfigArray;
- 
+
 @property (nonatomic,strong) UISlider *sliderWidth;
- 
+
 @property (nonatomic,strong) UIImageView *testImage;
- 
+
 @property (nonatomic,strong) UIColor *blackColor;//画笔默认颜色
 @property (nonatomic,strong) UIColor *oldColor;//画笔默认颜色
- 
+
 @property (nonatomic,strong) UIButton *btnCancelDraw;//撤销画笔
- 
+
 @property (nonatomic, strong) UIButton *btnChangeColor;//改变颜色
 @end
 
@@ -45,7 +45,7 @@
         self.lineNum = 0;
         self.backgroundColor = [UIColor clearColor];
         [self addSubview:self.btnChangeColor];
-//        [self addSubview:self.testImage];
+        //        [self addSubview:self.testImage];
         self.arrayLineConfig = [NSMutableDictionary dictionary];
         [self.arrayLineConfig setValue:self.blackColor forKey:@"color"];
         self.arrayLineConfigArray = [NSMutableArray array];
@@ -118,17 +118,45 @@
 #pragma mark --重新绘制
 - (void)drawRect:(CGRect)rect
 {
+    
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetLineWidth(context, self.sliderWidth.value);
     CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
     CGContextSetLineCap(context, kCGLineCapRound);//设置线头样式
-    if (self.arrayLineConfigArray.count ==0) {
-        if(self.arrayLine.count>0)
+    if(self.arrayLine.count>0)
+    {
+        //将里面的线条画出来
+        for(int i = 0;i<self.arrayLine.count;i++)
+        {
+            NSArray *array = [NSArray arrayWithArray:self.arrayLine[i]];
+            if(array.count>0)
+            {
+                CGPoint myStartPoint = CGPointFromString(array[0]);
+                //将画笔移动到指定的点
+                CGContextMoveToPoint(context, myStartPoint.x, myStartPoint.y);
+                for(int j = 1;j<array.count;j++)
+                {
+                    CGPoint myEndPoint = CGPointFromString(array[j]);
+                    CGContextAddLineToPoint(context, myEndPoint.x, myEndPoint.y);
+                }
+                [self.blackColor setStroke];
+                CGContextStrokePath(context);
+            }
+        }
+    }
+    for (NSDictionary *dic in self.arrayLineConfigArray) {
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        CGContextSetLineWidth(context, self.sliderWidth.value);
+        CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
+        CGContextSetLineCap(context, kCGLineCapRound);//设置线头样式
+        UIColor *color = [dic valueForKey:@"color"];
+        NSArray *arr = [dic valueForKey:@"arrayLine"];
+        if(arr.count>0)
         {
             //将里面的线条画出来
-            for(int i = 0;i<self.arrayLine.count;i++)
+            for(int i = 0;i<arr.count;i++)
             {
-                NSArray *array = [NSArray arrayWithArray:self.arrayLine[i]];
+                NSArray *array = [NSArray arrayWithArray:arr[i]];
                 if(array.count>0)
                 {
                     CGPoint myStartPoint = CGPointFromString(array[0]);
@@ -139,47 +167,22 @@
                         CGPoint myEndPoint = CGPointFromString(array[j]);
                         CGContextAddLineToPoint(context, myEndPoint.x, myEndPoint.y);
                     }
-                    [self.blackColor setStroke];
+                    [color setStroke];
                     CGContextStrokePath(context);
                 }
             }
         }
-    }else{
-        for (NSDictionary *dic in self.arrayLineConfigArray) {
-            UIColor *color = [dic valueForKey:@"color"];
-            NSArray *arr = [dic valueForKey:@"arrayLine"];
-            if(arr.count>0)
-            {
-                //将里面的线条画出来
-                for(int i = 0;i<arr.count;i++)
-                {
-                    NSArray *array = [NSArray arrayWithArray:arr[i]];
-                    if(array.count>0)
-                    {
-                        CGPoint myStartPoint = CGPointFromString(array[0]);
-                        //将画笔移动到指定的点
-                        CGContextMoveToPoint(context, myStartPoint.x, myStartPoint.y);
-                        for(int j = 1;j<array.count;j++)
-                        {
-                            CGPoint myEndPoint = CGPointFromString(array[j]);
-                            CGContextAddLineToPoint(context, myEndPoint.x, myEndPoint.y);
-                        }
-                        [color setStroke];
-                        CGContextStrokePath(context);
-                    }
-                }
-            }
-        }
+        //        }
         
     }
     
-
     
-//    UIFont *helvetica = [UIFont fontWithName:@"HelveticaNeue-Bold"size:30.0f];
-//    NSString *string =@"李先森";
-//
-//    [string drawAtPoint:CGPointMake(25,190)withFont:helvetica];
-//    [string drawAtPoint:CGPointMake(25,190)withAttributes:helvetica];
+    
+    //    UIFont *helvetica = [UIFont fontWithName:@"HelveticaNeue-Bold"size:30.0f];
+    //    NSString *string =@"李先森";
+    //
+    //    [string drawAtPoint:CGPointMake(25,190)withFont:helvetica];
+    //    [string drawAtPoint:CGPointMake(25,190)withAttributes:helvetica];
     
     CGContextRef contextCurrent = UIGraphicsGetCurrentContext();
     CGContextSetLineWidth(contextCurrent, self.sliderWidth.value);
@@ -202,19 +205,16 @@
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     if (self.oldColor == _blackColor) {
         
-//        [self.arrayLine addObject:self.pointArray];//将点得数组放入存到线的数组
-        
     }
     else{
         [self.arrayLineConfig setValue:self.oldColor forKey:@"color"];
         [self.arrayLineConfig setValue:self.arrayLine forKey:@"arrayLine"];
         [self.arrayLineConfigArray addObject:self.arrayLineConfig];
         self.arrayLineConfig = [NSMutableDictionary dictionary];
-        [self.arrayLine removeAllObjects];
-//        [self.arrayLine addObject:self.pointArray];//将点得数组放入存到线的数组
+        self.arrayLine = [NSMutableArray array];
     }
 }
- 
+
 //画笔触摸的所有点
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
@@ -226,10 +226,10 @@
     
     [self setNeedsDisplay];
 }
- 
+
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-
+    
     self.lineNum ++;
     [self addArray];
     if(self.oldColor != self.blackColor){
@@ -268,7 +268,6 @@
 -(void)btnClicked{
     _blackColor = [UIColor colorWithRed:(float)rand()/RAND_MAX green:(float)rand()/RAND_MAX blue:(float)rand()/RAND_MAX alpha:1.0];
     
-//    [self setNeedsDisplay];
 }
 - (UISlider *)sliderWidth
 {
@@ -310,29 +309,19 @@
 {
     if(self.pointArray!=nil)
     {
-//        NSDictionary *dic = self.arrayLineConfigArray.lastObject;
-//        if (self.oldColor == _blackColor) {
-            
-            [self.arrayLine addObject:self.pointArray];//将点得数组放入存到线的数组
-            
-//        }
-//        else{
-//            [self.arrayLineConfig setValue:self.oldColor forKey:@"color"];
-//            [self.arrayLineConfig setValue:self.arrayLine forKey:@"arrayLine"];
-//            [self.arrayLineConfigArray addObject:self.arrayLineConfig];
-//            self.arrayLineConfig = [NSMutableDictionary dictionary];
-//            [self.arrayLine removeAllObjects];
-//            [self.arrayLine addObject:self.pointArray];//将点得数组放入存到线的数组
-//        }
+        
+        [self.arrayLine addObject:self.pointArray];//将点得数组放入存到线的数组
+        
+
     }
     self.pointArray = [NSMutableArray array];//将点数组清空
 }
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect {
+ // Drawing code
+ }
+ */
 
 @end
