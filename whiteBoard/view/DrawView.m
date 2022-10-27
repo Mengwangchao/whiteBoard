@@ -7,19 +7,27 @@
 
 #import "DrawView.h"
 #import "DrawBoardModel.h"
+#import "UpdateToMQTT.h"
 #define SCREEN_SIZE self.frame.size
-@interface DrawView()<UIGestureRecognizerDelegate>
+
+@interface DrawView()<UIGestureRecognizerDelegate,UpdateToMQTTDelegate>
 
 //每次触摸结束前经过的点用来连成线
 @property (nonatomic,strong) NSMutableArray *pointArray;
+
+@property (nonatomic,strong) NSMutableArray *downPointArray;
+@property (nonatomic,strong) UIColor *downPointColor;
 
 //保存线条的数组
 @property (nonatomic,strong) NSMutableArray *arrayLine;
 
 @property (nonatomic) int lineNum;
 
-@property (nonatomic,strong) NSMutableArray<DrawBoardModel *> *drawBoardModelArray;
-@property (nonatomic,strong) DrawBoardModel  *drawBoardModel;
+@property (nonatomic, strong) NSMutableArray<DrawBoardModel *> *drawBoardModelArray;
+
+@property (nonatomic, strong) DrawBoardModel  *drawBoardModel;
+
+@property (nonatomic, strong) UpdateToMQTT * uploadMQTT;
 
 @property (nonatomic,strong) UISlider *sliderWidth;
 
@@ -31,15 +39,22 @@
 @property (nonatomic,strong) UIButton *btnCancelDraw;//撤销画笔
 
 @property (nonatomic, strong) UIButton *btnChangeColor;//改变颜色
+
+
+@property (nonatomic, strong) NSString *userId;
+@property (nonatomic, strong) NSString *roomId;
 @end
 
 
 @implementation DrawView
-- (instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId
 {
     self = [super initWithFrame:frame];
     if (self) {
         [self addSubview:self.sliderWidth];
+        self.downPointArray = [NSMutableArray array];
+        self.userId = userId;
+        self.roomId = roomId;
         _blackColor = [UIColor blackColor];
         self.oldColor = self.blackColor;
         self.lineNum = 0;
@@ -50,9 +65,24 @@
         self.drawBoardModel = [[DrawBoardModel alloc]init];
         self.drawBoardModel.color = self.blackColor;
         [self addSubview:self.btnCancelDraw];
+        self.uploadMQTT = [[UpdateToMQTT alloc]initWithTopic:roomId];
+        self.uploadMQTT.updateToMQTTdelegate = self;
         
     }
     return self;
+}
+
+#pragma mark --updateToMQTTdelegate
+- (void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+    if ([userId isEqual:self.userId]){
+        return;
+    }
+    NSString *strPoint = NSStringFromCGPoint(point);
+    [self.downPointArray addObject:strPoint];
+    self.downPointColor = color;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self setNeedsDisplay];
+    });
 }
 
 #pragma mark --添加图片，设置手势
@@ -123,6 +153,20 @@
     CGContextSetLineWidth(context, self.sliderWidth.value);
     CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
     CGContextSetLineCap(context, kCGLineCapRound);//设置线头样式
+    if(self.downPointArray.count >0){
+        
+            //划线
+        CGPoint startPoint = CGPointFromString(self.downPointArray[0]);
+        CGContextMoveToPoint(context, startPoint.x, startPoint.y);
+        for(int i = 1;i<self.downPointArray.count;i++)
+        {
+            CGPoint tempPoint = CGPointFromString(self.downPointArray[i]);
+            CGContextAddLineToPoint(context, tempPoint.x, tempPoint.y);
+        }
+        [self.downPointColor setStroke];
+        CGContextStrokePath(context);
+    }
+    
     if(self.arrayLine.count>0)
     {
         //将里面的线条画出来
@@ -223,7 +267,7 @@
     CGPoint myBeginPoint = [touch locationInView:self];
     NSString *strPoint = NSStringFromCGPoint(myBeginPoint);
     [self.pointArray addObject:strPoint];
-    
+    [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.blackColor];
     [self setNeedsDisplay];
 }
 
