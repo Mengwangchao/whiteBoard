@@ -17,7 +17,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT)];
+    UILabel *roomIdLabel = [[UILabel alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-100, 50, 200, 40)];
+    roomIdLabel.backgroundColor = [UIColor clearColor];
+    roomIdLabel.text = [NSString stringWithFormat:@"房间名：%@",self.roomId];
+    roomIdLabel.textColor = [UIColor blackColor];
+    roomIdLabel.font = [UIFont systemFontOfSize:18.0];
+    [self.view addSubview:roomIdLabel];
+    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId];
     [self.view addSubview:self.rootDrawView];
     // Do any additional setup after loading the view.
 }

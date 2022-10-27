@@ -18,15 +18,13 @@
     self = [super init];
     if (self) {
         self.topic = topic;
+        [self connectMQTT];
     }
     return self;
 }
--(void)connectMQTT : (NSString *)host port : (int) port userName:(NSString *)userName password:(NSString *)password{
+-(void)connectMQTT{
     
     
-    _topics = [NSMutableArray array];
-    [_topics addObject:@"saf"];
-    [_topics addObject:@"agf"];
     MQTTCFSocketTransport *tranport = [[MQTTCFSocketTransport alloc]init];
     tranport.host = @"od434124.cn-shenzhen.emqx.cloud";
     tranport.port = 11753;
@@ -38,45 +36,24 @@
     [self.mySession connectAndWaitTimeout:5];
     [self.mySession connect];
     [self.mySession addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
-//    NSString *clientID =[NSString stringWithFormat:@"%@|iOS|%@",[[NSBundle mainBundle] bundleIdentifier],[UIDevice currentDevice].identifierForVendor.UUIDString];
-//    MQTTWebsocketTransport *transport = [[MQTTWebsocketTransport alloc] init];
-////    transport.host = [NSString stringWithFormat:@"%@",server_ip];
-////    transport.port =  9999;  // 端口号
-//    NSURL *url=[NSURL URLWithString:_server_ip];
-//    transport.url=url;
-////    transport.path=@"ws";
-//    transport.tls = YES; //  根据需要配置  YES 开起 SSL 验证 此处为单向验证 双向验证 根据SDK 提供方法直接添加
-//    MQTTSession *session = [[MQTTSession alloc] init];
-//    NSString *linkUserName = userName;
-//    NSString *linkPassWord = password;
-//    [session setUserName:linkUserName];
-//    [session setClientId:clientID];
-//    session
-//    [session setPassword:linkPassWord];
-//    [session setKeepAliveInterval:5];
-//    session.transport = transport;
-//    session.delegate = self;
-//    [session connectAndWaitTimeout:10];
-//    self.mySession = session;
-//    [self.mySession connect];//self reconnect
-//    [self.mySession addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil]; //添加事件监听
+
 }
 -(void)handleEvent:(MQTTSession *)session event:(MQTTSessionEvent)eventCode error:(NSError *)error{
     if (eventCode == MQTTSessionEventConnected) {
         NSLog(@"链接MQTT 成功");
         
         // 方法 封装 可外部调用
-//        for (NSString *topic in _topics) {
-            [session subscribeToTopic:self.topic atLevel:2 subscribeHandler:^(NSError *error, NSArray<NSNumber *> *gQoss){
-                if (error) {
-                    NSLog(@"Subscription failed %@", error.localizedDescription);
-                } else {
-                    NSLog(@"Subscription sucessfull! Granted Qos: %@", gQoss);
- 
-    //                [self send];
-                }
-             }];
-//        }
+        //        for (NSString *topic in _topics) {
+        [session subscribeToTopic:self.topic atLevel:2 subscribeHandler:^(NSError *error, NSArray<NSNumber *> *gQoss){
+            if (error) {
+                NSLog(@"Subscription failed %@", error.localizedDescription);
+            } else {
+                NSLog(@"Subscription sucessfull! Granted Qos: %@", gQoss);
+                
+                //                [self send];
+            }
+        }];
+        //        }
  // this is part of the block API
  
     }else if (eventCode == MQTTSessionEventConnectionRefused) {
@@ -126,20 +103,48 @@
 
 -(void)newMessage:(MQTTSession *)session data:(NSData *)data onTopic:(NSString *)topic qos:(MQTTQosLevel)qos retained:(BOOL)retained mid:(unsigned int)mid
 {
-    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    NSLog(@"EasyMqttService mqtt connect success  %@",dic);
+    __weak typeof(self) weakSelf = self;
+    dispatch_queue_t que = dispatch_queue_create("getMessage", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        
+        NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        NSLog(@"EasyMqttService mqtt connect success  %@",dic);
+        NSDictionary *pointDic = dic[@"point"];
+        float x = [pointDic[@"x"] floatValue];
+        float y = [pointDic[@"y"] floatValue];
+        CGPoint point = CGPointMake(x, y);
+        NSDictionary *colorDic = dic[@"color"];
+        
+        if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getMassagePoint:userId:color:)]){
+            [weakSelf.updateToMQTTdelegate getMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic]];
+        }
+    });
     // 做相对应的操作
 }
-
+-(UIColor *)stringToUIColor:(NSDictionary *)colorDic{
+    
+    float r = [colorDic[@"r"] floatValue];
+    float g = [colorDic[@"g"] floatValue];
+    float b = [colorDic[@"b"] floatValue];
+    float a = [colorDic[@"a"] floatValue];
+    return  [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a];
+}
 -(void)closeMQTTClient{
     [self.mySession disconnect];
-    [self.mySession unsubscribeTopics:@[@"已经订阅的主题"] unsubscribeHandler:^(NSError *error) {
-        if (error) {
-            NSLog(@"取消订阅失败");
-        }else{
-            NSLog(@"取消订阅成功");
-        }
+    [self.mySession unsubscribeTopic:self.topic unsubscribeHandler:^(NSError *error) {
+            if (error) {
+                NSLog(@"取消订阅失败");
+            }else{
+                NSLog(@"取消订阅成功");
+            }
     }];
+//    [self.mySession unsubscribeTopics:self.topic unsubscribeHandler:^(NSError *error) {
+//        if (error) {
+//            NSLog(@"取消订阅失败");
+//        }else{
+//            NSLog(@"取消订阅成功");
+//        }
+//    }];
 }
 
 -(void)connectServer:(NSString *)urlString userName:(NSString *)userName passWord:(NSString *)passWord topic:(NSArray *)topics{
@@ -172,7 +177,6 @@
         }else{
             NSLog(@"发送成功");
            
-            
         }
     }];
 }

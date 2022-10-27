@@ -9,7 +9,7 @@
 #import "BoardViewController.h"
 #import "UpdateToMQTT.h"
 @interface ViewController ()
-@property (nonatomic , strong)UpdateToMQTT *update;
+//@property (nonatomic , strong)UpdateToMQTT *update;
 @end
 
 @implementation ViewController
@@ -38,24 +38,22 @@
     [sendButton setTitle:@"发送消息" forState:UIControlStateNormal];
     sendButton.titleLabel.font = FONT_MEDIUM(14);
     [self.view addSubview:sendButton];
-    self.update = [[UpdateToMQTT alloc]initWithTopic:@"userid"];
-    [self.update connectMQTT:@"" port:0 userName:@"" password:@""];
+//    self.update = [[UpdateToMQTT alloc]initWithTopic:@"userid"];
     // Do any additional setup after loading the view.
 }
 
 
 #pragma mark --进入各个界面
-- (void)sendButtonAction:(UIButton *)button {
-    NSString *msg = @"ssss";
-    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-    [dic setValue:msg forKey:@"key"];
-    
-    NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
-    UIColor *color = [UIColor colorWithRed:1/255.0 green:2/255.0 blue:3/255.0 alpha:0.6];
-//    self.update.topic = @"userid";
-    [self.update sendPoint:CGPointMake(1, 1) userId:@"test" color:[UIColor grayColor]];
-    [self.update sendMassage:data topic:@"saf22"];
-}
+//- (void)sendButtonAction:(UIButton *)button {
+//    NSString *msg = @"ssss";
+//    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+//    [dic setValue:msg forKey:@"key"];
+//
+//    NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+//    UIColor *color = [UIColor colorWithRed:1/255.0 green:2/255.0 blue:3/255.0 alpha:0.6];
+////    self.update.topic = @"userid";
+//    [self.update sendPoint:CGPointMake(1, 1) userId:@"test" color:[UIColor grayColor]];
+//}
 - (void)createBoardAction:(UIButton *)button {
     BoardViewController *boardViewController = [[BoardViewController alloc] init];
     boardViewController.isCreater = YES;
@@ -66,8 +64,27 @@
 
 - (void)enterBoardAction:(UIButton *)button {
     BoardViewController *joinViewController = [[BoardViewController alloc] init];
-
-    [self.navigationController pushViewController:joinViewController animated:YES];
+    UIAlertController *alertControl = [UIAlertController alertControllerWithTitle:@"请输入房间名" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *actionDefaut = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UITextField *textField = alertControl.textFields[0];
+        if([textField.text isEqual:@""]){
+            
+        }else{
+            joinViewController.roomId = textField.text;
+            joinViewController.userId = [self getUserId];
+            [self.navigationController pushViewController:joinViewController animated:YES];
+        }
+    }];
+    UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    [alertControl addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.keyboardType = UIKeyboardTypeNumberPad;
+            
+    }];
+    [alertControl addAction:actionDefaut];
+    [alertControl addAction:actionCancel];
+    [self presentViewController:alertControl animated:NO completion:nil];
 }
 
 -(NSString *)getUserId{
