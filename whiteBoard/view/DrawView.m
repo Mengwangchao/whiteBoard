@@ -31,9 +31,10 @@
 
 @property (nonatomic,strong) UISlider *sliderWidth;
 
-@property (nonatomic,strong) UIImageView *testImage;
+@property (nonatomic,strong) NSMutableArray *imageRootViewArray;
 
-@property (nonatomic,strong) UIColor *blackColor;//画笔默认颜色
+@property (nonatomic) int imageRootViewId;
+@property (nonatomic,strong) UIColor *currentColor;//画笔默认颜色
 @property (nonatomic,strong) UIColor *oldColor;//画笔默认颜色
 
 @property (nonatomic,strong) UIButton *btnCancelDraw;//撤销画笔
@@ -45,28 +46,35 @@
 @property (nonatomic, strong) NSString *roomId;
 @end
 
+//  下面这行代码能够将view2  调整到父视图的最下面
+
+//    [self.view sendSubviewToBack:view2];
 
 @implementation DrawView
 - (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.backgroundColor = [UIColor clearColor];
         [self addSubview:self.sliderWidth];
+        self.imageRootViewId = 0;
+        self.imageRootViewArray = [NSMutableArray array];
         self.downPointArray = [NSMutableArray array];
         self.userId = userId;
         self.roomId = roomId;
-        _blackColor = [UIColor blackColor];
-        self.oldColor = self.blackColor;
+        _currentColor = [UIColor blackColor];
+        self.oldColor = self.currentColor;
         self.lineNum = 0;
         self.backgroundColor = [UIColor clearColor];
         [self addSubview:self.btnChangeColor];
-        //        [self addSubview:self.testImage];
         self.drawBoardModelArray = [NSMutableArray<DrawBoardModel *> array];
         self.drawBoardModel = [[DrawBoardModel alloc]init];
-        self.drawBoardModel.color = self.blackColor;
+        self.drawBoardModel.color = self.currentColor;
         [self addSubview:self.btnCancelDraw];
         self.uploadMQTT = [[UpdateToMQTT alloc]initWithTopic:roomId];
         self.uploadMQTT.updateToMQTTdelegate = self;
+        
+
         
     }
     return self;
@@ -86,31 +94,10 @@
 }
 
 #pragma mark --添加图片，设置手势
-- (UIImageView *)testImage
-{
-    if(!_testImage)
-    {
-        _testImage = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"LOGO"]];
-        _testImage.frame = CGRectMake(80, 250, 200, 300);
-        _testImage.userInteractionEnabled = YES;
-        //添加拖动shous
-        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(gestureHandler:)];
-        //旋转手势
-        UIRotationGestureRecognizer *rotationGesture = [[UIRotationGestureRecognizer alloc]initWithTarget:self action:@selector(rotationGestureHanlder:)];
-        //缩放手势
-        UIPinchGestureRecognizer *pingGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(pinchGestureHanlder:)];
-        
-        //设置手势代理
-        [panGesture setDelegate:self];
-        [rotationGesture setDelegate:self];
-        [pingGesture setDelegate:self];
-        //添加手势
-        [_testImage addGestureRecognizer:pingGesture];
-        [_testImage addGestureRecognizer:rotationGesture];
-        [_testImage addGestureRecognizer:panGesture];
-    }
-    return _testImage;
-}
+
+
+
+
 #pragma mark -- 设置多个手势并存
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
@@ -133,6 +120,15 @@
     sender.view.transform = CGAffineTransformScale(sender.view.transform, sender.scale, sender.scale);
     sender.scale = 1;
 }
+
+-(void)OKButtonClick:(UIButton *)but{
+    NSLog(@"click %ld",but.tag);
+    UIView *midView = self.imageRootViewArray[but.tag];
+    midView.userInteractionEnabled = NO;
+    
+    self.imageRootViewArray[but.tag] = midView;
+    [self sendSubviewToBack:midView];
+}
 #pragma  mark - 对外接口
 //回滚
 - (void) btnCanCelDrawClicked
@@ -142,8 +138,41 @@
 }
 //设置线条颜色
 -(void)setLineColor:(UIColor*)color{
-    self.blackColor = color;
+    self.currentColor = color;
     [self setNeedsDisplay];
+}
+-(void)addImage:(int)imageId{
+    UIView * imageRootView = [[UIView alloc]initWithFrame:CGRectMake(80, 250, 200, 300)];
+    imageRootView.userInteractionEnabled = YES;
+    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(gestureHandler:)];
+    //旋转手势
+    UIRotationGestureRecognizer *rotationGesture = [[UIRotationGestureRecognizer alloc]initWithTarget:self action:@selector(rotationGestureHanlder:)];
+    //缩放手势
+    UIPinchGestureRecognizer *pingGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(pinchGestureHanlder:)];
+    
+    //设置手势代理
+    [panGesture setDelegate:self];
+    [rotationGesture setDelegate:self];
+    [pingGesture setDelegate:self];
+    //添加手势
+    [imageRootView addGestureRecognizer:pingGesture];
+    [imageRootView addGestureRecognizer:rotationGesture];
+    [imageRootView addGestureRecognizer:panGesture];
+    [self addSubview:imageRootView];
+    
+    UIImageView * imageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 20, imageRootView.frame.size.width, imageRootView.frame.size.height-20)];
+    [imageView setImage:[UIImage imageNamed:@"LOGO"]];
+    [imageRootView addSubview:imageView];
+    
+    UIButton * OKButton = [[UIButton alloc]initWithFrame:CGRectMake(imageRootView.frame.size.width-50, 20, 20, 20)];
+    OKButton.backgroundColor = [UIColor greenColor];
+    [OKButton addTarget:self action:@selector(OKButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [imageRootView addSubview:OKButton];
+    OKButton.tag = self.imageRootViewId;
+    self.imageRootViewId ++;
+    [self.imageRootViewArray addObject:imageView];
+    
+    
 }
 #pragma mark --重新绘制
 - (void)drawRect:(CGRect)rect
@@ -183,7 +212,7 @@
                     CGPoint myEndPoint = CGPointFromString(array[j]);
                     CGContextAddLineToPoint(context, myEndPoint.x, myEndPoint.y);
                 }
-                [self.blackColor setStroke];
+                [self.currentColor setStroke];
                 CGContextStrokePath(context);
             }
         }
@@ -242,42 +271,61 @@
             CGPoint tempPoint = CGPointFromString(self.pointArray[i]);
             CGContextAddLineToPoint(contextCurrent, tempPoint.x, tempPoint.y);
         }
-        [_blackColor setStroke];
+        [_currentColor setStroke];
         CGContextStrokePath(contextCurrent);
     }
 }
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
-    if (self.oldColor == _blackColor) {
-        
-    }
-    else{
-        self.drawBoardModel.color = self.oldColor;
-        self.drawBoardModel.lineArray = self.arrayLine;
-        [self.drawBoardModelArray addObject:self.drawBoardModel];
-        self.drawBoardModel = [[DrawBoardModel alloc]init];
-        self.arrayLine = [NSMutableArray array];
+    for (UITouch *touch in touches) {
+        if([touch.view isKindOfClass:[DrawView class]]){
+            
+            if (self.oldColor == _currentColor) {
+                
+            }
+            else{
+                self.drawBoardModel.color = self.oldColor;
+                self.drawBoardModel.lineArray = self.arrayLine;
+                [self.drawBoardModelArray addObject:self.drawBoardModel];
+                self.drawBoardModel = [[DrawBoardModel alloc]init];
+                self.arrayLine = [NSMutableArray array];
+            }
+            
+        }
     }
 }
 
 //画笔触摸的所有点
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
+    for (UITouch *touch in touches) {
+        if(![touch.view isKindOfClass:[DrawView class]]){
+            
+            return;
+            
+        }
+    }
     UITouch *touch = [touches anyObject];
     //去除每一个点
     CGPoint myBeginPoint = [touch locationInView:self];
     NSString *strPoint = NSStringFromCGPoint(myBeginPoint);
     [self.pointArray addObject:strPoint];
-    [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.blackColor];
+    [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.currentColor];
     [self setNeedsDisplay];
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    
+    for (UITouch *touch in touches) {
+        if(![touch.view isKindOfClass:[DrawView class]]){
+            
+            return;
+            
+        }
+    }
     self.lineNum ++;
     [self addArray];
-    if(self.oldColor != self.blackColor){
-        self.oldColor = self.blackColor;
+    if(self.oldColor != self.currentColor){
+        self.oldColor = self.currentColor;
     }
 }
 
@@ -310,8 +358,8 @@
     return _btnChangeColor;
 }
 -(void)btnClicked{
-    _blackColor = [UIColor colorWithRed:(float)rand()/RAND_MAX green:(float)rand()/RAND_MAX blue:(float)rand()/RAND_MAX alpha:1.0];
-    
+    _currentColor = [UIColor colorWithRed:(float)rand()/RAND_MAX green:(float)rand()/RAND_MAX blue:(float)rand()/RAND_MAX alpha:1.0];
+    [self addImage:1];
 }
 - (UISlider *)sliderWidth
 {
