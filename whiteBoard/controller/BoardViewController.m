@@ -6,8 +6,9 @@
 //
 
 #import "BoardViewController.h"
-
+#import "DrawView.h"
 @interface BoardViewController ()
+@property (nonatomic,strong)DrawView *rootDrawView;
 
 @end
 
@@ -15,6 +16,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT)];
+    [self.view addSubview:self.rootDrawView];
     // Do any additional setup after loading the view.
 }
 
