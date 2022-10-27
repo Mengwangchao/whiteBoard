@@ -6,13 +6,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreGraphics/CoreGraphics.h>
+#import <UIKit/UIKit.h>
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DrawBoardModel : NSObject
-@property (nonatomic)CGPoint *currentPoint;
-@property (nonatomic)CGPoint *startPoint;
-@property (nonatomic)int *userId;
+@property (nonatomic,strong) NSMutableArray *lineArray;
+@property (nonatomic,strong) UIColor *color;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -6,6 +6,7 @@
 //
 
 #import "DrawView.h"
+#import "DrawBoardModel.h"
 #define SCREEN_SIZE self.frame.size
 @interface DrawView()<UIGestureRecognizerDelegate>
 
@@ -16,10 +17,9 @@
 @property (nonatomic,strong) NSMutableArray *arrayLine;
 
 @property (nonatomic) int lineNum;
-//线条对应的配置
-@property (nonatomic,strong) NSMutableDictionary *arrayLineConfig;
-//保存线条对应的配置
-@property (nonatomic,strong) NSMutableArray *arrayLineConfigArray;
+
+@property (nonatomic,strong) NSMutableArray<DrawBoardModel *> *drawBoardModelArray;
+@property (nonatomic,strong) DrawBoardModel  *drawBoardModel;
 
 @property (nonatomic,strong) UISlider *sliderWidth;
 
@@ -46,9 +46,9 @@
         self.backgroundColor = [UIColor clearColor];
         [self addSubview:self.btnChangeColor];
         //        [self addSubview:self.testImage];
-        self.arrayLineConfig = [NSMutableDictionary dictionary];
-        [self.arrayLineConfig setValue:self.blackColor forKey:@"color"];
-        self.arrayLineConfigArray = [NSMutableArray array];
+        self.drawBoardModelArray = [NSMutableArray<DrawBoardModel *> array];
+        self.drawBoardModel = [[DrawBoardModel alloc]init];
+        self.drawBoardModel.color = self.blackColor;
         [self addSubview:self.btnCancelDraw];
         
     }
@@ -144,13 +144,13 @@
             }
         }
     }
-    for (NSDictionary *dic in self.arrayLineConfigArray) {
+    for (DrawBoardModel *drawBoard in self.drawBoardModelArray) {
         CGContextRef context = UIGraphicsGetCurrentContext();
         CGContextSetLineWidth(context, self.sliderWidth.value);
         CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
         CGContextSetLineCap(context, kCGLineCapRound);//设置线头样式
-        UIColor *color = [dic valueForKey:@"color"];
-        NSArray *arr = [dic valueForKey:@"arrayLine"];
+        UIColor *color = drawBoard.color;
+        NSArray *arr = drawBoard.lineArray;
         if(arr.count>0)
         {
             //将里面的线条画出来
@@ -207,10 +207,10 @@
         
     }
     else{
-        [self.arrayLineConfig setValue:self.oldColor forKey:@"color"];
-        [self.arrayLineConfig setValue:self.arrayLine forKey:@"arrayLine"];
-        [self.arrayLineConfigArray addObject:self.arrayLineConfig];
-        self.arrayLineConfig = [NSMutableDictionary dictionary];
+        self.drawBoardModel.color = self.oldColor;
+        self.drawBoardModel.lineArray = self.arrayLine;
+        [self.drawBoardModelArray addObject:self.drawBoardModel];
+        self.drawBoardModel = [[DrawBoardModel alloc]init];
         self.arrayLine = [NSMutableArray array];
     }
 }

@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BoardViewController : UIViewController
 
 @property (nonatomic)BOOL isCreater;
+//房间名
+@property (nonatomic,strong)NSString * roomId;
+//用户名
+@property (nonatomic,strong)NSString * userId;
 @end
 
 NS_ASSUME_NONNULL_END
