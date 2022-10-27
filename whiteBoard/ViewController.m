@@ -7,7 +7,6 @@
 
 #import "ViewController.h"
 #import "BoardViewController.h"
-#import "JoinViewController.h"
 #import "UpdateToMQTT.h"
 @interface ViewController ()
 @property (nonatomic , strong)UpdateToMQTT *update;
@@ -57,6 +56,8 @@
 - (void)createBoardAction:(UIButton *)button {
     BoardViewController *boardViewController = [[BoardViewController alloc] init];
     boardViewController.isCreater = YES;
+    boardViewController.userId = [self getUserId];
+    boardViewController.roomId = [self getRoomId];
     [self.navigationController pushViewController:boardViewController animated:YES];
 }
 
@@ -66,4 +67,18 @@
     [self.navigationController pushViewController:joinViewController animated:YES];
 }
 
+-(NSString *)getUserId{
+    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:0];
+    NSTimeInterval time = [date timeIntervalSince1970];
+    return [NSString stringWithFormat:@"user%.0f",time];
+}
+
+-(NSString *)getRoomId{
+    NSString *roomId = @"";
+    for (int i = 0 ; i<12; i++) {
+        NSString *num = [NSString stringWithFormat:@"%d", arc4random()%10];
+        roomId = [roomId stringByAppendingString:num];
+    }
+    return roomId;
+}
 @end
