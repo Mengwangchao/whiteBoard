@@ -8,15 +8,19 @@
 #import "UpdateToMQTT.h"
 #import <MQTTClient/MQTTClient.h>
 //#import "MQTTClient.h"
-#import <UIKit/UIKit.h>
 @interface UpdateToMQTT()<MQTTSessionDelegate>
 @property(nonatomic,strong)MQTTSession *mySession;
-//@property(nonatomic,strong)NSString *server_ip;
-//@property(nonatomic,strong)NSString *userName;
-//@property(nonatomic,strong)NSString *passWord;
 @property(nonatomic,strong)NSMutableArray *topics;
+@property (nonatomic,strong,readwrite)NSString *topic;
 @end
 @implementation UpdateToMQTT
+-(instancetype)initWithTopic:(NSString *)topic{
+    self = [super init];
+    if (self) {
+        self.topic = topic;
+    }
+    return self;
+}
 -(void)connectMQTT : (NSString *)host port : (int) port userName:(NSString *)userName password:(NSString *)password{
     
     
@@ -62,8 +66,8 @@
         NSLog(@"链接MQTT 成功");
         
         // 方法 封装 可外部调用
-        for (NSString *topic in _topics) {
-            [session subscribeToTopic:topic atLevel:2 subscribeHandler:^(NSError *error, NSArray<NSNumber *> *gQoss){
+//        for (NSString *topic in _topics) {
+            [session subscribeToTopic:self.topic atLevel:2 subscribeHandler:^(NSError *error, NSArray<NSNumber *> *gQoss){
                 if (error) {
                     NSLog(@"Subscription failed %@", error.localizedDescription);
                 } else {
@@ -72,7 +76,7 @@
     //                [self send];
                 }
              }];
-        }
+//        }
  // this is part of the block API
  
     }else if (eventCode == MQTTSessionEventConnectionRefused) {
@@ -172,4 +176,72 @@
         }
     }];
 }
+
+-(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("uploadPoint", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        NSMutableDictionary *pointDic = [NSMutableDictionary dictionary];
+        [pointDic setValue:[NSString stringWithFormat:@"%f",point.x] forKey:@"x"];
+        [pointDic setValue:[NSString stringWithFormat:@"%f",point.y] forKey:@"y"];
+        [dic setValue:pointDic forKey:@"point"];
+        
+        NSMutableDictionary *colorDic = [NSMutableDictionary dictionary];
+        CGFloat cmp[4];
+        [weakSelf cx_getRGBComponents:cmp forColor:color];
+        NSArray *rgbaName = @[@"r",@"g",@"b",@"a"];
+        for (int i = 0 ; i < 4; i++) {
+            float f = cmp[i];
+            [colorDic setValue:[NSString stringWithFormat:@"%f",f] forKey:rgbaName[i]];
+        }
+        [dic setValue:colorDic forKey:@"color"];
+        [dic setValue:userId forKey:@"userId"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:weakSelf.topic retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+         
+                    
+                }else{
+                    NSLog(@"发送成功");
+                   
+                    
+                }
+        }];
+    });
+
+}
+
+//cmp 0 -> r  1 -> g  2 -> b  3 -> a
+- (void)cx_getRGBComponents:(CGFloat [4])cmp forColor:(UIColor *)color {
+    unsigned long int fNum = CGColorGetNumberOfComponents(color.CGColor);
+    if (fNum == 4) {
+        const CGFloat *resultPixel = CGColorGetComponents(color.CGColor);
+        
+        for (int i = 0; i < 3; i++) {
+            
+            cmp[i] = resultPixel[i]*255.0;
+        }
+        cmp[3] = resultPixel[3];
+    }else{
+        CGColorSpaceRef spaceRef = CGColorSpaceCreateDeviceRGB();
+        unsigned char resultPixel[4];
+        CGContextRef ctx = CGBitmapContextCreate(&resultPixel, 1, 1, 8, 4, spaceRef, kCGImageAlphaNoneSkipLast);
+        CGContextSetFillColorWithColor(ctx, [color CGColor]);
+        CGContextFillRect(ctx, CGRectMake(0, 0, 1, 1));
+        CGContextRelease(ctx);
+        CGColorSpaceRelease(spaceRef);
+        
+        for (int i = 0; i < 3; i++) {
+            cmp[i] = resultPixel[i];
+        }
+        
+        cmp[3] = 1.0;
+    }
+    
+}
+
 @end
