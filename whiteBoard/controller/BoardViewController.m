@@ -8,7 +8,7 @@
 #import "BoardViewController.h"
 #import "DrawView.h"
 #import "UpdateToMQTT.h"
-@interface BoardViewController ()
+@interface BoardViewController ()<PageMQTTDelegate>
 @property (nonatomic,strong)DrawView *rootDrawView;
 @property (nonatomic,strong)NSMutableArray<DrawView*> *rootDrawViewArray;
 @property (nonatomic,strong)UIButton *pageButton;
@@ -64,7 +64,7 @@
 
     self.rootDrawView.layer.borderWidth = 1;
     self.rootDrawView.layer.borderColor = [UIColor blackColor].CGColor;
-   
+    self.rootDrawView.uploadMQTT.pageMQTTdelegate = self;
     
     self.addPageButton = [[UIButton alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH-50, MAIN_SCREEN_HEIGHT-70, 30, 30)];
     self.addPageButton.backgroundColor = [UIColor clearColor];
@@ -179,6 +179,17 @@
 -(void)setPageButtonText:(int)currentPage pageCount:(int)pageCount{
     [self.pageButton setTitle:[NSString stringWithFormat:@"%d/%d",currentPage,pageCount] forState:UIControlStateNormal];
 }
+#pragma mark - delegate
+-(void)addPage:(NSString *)roomId userId:(NSString *)userId{
+    if ([roomId isEqual:self.roomId] && ![self.userId isEqual:userId]) {
+        [self addPage];
+    }
+}
+-(void)deletePage:(NSString *)roomId userId:(NSString *)userId pageNum:(int)pageNum{
+    if ([roomId isEqual:self.roomId] && ![self.userId isEqual:userId]) {
+        [self deletePage];
+    }
+}
 #pragma mark - 按钮点击事件
 -(void)pancilButtonClick:(UIButton *)sender{
 //    self.pancilButton.tintColor = [UIColor greenColor];
@@ -221,11 +232,15 @@
 }
 -(void)addPageButtonClick{
     [self.rootDrawView.uploadMQTT sendAddPageMessage:self.roomId userId:self.userId];
-    
+    [self addPage];
+  
+}
+-(void)addPage{
     self.currentPage++;
     self.pageCount++;
     for (DrawView *view in self.rootDrawViewArray) {
         view.uploadMQTT.pageCount = self.pageCount;
+        view.uploadMQTT.pageMQTTdelegate = nil;
         view.hidden = YES;
     }
     self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId];
@@ -236,6 +251,7 @@
     }
     self.rootDrawView.uploadMQTT.currentPage = self.currentPage;
     self.rootDrawView.uploadMQTT.pageCount = self.pageCount;
+    self.rootDrawView.uploadMQTT.pageMQTTdelegate = self;
     [self.view addSubview:self.rootDrawView];
     self.rootDrawView.layer.borderWidth = 1;
     self.rootDrawView.layer.borderColor = [UIColor blackColor].CGColor;
@@ -246,23 +262,32 @@
     
     self.pancilButton.tintColor = [self.rootDrawView getLineColor];
     [self setPageButtonText:self.currentPage pageCount:self.pageCount];
-    NSLog(@"addPage");
 }
 -(void)pageButtonClick{
+    [self selectPage];
+    
+}
+-(void)selectPage{
     self.currentPage ++;
     if (self.currentPage>self.pageCount) {
         self.currentPage = 1;
     }
     for (DrawView *view in self.rootDrawViewArray) {
         view.hidden = YES;
+        view.uploadMQTT.pageMQTTdelegate = nil;
     }
     self.rootDrawView = self.rootDrawViewArray[self.currentPage-1];
     [self setPageButtonText:self.currentPage pageCount:self.pageCount];
     self.pancilButton.tintColor = [self.rootDrawView getLineColor];
+    self.rootDrawView.uploadMQTT.pageMQTTdelegate = self;
     self.rootDrawView.hidden = NO;
-    
 }
 -(void)deletePageButtonClick{
+    [self.rootDrawView.uploadMQTT sendDeletePageMessage:self.roomId userId:self.userId pageNum:self.currentPage];
+    [self deletePage];
+    
+}
+-(void)deletePage{
     if (self.pageCount>1) {
         
         self.pageCount--;
@@ -281,7 +306,6 @@
         self.pancilButton.tintColor = [self.rootDrawView getLineColor];
         self.rootDrawView.hidden = NO;
     }
-    
 }
 /*
 #pragma mark - Navigation

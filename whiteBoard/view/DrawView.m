@@ -87,11 +87,14 @@
 }
 
 #pragma mark --updateToMQTTdelegate
-- (void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+- (void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage{
     if ([userId isEqual:self.userId]){
         return;
     }
     
+    if (self.uploadMQTT.currentPage != currentPage) {
+        return;
+    }
     NSString *strPoint = NSStringFromCGPoint(point);
     [self.downPointArray addObject:strPoint];
     self.downPointColor = color;
@@ -99,8 +102,11 @@
         [self setNeedsDisplay];
     });
 }
--(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+-(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage{
     if ([userId isEqual:self.userId]){
+        return;
+    }
+    if (self.uploadMQTT.currentPage != currentPage) {
         return;
     }
     
@@ -122,11 +128,14 @@
 
   
 }
--(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+-(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage{
     if ([userId isEqual:self.userId]){
         return;
     }
     
+    if (self.uploadMQTT.currentPage != currentPage) {
+        return;
+    }
     NSString *strPoint = NSStringFromCGPoint(point);
     [self.downPointArray addObject:strPoint];
     [self.downArrayLine addObject:self.downPointArray];
@@ -208,6 +217,7 @@
     [self.drawBoardModelArray removeAllObjects];
     self.downBoardModel = nil;
     self.drawBoardModel = nil;
+    [self.uploadMQTT disConnectServer];
     self.uploadMQTT = nil;
     [self setNeedsDisplay];
     

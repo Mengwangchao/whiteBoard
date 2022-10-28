@@ -45,7 +45,7 @@
     [self.mySession setUserName: @"emqx_user"];
     [self.mySession setPassword: @"emqx_password"];
     [self.mySession connectAndWaitTimeout:5];
-    [self.mySession connect];
+//    [self.mySession connect];
     [self.mySession addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
 
 }
@@ -139,17 +139,25 @@
         }
         if ([topic isEqual:@"touchStart"]) {
             
-            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getStartMassagePoint:userId:color:)]){
-                [weakSelf.updateToMQTTdelegate getStartMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic]];
+            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getStartMassagePoint:userId:color:currentPage:)]){
+                [weakSelf.updateToMQTTdelegate getStartMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue]];
             }
         }
         else if([topic isEqual:@"touchEnd"]){
-            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getEndMassagePoint:userId:color:)]){
-                [weakSelf.updateToMQTTdelegate getEndMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic]];
+            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getEndMassagePoint:userId:color:currentPage:)]){
+                [weakSelf.updateToMQTTdelegate getEndMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue]];
+            }
+        }else if([topic isEqual:@"addPage"]){
+            if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(addPage:userId:)]){
+                [weakSelf.pageMQTTdelegate addPage:dic[@"roomId"] userId:dic[@"userId"]];
+            }
+        }else if([topic isEqual:@"deletePage"]){
+            if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(deletePage:userId:pageNum:)]){
+                [weakSelf.pageMQTTdelegate deletePage:dic[@"roomId"] userId:dic[@"userId"] pageNum:[dic[@"pageNum"] intValue]];
             }
         }else{
-            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getMassagePoint:userId:color:)]){
-                [weakSelf.updateToMQTTdelegate getMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic]];
+            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getMassagePoint:userId:color:currentPage:)]){
+                [weakSelf.updateToMQTTdelegate getMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue]];
             }
         }
     });
@@ -194,6 +202,7 @@
 -(void)disConnectServer{
     [_mySession closeAndWait:1];
     self.mySession.delegate=nil;//代理
+    self.pageMQTTdelegate = nil;
     self.updateToMQTTdelegate = nil;
     _mySession=nil;
 //    _transport=nil;//连接服务器属性

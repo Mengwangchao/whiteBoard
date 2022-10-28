@@ -10,14 +10,22 @@
 NS_ASSUME_NONNULL_BEGIN
 @protocol UpdateToMQTTDelegate <NSObject>
 
--(void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
--(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
--(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
+-(void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color currentPage:(int)currentPage;
+-(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color currentPage:(int)currentPage;
+-(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color currentPage:(int)currentPage;
 
 //-(void)getJoinRoomReturn:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
 
 @end
 
+@protocol PageMQTTDelegate <NSObject>
+
+-(void)addPage:(NSString *)roomId userId:(NSString *)userId;
+-(void)deletePage:(NSString *)roomId userId:(NSString *)userId pageNum:(int)pageNum;
+
+//-(void)getJoinRoomReturn:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
+
+@end
 typedef NS_ENUM(NSInteger, AuthorityState){
     ONLY_READ = 2, //只读
     READ_WRITE = 1 //协作
@@ -29,6 +37,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 @property (nonatomic)int pageCount;
 @property (nonatomic)int currentPage;
 @property (nonatomic,weak) id<UpdateToMQTTDelegate> updateToMQTTdelegate;
+@property (nonatomic,weak) id<PageMQTTDelegate> pageMQTTdelegate;
 
 -(instancetype)init NS_UNAVAILABLE;
 -(instancetype)initWithTopic:(NSString *)topic;
