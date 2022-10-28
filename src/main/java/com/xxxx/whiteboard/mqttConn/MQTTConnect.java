@@ -3,14 +3,13 @@ package com.xxxx.whiteboard.mqttConn;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
  * MQTT工具类操作
  *
- * @author Mr.Qu
- * @since v1.1.0 2020-01-10
+ * @author fan yang
+ * @since v1.1.0 2022-10-28
  */
 @Slf4j
 @Component
@@ -115,8 +114,9 @@ public class MQTTConnect {
      */
     public static void main(String[] args) throws MqttException {
         MQTTConnect mqttConnect = new MQTTConnect();
-        mqttConnect.setMqttClient("admin", "public", new Callback());
+        mqttConnect.setMqttClient("emqx_user", "emqx_password", new Callback());
         mqttConnect.sub("com/iot/init");
+        mqttConnect.sub("touchStart");
         mqttConnect.pub("com/iot/init", "Mr.Qu" + (int) (Math.random() * 100000000));
     }
 }
