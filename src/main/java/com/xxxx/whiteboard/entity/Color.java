@@ -1,6 +1,9 @@
 package com.xxxx.whiteboard.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.boot.jackson.JsonComponent;
 
 /**
@@ -8,6 +11,9 @@ import org.springframework.boot.jackson.JsonComponent;
  * @Description: Color类，rgba格式的颜色
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class Color {
     // 参数 r
     private float r;
