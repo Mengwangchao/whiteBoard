@@ -32,10 +32,10 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(instancetype)initWithTopic:(NSString *)topic;
 
 
--(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color;
+-(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId;
 
--(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color;
--(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color;
+-(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId;
+-(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId;
 -(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId;
 -(void)sendCreateRoom:(NSString *)roomId userId:(NSString *)userId authority :(AuthorityState) authority;
 -(void)sendDeleteRoom:(NSString *)roomId userId:(NSString *)userId;

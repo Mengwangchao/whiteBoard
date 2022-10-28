@@ -59,7 +59,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor clearColor];
-        [self addSubview:self.sliderWidth];
+//        [self addSubview:self.sliderWidth];
         self.imageRootViewId = 0;
         self.imageRootViewArray = [NSMutableArray array];
         self.downPointArray = [NSMutableArray array];
@@ -72,11 +72,11 @@
         self.oldColor = self.currentColor;
         self.lineNum = 0;
         self.backgroundColor = [UIColor clearColor];
-        [self addSubview:self.btnChangeColor];
+//        [self addSubview:self.btnChangeColor];
         self.drawBoardModelArray = [NSMutableArray<DrawBoardModel *> array];
         self.drawBoardModel = [[DrawBoardModel alloc]init];
         self.drawBoardModel.color = self.currentColor;
-        [self addSubview:self.btnCancelDraw];
+//        [self addSubview:self.btnCancelDraw];
         self.uploadMQTT = [[UpdateToMQTT alloc]initWithTopic:roomId];
         self.uploadMQTT.updateToMQTTdelegate = self;
         
@@ -181,8 +181,18 @@
 }
 //设置线条颜色
 -(void)setLineColor:(UIColor*)color{
+    if(self.arrayLine.count>0){
+        self.drawBoardModel.color = self.oldColor;
+//        [self.arrayLine addObject:self.pointArray];
+        self.drawBoardModel.lineArray = self.arrayLine;
+        [self.drawBoardModelArray addObject:self.drawBoardModel];
+        self.drawBoardModel = [[DrawBoardModel alloc]init];
+        self.arrayLine = [NSMutableArray array];
+        self.pointArray = [NSMutableArray array];
+    }
     self.currentColor = color;
-    [self setNeedsDisplay];
+    self.oldColor = color;
+//    [self setNeedsDisplay];
 }
 -(void)addImage:(int)imageId{
     UIView * imageRootView = [[UIView alloc]initWithFrame:CGRectMake(80, 250, 200, 300)];
@@ -306,7 +316,7 @@
             UITouch *touch = [touches anyObject];
             //去除每一个点
             CGPoint myBeginPoint = [touch locationInView:self];
-            [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:self.currentColor];
+            [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
             if (self.oldColor == _currentColor) {
                 
             }
@@ -337,7 +347,7 @@
     CGPoint myBeginPoint = [touch locationInView:self];
     NSString *strPoint = NSStringFromCGPoint(myBeginPoint);
     [self.pointArray addObject:strPoint];
-    [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.currentColor];
+    [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
     [self setNeedsDisplay];
 }
 
@@ -354,7 +364,7 @@
     UITouch *touch = [touches anyObject];
     //去除每一个点
     CGPoint myBeginPoint = [touch locationInView:self];
-    [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:self.currentColor];
+    [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
     self.lineNum ++;
     [self addArray];
     if(self.oldColor != self.currentColor){

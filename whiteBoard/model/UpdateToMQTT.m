@@ -125,12 +125,14 @@
     dispatch_sync(que, ^{
         
         NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        NSLog(@"EasyMqttService mqtt connect success  %@",dic);
         NSDictionary *pointDic = dic[@"point"];
         float x = [pointDic[@"x"] floatValue];
         float y = [pointDic[@"y"] floatValue];
         CGPoint point = CGPointMake(x, y);
         NSDictionary *colorDic = dic[@"color"];
+        if(![dic[@"roomId"] isEqual:self.topic]){
+            return;
+        }
         if ([topic isEqual:@"touchStart"]) {
             
             if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getStartMassagePoint:userId:color:)]){
@@ -198,7 +200,7 @@
     _topic=nil;//单个主题订阅
     _topics=nil;//多个主题订阅
 }
--(void)sendPointMassage:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color topic:(NSString *)topic{
+-(void)sendPointMassage:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color topic:(NSString *)topic roomId:(NSString *)roomId{
     
     __weak typeof(self) weakSelf = self;
     
@@ -221,6 +223,7 @@
         }
         [dic setValue:colorDic forKey:@"color"];
         [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:topic retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
@@ -235,14 +238,14 @@
         }];
     });
 }
--(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
-    [self sendPointMassage:point userId:userId color:color topic:@"touchStart"];
+-(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color roomId:(NSString *)roomId{
+    [self sendPointMassage:point userId:userId color:color topic:@"touchStart" roomId:roomId];
 }
--(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
-    [self sendPointMassage:point userId:userId color:color topic:@"touchEnd"];
+-(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color roomId:(NSString *)roomId{
+    [self sendPointMassage:point userId:userId color:color topic:@"touchEnd" roomId:roomId];
 }
--(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
-    [self sendPointMassage:point userId:userId color:color topic:self.topic];
+-(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color roomId:(NSString *)roomId{
+    [self sendPointMassage:point userId:userId color:color topic:self.topic roomId:roomId];
 }
 -(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId{
     __weak typeof(self) weakSelf = self;
