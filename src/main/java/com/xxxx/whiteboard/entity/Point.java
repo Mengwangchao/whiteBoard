@@ -1,6 +1,9 @@
 package com.xxxx.whiteboard.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 
 /**
@@ -8,6 +11,9 @@ import lombok.Data;
  * @Description: 组成路径的坐标点
  */
 @Data
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Point {
     /** x轴坐标值 */
     private float x;
