@@ -42,10 +42,11 @@
     pancilImage = [pancilImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
 //    [self.pancilButton setImage:pancilImage forState:UIControlStateNormal];
-    self.pancilButton.backgroundColor = [UIColor clearColor];
+    self.pancilButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
     self.pancilButton.tintColor = [UIColor blackColor];
     [self.pancilButton setBackgroundImage:pancilImage forState:UIControlStateNormal];
     [self.pancilButton addTarget:self action:@selector(pancilButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    
     [self.view addSubview:self.pancilButton];
     UIPanGestureRecognizer *doublePanGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(doublePanGestureClick:)];
     doublePanGesture.minimumNumberOfTouches = 2;
@@ -71,6 +72,7 @@
     UILabel *alphaLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 420, 70, 30)];
     alphaLabel.backgroundColor = [UIColor clearColor];
     alphaLabel.text = @"透明度";
+    alphaLabel.textColor = [UIColor blackColor];
     [self.colorRootView addSubview:alphaLabel];
     self.colorAlpha = [[UISlider alloc]initWithFrame:CGRectMake(90, 420, self.colorRootView.frame.size.width - 130, 30)];
     self.colorAlpha.maximumValue = 1.0;
@@ -82,6 +84,7 @@
     UILabel *redColorLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 460, 70, 30)];
     redColorLabel.backgroundColor = [UIColor clearColor];
     redColorLabel.text = @"红色占比";
+    redColorLabel.textColor = [UIColor blackColor];
     [self.colorRootView addSubview:redColorLabel];
     self.colorRedColor = [[UISlider alloc]initWithFrame:CGRectMake(90, 460, self.colorRootView.frame.size.width - 130, 30)];
     self.colorRedColor.maximumValue = 255.0;
@@ -93,6 +96,7 @@
     UILabel *greenColorLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 500, 70, 30)];
     greenColorLabel.backgroundColor = [UIColor clearColor];
     greenColorLabel.text = @"绿色占比";
+    greenColorLabel.textColor = [UIColor blackColor];
     [self.colorRootView addSubview:greenColorLabel];
     self.colorGreenColor = [[UISlider alloc]initWithFrame:CGRectMake(90, 500, self.colorRootView.frame.size.width - 130, 30)];
     self.colorGreenColor.maximumValue = 255.0;
@@ -105,6 +109,7 @@
     UILabel *blueColorLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 540, 70, 30)];
     blueColorLabel.backgroundColor = [UIColor clearColor];
     blueColorLabel.text = @"蓝色占比";
+    blueColorLabel.textColor = [UIColor blackColor];
     [self.colorRootView addSubview:blueColorLabel];
     self.colorBlueColor = [[UISlider alloc]initWithFrame:CGRectMake(90, 540, self.colorRootView.frame.size.width - 130, 30)];
     self.colorBlueColor.maximumValue = 255.0;
@@ -171,6 +176,7 @@
     if(sender.tag == 10){
         self.pancilButton.tintColor = self.colorChangeView.backgroundColor;
         [self.rootDrawView setLineColor:self.colorChangeView.backgroundColor];
+       
         [UIView animateWithDuration:0.3 animations:^{
                     self.colorRootView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
                 }];

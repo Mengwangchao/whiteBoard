@@ -16,6 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
     UIButton *boardButton = [[UIButton alloc] initWithFrame:CGRectMake(70, MAIN_SCREEN_HEIGHT/2 - 100, MAIN_SCREEN_WIDTH - 140, 34)];
     boardButton.backgroundColor = BUTTON_BACKGROUNDCOLOR;
     boardButton.layer.cornerRadius = 3;
