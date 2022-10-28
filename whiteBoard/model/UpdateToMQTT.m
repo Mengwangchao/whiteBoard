@@ -59,7 +59,7 @@
         }];
         // 方法 封装 可外部调用
         for (NSString *topic in _topics) {
-            [session subscribeToTopic:self.topic atLevel:2 subscribeHandler:^(NSError *error, NSArray<NSNumber *> *gQoss){
+            [session subscribeToTopic:topic atLevel:2 subscribeHandler:^(NSError *error, NSArray<NSNumber *> *gQoss){
                 if (error) {
                     NSLog(@"Subscription failed %@", error.localizedDescription);
                 } else {

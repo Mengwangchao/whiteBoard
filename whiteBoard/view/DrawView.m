@@ -16,6 +16,9 @@
 @property (nonatomic,strong) NSMutableArray *pointArray;
 
 @property (nonatomic,strong) NSMutableArray *downPointArray;
+@property (nonatomic,strong) NSMutableArray *downArrayLine;
+@property (nonatomic, strong) DrawBoardModel  *downBoardModel;
+@property (nonatomic, strong) NSMutableArray<DrawBoardModel *> *downPointArrayArray;
 @property (nonatomic,strong) UIColor *downPointColor;
 
 //保存线条的数组
@@ -60,6 +63,9 @@
         self.imageRootViewId = 0;
         self.imageRootViewArray = [NSMutableArray array];
         self.downPointArray = [NSMutableArray array];
+        self.downArrayLine = [NSMutableArray array];
+        self.downBoardModel = [[DrawBoardModel alloc]init];
+        self.downPointArrayArray = [NSMutableArray<DrawBoardModel *> array];
         self.userId = userId;
         self.roomId = roomId;
         _currentColor = [UIColor blackColor];
@@ -94,9 +100,39 @@
     });
 }
 -(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+    if ([userId isEqual:self.userId]){
+        return;
+    }
     
+    self.downPointArray = [NSMutableArray array];
+    if (color != self.downPointColor) {
+        self.downBoardModel.color = self.downPointColor;
+        self.downBoardModel.lineArray = self.downArrayLine;
+        [self.downPointArrayArray addObject:self.downBoardModel];
+        self.downBoardModel = [[DrawBoardModel alloc]init];
+        self.downArrayLine = [NSMutableArray array];
+        
+    }
+    NSString *strPoint = NSStringFromCGPoint(point);
+    [self.downPointArray addObject:strPoint];
+    self.downPointColor = color;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self setNeedsDisplay];
+    });
+
+  
 }
 -(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+    if ([userId isEqual:self.userId]){
+        return;
+    }
+    
+    NSString *strPoint = NSStringFromCGPoint(point);
+    [self.downPointArray addObject:strPoint];
+    [self.downArrayLine addObject:self.downPointArray];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self setNeedsDisplay];
+    });
     
 }
 
@@ -234,6 +270,13 @@
     //网络传过来的
     [self drawLineNow:self.downPointArray color:self.downPointColor];
     
+    //网络传过来的保存的所有点
+    for (DrawBoardModel *drawBoard in self.downPointArrayArray) {
+        UIColor *color = drawBoard.color;
+        NSArray *arr = drawBoard.lineArray;
+        [self drawLineArrayNow:arr color:color];
+
+    }
     //尚未保存的
     [self drawLineArrayNow:self.arrayLine color:self.currentColor];
 
@@ -260,6 +303,10 @@
     for (UITouch *touch in touches) {
         if([touch.view isKindOfClass:[DrawView class]]){
             
+            UITouch *touch = [touches anyObject];
+            //去除每一个点
+            CGPoint myBeginPoint = [touch locationInView:self];
+            [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:self.currentColor];
             if (self.oldColor == _currentColor) {
                 
             }
@@ -303,6 +350,11 @@
             
         }
     }
+    
+    UITouch *touch = [touches anyObject];
+    //去除每一个点
+    CGPoint myBeginPoint = [touch locationInView:self];
+    [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:self.currentColor];
     self.lineNum ++;
     [self addArray];
     if(self.oldColor != self.currentColor){
@@ -340,7 +392,7 @@
 }
 -(void)btnClicked{
     _currentColor = [UIColor colorWithRed:(float)rand()/RAND_MAX green:(float)rand()/RAND_MAX blue:(float)rand()/RAND_MAX alpha:1.0];
-    [self addImage:1];
+//    [self addImage:1];
 }
 - (UISlider *)sliderWidth
 {
