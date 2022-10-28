@@ -16,12 +16,11 @@ import lombok.ToString;
 @ToString
 @TableName("user")
 public class User {
+
     /** 用户的id */
     private String userId; // user1666843216
 
     /** 用户的room */
     private String roomId;
-
-
 
 }
