@@ -17,7 +17,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    UILabel *roomIdLabel = [[UILabel alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-100, 50, 200, 40)];
+    UILabel *roomIdLabel = [[UILabel alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-120, 60, 240, 40)];
     roomIdLabel.backgroundColor = [UIColor clearColor];
     roomIdLabel.text = [NSString stringWithFormat:@"房间名：%@",self.roomId];
     roomIdLabel.textColor = [UIColor blackColor];

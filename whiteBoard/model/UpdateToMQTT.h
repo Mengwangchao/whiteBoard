@@ -11,8 +11,17 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol UpdateToMQTTDelegate <NSObject>
 
 -(void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
+-(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
+-(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
+
+//-(void)getJoinRoomReturn:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
 
 @end
+
+typedef NS_ENUM(NSInteger, AuthorityState){
+    ONLY_READ = 2, //只读
+    READ_WRITE = 1 //协作
+};
 
 @interface UpdateToMQTT : NSObject
 
@@ -24,7 +33,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 -(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color;
+
+-(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color;
+-(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color;
+-(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId;
+-(void)sendCreateRoom:(NSString *)roomId userId:(NSString *)userId authority :(AuthorityState) authority;
+-(void)sendDeleteRoom:(NSString *)roomId userId:(NSString *)userId;
 -(void)closeMQTTClient;
+-(void)disConnectServer;
 @end
 
 NS_ASSUME_NONNULL_END

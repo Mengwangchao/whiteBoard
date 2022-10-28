@@ -10,7 +10,7 @@
 //#import "MQTTClient.h"
 @interface UpdateToMQTT()<MQTTSessionDelegate>
 @property(nonatomic,strong)MQTTSession *mySession;
-@property(nonatomic,strong)NSMutableArray *topics;
+@property(nonatomic,strong)NSMutableArray<NSString *> *topics;
 @property (nonatomic,strong,readwrite)NSString *topic;
 @end
 @implementation UpdateToMQTT
@@ -18,6 +18,13 @@
     self = [super init];
     if (self) {
         self.topic = topic;
+        self.topics = [NSMutableArray array];
+        [self.topics addObject:@"touchStart"];
+        [self.topics addObject:@"touchEnd"];
+        [self.topics addObject:@"joinRoom"];
+        [self.topics addObject:@"joinRoomReturn"];
+        [self.topics addObject:@"createRoom"];
+        [self.topics addObject:@"deleteRoom"];
         [self connectMQTT];
     }
     return self;
@@ -41,19 +48,27 @@
 -(void)handleEvent:(MQTTSession *)session event:(MQTTSessionEvent)eventCode error:(NSError *)error{
     if (eventCode == MQTTSessionEventConnected) {
         NSLog(@"链接MQTT 成功");
-        
-        // 方法 封装 可外部调用
-        //        for (NSString *topic in _topics) {
         [session subscribeToTopic:self.topic atLevel:2 subscribeHandler:^(NSError *error, NSArray<NSNumber *> *gQoss){
             if (error) {
                 NSLog(@"Subscription failed %@", error.localizedDescription);
             } else {
-                NSLog(@"Subscription sucessfull! Granted Qos: %@", gQoss);
+                NSLog(@"Subscription sucessfull!");
                 
                 //                [self send];
             }
         }];
-        //        }
+        // 方法 封装 可外部调用
+        for (NSString *topic in _topics) {
+            [session subscribeToTopic:self.topic atLevel:2 subscribeHandler:^(NSError *error, NSArray<NSNumber *> *gQoss){
+                if (error) {
+                    NSLog(@"Subscription failed %@", error.localizedDescription);
+                } else {
+                    NSLog(@"Subscription sucessfull!");
+                    
+                    //                [self send];
+                }
+            }];
+        }
  // this is part of the block API
  
     }else if (eventCode == MQTTSessionEventConnectionRefused) {
@@ -104,6 +119,8 @@
 -(void)newMessage:(MQTTSession *)session data:(NSData *)data onTopic:(NSString *)topic qos:(MQTTQosLevel)qos retained:(BOOL)retained mid:(unsigned int)mid
 {
     __weak typeof(self) weakSelf = self;
+
+    
     dispatch_queue_t que = dispatch_queue_create("getMessage", DISPATCH_QUEUE_SERIAL);
     dispatch_sync(que, ^{
         
@@ -114,9 +131,20 @@
         float y = [pointDic[@"y"] floatValue];
         CGPoint point = CGPointMake(x, y);
         NSDictionary *colorDic = dic[@"color"];
-        
-        if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getMassagePoint:userId:color:)]){
-            [weakSelf.updateToMQTTdelegate getMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic]];
+        if ([topic isEqual:@"touchStart"]) {
+            
+            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getStartMassagePoint:userId:color:)]){
+                [weakSelf.updateToMQTTdelegate getStartMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic]];
+            }
+        }
+        else if([topic isEqual:@"touchEnd"]){
+            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getEndMassagePoint:userId:color:)]){
+                [weakSelf.updateToMQTTdelegate getEndMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic]];
+            }
+        }else{
+            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getMassagePoint:userId:color:)]){
+                [weakSelf.updateToMQTTdelegate getMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic]];
+            }
         }
     });
     // 做相对应的操作
@@ -138,13 +166,15 @@
                 NSLog(@"取消订阅成功");
             }
     }];
-//    [self.mySession unsubscribeTopics:self.topic unsubscribeHandler:^(NSError *error) {
-//        if (error) {
-//            NSLog(@"取消订阅失败");
-//        }else{
-//            NSLog(@"取消订阅成功");
-//        }
-//    }];
+    for (NSString *top in self.topics) {
+        [self.mySession unsubscribeTopic:top unsubscribeHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"取消订阅失败");
+                }else{
+                    NSLog(@"取消订阅成功");
+                }
+        }];
+    }
 }
 
 -(void)connectServer:(NSString *)urlString userName:(NSString *)userName passWord:(NSString *)passWord topic:(NSArray *)topics{
@@ -156,32 +186,20 @@
    
 }
 -(void)disConnectServer{
-//    [_mySession closeAndWait:1];
-//    self.mySession.delegate=nil;//代理
-//    _mySession=nil;
-////    _transport=nil;//连接服务器属性
+    [_mySession closeAndWait:1];
+    self.mySession.delegate=nil;//代理
+    self.updateToMQTTdelegate = nil;
+    _mySession=nil;
+//    _transport=nil;//连接服务器属性
 //    _server_ip=nil;//服务器ip地址
-////    _port=0;//服务器ip地址
+//    _port=0;//服务器ip地址
 //    _userName=nil;//用户名
 //    _passWord=nil;//密码
-////    _topic=nil;//单个主题订阅
-//    _topics=nil;//多个主题订阅
+    _topic=nil;//单个主题订阅
+    _topics=nil;//多个主题订阅
 }
--(void)sendMassage:(NSData *)msg topic:(NSString *)topic{
+-(void)sendPointMassage:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color topic:(NSString *)topic{
     
-    [self.mySession publishData:msg onTopic:topic retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
-        if (error) {
-            NSLog(@"发送失败 - %@",error);
- 
-            
-        }else{
-            NSLog(@"发送成功");
-           
-        }
-    }];
-}
-
--(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
     __weak typeof(self) weakSelf = self;
     
     dispatch_queue_t que = dispatch_queue_create("uploadPoint", DISPATCH_QUEUE_SERIAL);
@@ -204,7 +222,7 @@
         [dic setValue:colorDic forKey:@"color"];
         [dic setValue:userId forKey:@"userId"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
-        [weakSelf.mySession publishData:data onTopic:weakSelf.topic retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+        [weakSelf.mySession publishData:data onTopic:topic retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
                     NSLog(@"发送失败 - %@",error);
          
@@ -216,8 +234,78 @@
                 }
         }];
     });
-
 }
+-(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+    [self sendPointMassage:point userId:userId color:color topic:@"touchStart"];
+}
+-(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+    [self sendPointMassage:point userId:userId color:color topic:@"touchEnd"];
+}
+-(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+    [self sendPointMassage:point userId:userId color:color topic:self.topic];
+}
+-(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("sendJoinRoom", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        NSMutableDictionary *pointDic = [NSMutableDictionary dictionary];
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"joinRoom" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+-(void)sendCreateRoom:(NSString *)roomId userId:(NSString *)userId authority :(AuthorityState) authority{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("createRoom", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        NSMutableDictionary *pointDic = [NSMutableDictionary dictionary];
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",(int)authority] forKey:@"authority"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"createRoom" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+-(void)sendDeleteRoom:(NSString *)roomId userId:(NSString *)userId{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("deleteRoom", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        NSMutableDictionary *pointDic = [NSMutableDictionary dictionary];
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"deleteRoom" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+
 
 //cmp 0 -> r  1 -> g  2 -> b  3 -> a
 - (void)cx_getRGBComponents:(CGFloat [4])cmp forColor:(UIColor *)color {

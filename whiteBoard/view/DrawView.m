@@ -85,12 +85,19 @@
     if ([userId isEqual:self.userId]){
         return;
     }
+    
     NSString *strPoint = NSStringFromCGPoint(point);
     [self.downPointArray addObject:strPoint];
     self.downPointColor = color;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self setNeedsDisplay];
     });
+}
+-(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+    
+}
+-(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color{
+    
 }
 
 #pragma mark --添加图片，设置手势
@@ -175,33 +182,36 @@
     
 }
 #pragma mark --重新绘制
-- (void)drawRect:(CGRect)rect
-{
-    
+-(void)drawLineNow:(NSArray*)arr color : (UIColor *)color{
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetLineWidth(context, self.sliderWidth.value);
     CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
     CGContextSetLineCap(context, kCGLineCapRound);//设置线头样式
-    if(self.downPointArray.count >0){
+    if(arr.count >0){
         
             //划线
-        CGPoint startPoint = CGPointFromString(self.downPointArray[0]);
+        CGPoint startPoint = CGPointFromString(arr[0]);
         CGContextMoveToPoint(context, startPoint.x, startPoint.y);
-        for(int i = 1;i<self.downPointArray.count;i++)
+        for(int i = 1;i<arr.count;i++)
         {
-            CGPoint tempPoint = CGPointFromString(self.downPointArray[i]);
+            CGPoint tempPoint = CGPointFromString(arr[i]);
             CGContextAddLineToPoint(context, tempPoint.x, tempPoint.y);
         }
-        [self.downPointColor setStroke];
+        [color setStroke];
         CGContextStrokePath(context);
     }
-    
-    if(self.arrayLine.count>0)
+}
+-(void)drawLineArrayNow:(NSArray*)arr color : (UIColor *)color{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetLineWidth(context, self.sliderWidth.value);
+    CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
+    CGContextSetLineCap(context, kCGLineCapRound);//设置线头样式
+    if(arr.count>0)
     {
         //将里面的线条画出来
-        for(int i = 0;i<self.arrayLine.count;i++)
+        for(int i = 0;i<arr.count;i++)
         {
-            NSArray *array = [NSArray arrayWithArray:self.arrayLine[i]];
+            NSArray *array = [NSArray arrayWithArray:arr[i]];
             if(array.count>0)
             {
                 CGPoint myStartPoint = CGPointFromString(array[0]);
@@ -212,41 +222,27 @@
                     CGPoint myEndPoint = CGPointFromString(array[j]);
                     CGContextAddLineToPoint(context, myEndPoint.x, myEndPoint.y);
                 }
-                [self.currentColor setStroke];
+                [color setStroke];
                 CGContextStrokePath(context);
             }
         }
     }
+}
+- (void)drawRect:(CGRect)rect
+{
+
+    //网络传过来的
+    [self drawLineNow:self.downPointArray color:self.downPointColor];
+    
+    //尚未保存的
+    [self drawLineArrayNow:self.arrayLine color:self.currentColor];
+
+    //保存的所有点
     for (DrawBoardModel *drawBoard in self.drawBoardModelArray) {
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextSetLineWidth(context, self.sliderWidth.value);
-        CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
-        CGContextSetLineCap(context, kCGLineCapRound);//设置线头样式
         UIColor *color = drawBoard.color;
         NSArray *arr = drawBoard.lineArray;
-        if(arr.count>0)
-        {
-            //将里面的线条画出来
-            for(int i = 0;i<arr.count;i++)
-            {
-                NSArray *array = [NSArray arrayWithArray:arr[i]];
-                if(array.count>0)
-                {
-                    CGPoint myStartPoint = CGPointFromString(array[0]);
-                    //将画笔移动到指定的点
-                    CGContextMoveToPoint(context, myStartPoint.x, myStartPoint.y);
-                    for(int j = 1;j<array.count;j++)
-                    {
-                        CGPoint myEndPoint = CGPointFromString(array[j]);
-                        CGContextAddLineToPoint(context, myEndPoint.x, myEndPoint.y);
-                    }
-                    [color setStroke];
-                    CGContextStrokePath(context);
-                }
-            }
-        }
-        //        }
-        
+        [self drawLineArrayNow:arr color:color];
+
     }
     
     
@@ -256,24 +252,9 @@
     //
     //    [string drawAtPoint:CGPointMake(25,190)withFont:helvetica];
     //    [string drawAtPoint:CGPointMake(25,190)withAttributes:helvetica];
-    
-    CGContextRef contextCurrent = UIGraphicsGetCurrentContext();
-    CGContextSetLineWidth(contextCurrent, self.sliderWidth.value);
-    CGContextSetLineJoin(contextCurrent, kCGLineJoinRound);//设置拐角样式
-    CGContextSetLineCap(contextCurrent, kCGLineCapRound);//设置线头样式
-    if(self.pointArray.count>0)
-    {
-        //划线
-        CGPoint startPoint = CGPointFromString(self.pointArray[0]);
-        CGContextMoveToPoint(contextCurrent, startPoint.x, startPoint.y);
-        for(int i = 1;i<self.pointArray.count;i++)
-        {
-            CGPoint tempPoint = CGPointFromString(self.pointArray[i]);
-            CGContextAddLineToPoint(contextCurrent, tempPoint.x, tempPoint.y);
-        }
-        [_currentColor setStroke];
-        CGContextStrokePath(contextCurrent);
-    }
+    //当前正在画的
+    [self drawLineNow:self.pointArray color:self.currentColor];
+
 }
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     for (UITouch *touch in touches) {
