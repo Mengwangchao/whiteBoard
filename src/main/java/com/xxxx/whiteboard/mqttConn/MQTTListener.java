@@ -9,9 +9,10 @@ import org.springframework.stereotype.Component;
 
 /**
  * 项目启动 监听主题
+ * ContextRefreshedEvent 是指项目启动完毕
  *
- * @author Mr.Qu
- * @since 2020/1/10
+ * @author fan yang
+ * @since 2022/10/28
  */
 @Slf4j
 @Component
@@ -27,8 +28,8 @@ public class MQTTListener implements ApplicationListener<ContextRefreshedEvent> 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         try {
-            server.setMqttClient("admin", "public", new Callback());
-            server.sub("com/iot/init");
+            server.setMqttClient("emqx_user", "emqx_password", new Callback());
+            server.sub("touchStart"); // 项目启动就开始监听touchStart主题
         } catch (MqttException e) {
             log.error(e.getMessage(), e);
         }
