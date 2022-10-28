@@ -26,6 +26,8 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 @interface UpdateToMQTT : NSObject
 
 @property (nonatomic,strong,readonly)NSString *topic;
+@property (nonatomic)int pageCount;
+@property (nonatomic)int currentPage;
 @property (nonatomic,weak) id<UpdateToMQTTDelegate> updateToMQTTdelegate;
 
 -(instancetype)init NS_UNAVAILABLE;
@@ -39,6 +41,8 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId;
 -(void)sendCreateRoom:(NSString *)roomId userId:(NSString *)userId authority :(AuthorityState) authority;
 -(void)sendDeleteRoom:(NSString *)roomId userId:(NSString *)userId;
+-(void)sendAddPageMessage:(NSString *)roomId userId:(NSString *)userId;
+-(void)sendDeletePageMessage:(NSString *)roomId userId:(NSString *)userId pageNum:(int) pageNum;
 -(void)closeMQTTClient;
 -(void)disConnectServer;
 @end

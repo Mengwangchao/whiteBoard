@@ -7,9 +7,16 @@
 
 #import "BoardViewController.h"
 #import "DrawView.h"
+#import "UpdateToMQTT.h"
 @interface BoardViewController ()
 @property (nonatomic,strong)DrawView *rootDrawView;
+@property (nonatomic,strong)NSMutableArray<DrawView*> *rootDrawViewArray;
+@property (nonatomic,strong)UIButton *pageButton;
+@property (nonatomic)int currentPage;
+@property (nonatomic)int pageCount;
 @property (nonatomic,strong)UIButton *pancilButton;
+@property (nonatomic,strong)UIButton *addPageButton;
+@property (nonatomic,strong)UIButton *deletePageButton;
 @property (nonatomic,strong)UIView *colorRootView;
 @property (nonatomic,strong)UIView *colorChangeView;
 @property (nonatomic,strong)UISlider *colorAlpha;
@@ -22,7 +29,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.currentPage = 1;
+    self.pageCount = 1;
     self.view.backgroundColor = [UIColor whiteColor];
+    self.rootDrawViewArray = [NSMutableArray array];
     UILabel *roomIdLabel = [[UILabel alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-120, 60, 240, 40)];
     roomIdLabel.backgroundColor = [UIColor clearColor];
     roomIdLabel.text = [NSString stringWithFormat:@"房间名：%@",self.roomId];
@@ -30,6 +40,7 @@
     roomIdLabel.font = [UIFont systemFontOfSize:18.0];
     [self.view addSubview:roomIdLabel];
     self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId];
+    [self.rootDrawViewArray addObject:self.rootDrawView];
     if(!self.isCreater){
         
 //        self.rootDrawView.userInteractionEnabled = NO;  //开启后就是只读模式
@@ -41,7 +52,6 @@
     
     pancilImage = [pancilImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
-//    [self.pancilButton setImage:pancilImage forState:UIControlStateNormal];
     self.pancilButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
     self.pancilButton.tintColor = [UIColor blackColor];
     [self.pancilButton setBackgroundImage:pancilImage forState:UIControlStateNormal];
@@ -54,17 +64,31 @@
 
     self.rootDrawView.layer.borderWidth = 1;
     self.rootDrawView.layer.borderColor = [UIColor blackColor].CGColor;
-    [self addColorView];
+   
     
+    self.addPageButton = [[UIButton alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH-50, MAIN_SCREEN_HEIGHT-70, 30, 30)];
+    self.addPageButton.backgroundColor = [UIColor clearColor];
+    [self.addPageButton setImage:[UIImage imageNamed:@"addPage"] forState:UIControlStateNormal];
+    [self.addPageButton addTarget:self action:@selector(addPageButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.addPageButton];
+    
+    self.deletePageButton = [[UIButton alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH-100, MAIN_SCREEN_HEIGHT-70, 30, 30)];
+    self.deletePageButton.backgroundColor = [UIColor clearColor];
+    [self.deletePageButton setImage:[UIImage imageNamed:@"deletePage"] forState:UIControlStateNormal];
+    [self.deletePageButton addTarget:self action:@selector(deletePageButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.deletePageButton];
+    
+    self.pageButton = [[UIButton alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-25, MAIN_SCREEN_HEIGHT-70, 50, 30)];
+    [self setPageButtonText:self.currentPage pageCount:self.pageCount];
+    [self.pageButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.pageButton addTarget:self action:@selector(pageButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.pageButton];
+    
+    //保证最后创建
+    [self addColorView];
     // Do any additional setup after loading the view.
 }
--(void)doublePanGestureClick:(UIPanGestureRecognizer *)sender{
-    NSLog(@"panClick");
-    
-    CGPoint translation = [sender translationInView:self.view];
-    self.rootDrawView.center = CGPointMake(self.rootDrawView.center.x+translation.x, self.rootDrawView.center.y+translation.y);
-    [sender setTranslation:CGPointZero inView:self.view];
-}
+
 -(void)addColorView{
     _colorRootView = [[UIView alloc]initWithFrame:CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50)];
         _colorRootView.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
@@ -152,6 +176,9 @@
     [cancelButton setTitle:@"取消" forState:UIControlStateNormal];
     [self.colorRootView addSubview:cancelButton];
 }
+-(void)setPageButtonText:(int)currentPage pageCount:(int)pageCount{
+    [self.pageButton setTitle:[NSString stringWithFormat:@"%d/%d",currentPage,pageCount] forState:UIControlStateNormal];
+}
 #pragma mark - 按钮点击事件
 -(void)pancilButtonClick:(UIButton *)sender{
 //    self.pancilButton.tintColor = [UIColor greenColor];
@@ -185,6 +212,76 @@
                     self.colorRootView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
                 }];
     }
+}
+-(void)doublePanGestureClick:(UIPanGestureRecognizer *)sender{
+    
+    CGPoint translation = [sender translationInView:self.view];
+    self.rootDrawView.center = CGPointMake(self.rootDrawView.center.x+translation.x, self.rootDrawView.center.y+translation.y);
+    [sender setTranslation:CGPointZero inView:self.view];
+}
+-(void)addPageButtonClick{
+    [self.rootDrawView.uploadMQTT sendAddPageMessage:self.roomId userId:self.userId];
+    
+    self.currentPage++;
+    self.pageCount++;
+    for (DrawView *view in self.rootDrawViewArray) {
+        view.uploadMQTT.pageCount = self.pageCount;
+        view.hidden = YES;
+    }
+    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId];
+    [self.rootDrawViewArray addObject:self.rootDrawView];
+    if(!self.isCreater){
+        
+//        self.rootDrawView.userInteractionEnabled = NO;  //开启后就是只读模式
+    }
+    self.rootDrawView.uploadMQTT.currentPage = self.currentPage;
+    self.rootDrawView.uploadMQTT.pageCount = self.pageCount;
+    [self.view addSubview:self.rootDrawView];
+    self.rootDrawView.layer.borderWidth = 1;
+    self.rootDrawView.layer.borderColor = [UIColor blackColor].CGColor;
+    [UIView animateWithDuration:0.3 animations:^{
+        self.rootDrawView.frame = CGRectMake(0, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT);
+        [self.view sendSubviewToBack:self.rootDrawView];
+    }];
+    
+    self.pancilButton.tintColor = [self.rootDrawView getLineColor];
+    [self setPageButtonText:self.currentPage pageCount:self.pageCount];
+    NSLog(@"addPage");
+}
+-(void)pageButtonClick{
+    self.currentPage ++;
+    if (self.currentPage>self.pageCount) {
+        self.currentPage = 1;
+    }
+    for (DrawView *view in self.rootDrawViewArray) {
+        view.hidden = YES;
+    }
+    self.rootDrawView = self.rootDrawViewArray[self.currentPage-1];
+    [self setPageButtonText:self.currentPage pageCount:self.pageCount];
+    self.pancilButton.tintColor = [self.rootDrawView getLineColor];
+    self.rootDrawView.hidden = NO;
+    
+}
+-(void)deletePageButtonClick{
+    if (self.pageCount>1) {
+        
+        self.pageCount--;
+        if (self.currentPage>self.pageCount) {
+            self.currentPage --;
+        }
+        int i =1;
+        [self.rootDrawView deleteView];
+        [self.rootDrawViewArray removeObject:self.rootDrawView];
+        for (DrawView *view in self.rootDrawViewArray) {
+            view.uploadMQTT.currentPage = i;
+            view.hidden = YES;
+        }
+        self.rootDrawView = self.rootDrawViewArray[self.currentPage-1];
+        [self setPageButtonText:self.currentPage pageCount:self.pageCount];
+        self.pancilButton.tintColor = [self.rootDrawView getLineColor];
+        self.rootDrawView.hidden = NO;
+    }
+    
 }
 /*
 #pragma mark - Navigation

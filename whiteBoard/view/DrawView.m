@@ -30,7 +30,7 @@
 
 @property (nonatomic, strong) DrawBoardModel  *drawBoardModel;
 
-@property (nonatomic, strong) UpdateToMQTT * uploadMQTT;
+@property (nonatomic, strong,readwrite) UpdateToMQTT * uploadMQTT;
 
 @property (nonatomic,strong) UISlider *sliderWidth;
 
@@ -193,6 +193,24 @@
     self.currentColor = color;
     self.oldColor = color;
 //    [self setNeedsDisplay];
+}
+
+- (UIColor*)getLineColor{
+    return  self.currentColor;
+}
+
+-(void)deleteView{
+    [self.pointArray removeAllObjects];
+    [self.downPointArray removeAllObjects];
+    [self.downArrayLine removeAllObjects];
+    [self.downPointArrayArray removeAllObjects];
+    [self.arrayLine removeAllObjects];
+    [self.drawBoardModelArray removeAllObjects];
+    self.downBoardModel = nil;
+    self.drawBoardModel = nil;
+    self.uploadMQTT = nil;
+    [self setNeedsDisplay];
+    
 }
 -(void)addImage:(int)imageId{
     UIView * imageRootView = [[UIView alloc]initWithFrame:CGRectMake(80, 250, 200, 300)];

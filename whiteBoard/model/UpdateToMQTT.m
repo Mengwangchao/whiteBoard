@@ -25,6 +25,10 @@
         [self.topics addObject:@"joinRoomReturn"];
         [self.topics addObject:@"createRoom"];
         [self.topics addObject:@"deleteRoom"];
+        [self.topics addObject:@"deletePage"];
+        [self.topics addObject:@"addPage"];
+        self.currentPage = 1;
+        self.pageCount = 1;
         [self connectMQTT];
     }
     return self;
@@ -224,6 +228,8 @@
         [dic setValue:colorDic forKey:@"color"];
         [dic setValue:userId forKey:@"userId"];
         [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.pageCount] forKey:@"pageCount"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:topic retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
@@ -295,7 +301,6 @@
     dispatch_sync(que, ^{
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         
-        NSMutableDictionary *pointDic = [NSMutableDictionary dictionary];
         [dic setValue:userId forKey:@"userId"];
         [dic setValue:roomId forKey:@"roomId"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
@@ -308,7 +313,46 @@
         }];
     });
 }
+-(void)sendAddPageMessage:(NSString *)roomId userId:(NSString *)userId{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("deleteRoom", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"addPage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
 
+-(void)sendDeletePageMessage:(NSString *)roomId userId:(NSString *)userId pageNum:(int)pageNum{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("deleteRoom", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",pageNum] forKey:@"pageNum"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"deletePage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
 
 //cmp 0 -> r  1 -> g  2 -> b  3 -> a
 - (void)cx_getRGBComponents:(CGFloat [4])cmp forColor:(UIColor *)color {
