@@ -29,7 +29,7 @@
     roomIdLabel.textColor = [UIColor blackColor];
     roomIdLabel.font = [UIFont systemFontOfSize:18.0];
     [self.view addSubview:roomIdLabel];
-    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId];
+    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId];
     if(!self.isCreater){
         
 //        self.rootDrawView.userInteractionEnabled = NO;  //开启后就是只读模式
@@ -47,11 +47,22 @@
     [self.pancilButton setBackgroundImage:pancilImage forState:UIControlStateNormal];
     [self.pancilButton addTarget:self action:@selector(pancilButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.pancilButton];
-    
+    UIPanGestureRecognizer *doublePanGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(doublePanGestureClick:)];
+    doublePanGesture.minimumNumberOfTouches = 2;
+    [self.view addGestureRecognizer:doublePanGesture];
 
+    self.rootDrawView.layer.borderWidth = 1;
+    self.rootDrawView.layer.borderColor = [UIColor blackColor].CGColor;
     [self addColorView];
     
     // Do any additional setup after loading the view.
+}
+-(void)doublePanGestureClick:(UIPanGestureRecognizer *)sender{
+    NSLog(@"panClick");
+    
+    CGPoint translation = [sender translationInView:self.view];
+    self.rootDrawView.center = CGPointMake(self.rootDrawView.center.x+translation.x, self.rootDrawView.center.y+translation.y);
+    [sender setTranslation:CGPointZero inView:self.view];
 }
 -(void)addColorView{
     _colorRootView = [[UIView alloc]initWithFrame:CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50)];

@@ -314,6 +314,7 @@
         if([touch.view isKindOfClass:[DrawView class]]){
             
             UITouch *touch = [touches anyObject];
+            
             //去除每一个点
             CGPoint myBeginPoint = [touch locationInView:self];
             [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
@@ -342,6 +343,7 @@
             
         }
     }
+    
     UITouch *touch = [touches anyObject];
     //去除每一个点
     CGPoint myBeginPoint = [touch locationInView:self];
