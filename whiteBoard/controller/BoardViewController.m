@@ -16,6 +16,7 @@
 @property (nonatomic)int currentPage;
 @property (nonatomic)int pageCount;
 @property (nonatomic,strong)UIButton *pancilButton;
+@property(nonatomic,strong)UIButton *eraserButton;
 @property (nonatomic,strong)UIButton *addPageButton;
 @property (nonatomic,strong)UIButton *deletePageButton;
 @property (nonatomic,strong)UIView *colorRootView;
@@ -48,7 +49,7 @@
     self.mMQTT = [[UpdateToMQTT alloc]initWithTopic:self.roomId];
     self.mMQTT.pageMQTTdelegate = self;
     [self.mMQTT connectMQTT];
-    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
+    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, 1000, 1000) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
     [self.rootDrawViewArray addObject:self.rootDrawView];
     if(!self.isCreater){
         
@@ -67,6 +68,14 @@
     [self.pancilButton addTarget:self action:@selector(pancilButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     [self.view addSubview:self.pancilButton];
+    
+    self.eraserButton = [[UIButton alloc]initWithFrame:CGRectMake(50, MAIN_SCREEN_HEIGHT-80, 28, 45)];
+    self.eraserButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    self.eraserButton.tintColor = [UIColor blackColor];
+    [self.eraserButton setBackgroundImage:[[UIImage imageNamed:@"eraser"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [self.eraserButton addTarget:self action:@selector(eraserButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.eraserButton];
+    
     UIPanGestureRecognizer *doublePanGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(doublePanGestureClick:)];
     doublePanGesture.minimumNumberOfTouches = 2;
     [self.view addGestureRecognizer:doublePanGesture];
@@ -223,11 +232,21 @@
 #pragma mark - 按钮点击事件
 -(void)pancilButtonClick:(UIButton *)sender{
 //    self.pancilButton.tintColor = [UIColor greenColor];
-
+    self.rootDrawView.isEraser = NO;
+    self.eraserButton.tintColor = [UIColor blackColor];
         [UIView animateWithDuration:0.3 animations:^{
                     self.colorRootView.frame = CGRectMake(0, 50, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
                 }];
     
+}
+-(void)eraserButtonClick{
+    if (self.rootDrawView.isEraser == NO) {
+        self.eraserButton.tintColor = [UIColor greenColor];
+        self.rootDrawView.isEraser = YES;
+    }else{
+        self.rootDrawView.isEraser = NO;
+        self.eraserButton.tintColor = [UIColor blackColor];
+    }
 }
 -(void)viewTapGesClick:(UITapGestureRecognizer *)tap{
     self.pancilButton.tintColor = tap.view.backgroundColor;

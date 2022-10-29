@@ -38,7 +38,7 @@
 
 @property (nonatomic) int imageRootViewId;
 @property (nonatomic,strong) UIColor *currentColor;//画笔默认颜色
-@property (nonatomic,strong) UIColor *oldColor;//画笔默认颜色
+@property (nonatomic,copy) UIColor *oldColor;//画笔默认颜色
 
 @property (nonatomic,strong) UIButton *btnCancelDraw;//撤销画笔
 
@@ -47,6 +47,7 @@
 
 @property (nonatomic, strong) NSString *userId;
 @property (nonatomic, strong) NSString *roomId;
+@property (nonatomic) BOOL isEraserFlag;
 @end
 
 //  下面这行代码能够将view2  调整到父视图的最下面
@@ -62,6 +63,8 @@
 //        [self addSubview:self.sliderWidth];
         self.imageRootViewId = 0;
         self.currentPage = 1;
+        self.isEraser = NO;
+        self.isEraserFlag =NO;
         self.imageRootViewArray = [NSMutableArray array];
         self.downPointArray = [NSMutableArray array];
         self.downArrayLine = [NSMutableArray array];
@@ -198,7 +201,13 @@
 //设置线条颜色
 -(void)setLineColor:(UIColor*)color{
     if(self.arrayLine.count>0){
-        self.drawBoardModel.color = self.oldColor;
+        if (self.isEraserFlag == YES) {
+            
+            self.drawBoardModel.color = [UIColor whiteColor];
+        }else{
+            
+            self.drawBoardModel.color = self.oldColor;
+        }
 //        [self.arrayLine addObject:self.pointArray];
         self.drawBoardModel.lineArray = self.arrayLine;
         [self.drawBoardModelArray addObject:self.drawBoardModel];
@@ -263,9 +272,9 @@
     
 }
 #pragma mark --重新绘制
--(void)drawLineNow:(NSArray*)arr color : (UIColor *)color{
+-(void)drawLineNow:(NSArray*)arr color : (UIColor *)color pencilwidth:(int)pencilwidth{
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetLineWidth(context, self.sliderWidth.value);
+    CGContextSetLineWidth(context, pencilwidth);
     CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
     CGContextSetLineCap(context, kCGLineCapRound);//设置线头样式
     if(arr.count >0){
@@ -282,9 +291,9 @@
         CGContextStrokePath(context);
     }
 }
--(void)drawLineArrayNow:(NSArray*)arr color : (UIColor *)color{
+-(void)drawLineArrayNow:(NSArray*)arr color : (UIColor *)color pencilwidth:(int)pencilwidth{
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetLineWidth(context, self.sliderWidth.value);
+    CGContextSetLineWidth(context, pencilwidth);
     CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
     CGContextSetLineCap(context, kCGLineCapRound);//设置线头样式
     if(arr.count>0)
@@ -303,6 +312,7 @@
                     CGPoint myEndPoint = CGPointFromString(array[j]);
                     CGContextAddLineToPoint(context, myEndPoint.x, myEndPoint.y);
                 }
+                
                 [color setStroke];
                 CGContextStrokePath(context);
             }
@@ -312,36 +322,42 @@
 - (void)drawRect:(CGRect)rect
 {
 
-    //网络传过来的
-    [self drawLineNow:self.downPointArray color:self.downPointColor];
-    
     //网络传过来的保存的所有点
     for (DrawBoardModel *drawBoard in self.downPointArrayArray) {
         UIColor *color = drawBoard.color;
         NSArray *arr = drawBoard.lineArray;
-        [self drawLineArrayNow:arr color:color];
+        [self drawLineArrayNow:arr color:color pencilwidth:10];
 
     }
-    //尚未保存的
-    [self drawLineArrayNow:self.arrayLine color:self.currentColor];
 
     //保存的所有点
     for (DrawBoardModel *drawBoard in self.drawBoardModelArray) {
         UIColor *color = drawBoard.color;
         NSArray *arr = drawBoard.lineArray;
-        [self drawLineArrayNow:arr color:color];
+        [self drawLineArrayNow:arr color:color pencilwidth:10];
 
     }
     
     
-    
+    //网络传过来的
+    [self drawLineNow:self.downPointArray color:self.downPointColor pencilwidth:10];
+    if (_isEraser == YES) {
+        
+        //尚未保存的
+        [self drawLineArrayNow:self.arrayLine color:[UIColor whiteColor] pencilwidth:10];
+        //当前正在画的
+        [self drawLineNow:self.pointArray color:[UIColor whiteColor] pencilwidth:10];
+    }else{
+        //尚未保存的
+        [self drawLineArrayNow:self.arrayLine color:self.currentColor pencilwidth:10];
+        //当前正在画的
+        [self drawLineNow:self.pointArray color:self.currentColor pencilwidth:10];
+    }
     //    UIFont *helvetica = [UIFont fontWithName:@"HelveticaNeue-Bold"size:30.0f];
     //    NSString *string =@"李先森";
     //
     //    [string drawAtPoint:CGPointMake(25,190)withFont:helvetica];
     //    [string drawAtPoint:CGPointMake(25,190)withAttributes:helvetica];
-    //当前正在画的
-    [self drawLineNow:self.pointArray color:self.currentColor];
 
 }
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
@@ -352,16 +368,50 @@
             
             //去除每一个点
             CGPoint myBeginPoint = [touch locationInView:self];
-            [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
-            if (self.oldColor == _currentColor) {
+            if (self.isEraser == YES) {
                 
+                [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId];
+            }else{
+                
+                [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
             }
-            else{
+            
+            if (self.isEraser == YES && self.isEraserFlag == NO) {
+                self.isEraserFlag = YES;
                 self.drawBoardModel.color = self.oldColor;
                 self.drawBoardModel.lineArray = self.arrayLine;
                 [self.drawBoardModelArray addObject:self.drawBoardModel];
                 self.drawBoardModel = [[DrawBoardModel alloc]init];
                 self.arrayLine = [NSMutableArray array];
+            }
+            else{
+                if (self.isEraser == NO && self.isEraserFlag == YES) {
+                    
+                    self.drawBoardModel.color = [UIColor whiteColor];
+                    self.drawBoardModel.lineArray = self.arrayLine;
+                    [self.drawBoardModelArray addObject:self.drawBoardModel];
+                    self.drawBoardModel = [[DrawBoardModel alloc]init];
+                    self.arrayLine = [NSMutableArray array];
+                    self.isEraserFlag = NO;
+                    return;
+                }else{
+                }
+            }
+            if (self.isEraserFlag == NO) {
+                
+                if ([self.oldColor isEqual:self.currentColor]) {
+                    
+                }
+                else{
+                    self.drawBoardModel.color = self.oldColor;
+                    self.drawBoardModel.lineArray = self.arrayLine;
+                    [self.drawBoardModelArray addObject:self.drawBoardModel];
+                    self.drawBoardModel = [[DrawBoardModel alloc]init];
+                    self.arrayLine = [NSMutableArray array];
+                    if(self.oldColor != self.currentColor){
+                        self.oldColor = self.currentColor;
+                    }
+                }
             }
             
         }
@@ -384,7 +434,13 @@
     CGPoint myBeginPoint = [touch locationInView:self];
     NSString *strPoint = NSStringFromCGPoint(myBeginPoint);
     [self.pointArray addObject:strPoint];
-    [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
+    if (_isEraser) {
+        
+        [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId];
+    }else{
+        
+        [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
+    }
     [self setNeedsDisplay];
 }
 
@@ -401,12 +457,17 @@
     UITouch *touch = [touches anyObject];
     //去除每一个点
     CGPoint myBeginPoint = [touch locationInView:self];
-    [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
+    if (self.isEraser == YES) {
+        
+        [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId];
+    }else{
+        
+        [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
+    }
     self.lineNum ++;
     [self addArray];
-    if(self.oldColor != self.currentColor){
-        self.oldColor = self.currentColor;
-    }
+
+    
 }
 
 #pragma mark --Getter
