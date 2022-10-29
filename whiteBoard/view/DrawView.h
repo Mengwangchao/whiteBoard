@@ -11,8 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DrawView : UIView
 
-@property (nonatomic, strong,readonly) UpdateToMQTT * uploadMQTT;
-- (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId;
+@property (nonatomic, weak) UpdateToMQTT * uploadMQTT;
+- (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId MQTT:(UpdateToMQTT *)mqtt;
 
 - (void)setLineColor:(UIColor *)color;
 - (UIColor*)getLineColor;

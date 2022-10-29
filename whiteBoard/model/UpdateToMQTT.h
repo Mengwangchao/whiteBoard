@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <MQTTClient/MQTTClient.h>
 NS_ASSUME_NONNULL_BEGIN
 @protocol UpdateToMQTTDelegate <NSObject>
 
@@ -36,6 +37,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 @property (nonatomic,strong,readonly)NSString *topic;
 @property (nonatomic)int pageCount;
 @property (nonatomic)int currentPage;
+@property(nonatomic,strong)MQTTSession *mySession;
 @property (nonatomic,weak) id<UpdateToMQTTDelegate> updateToMQTTdelegate;
 @property (nonatomic,weak) id<PageMQTTDelegate> pageMQTTdelegate;
 
@@ -53,6 +55,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)sendAddPageMessage:(NSString *)roomId userId:(NSString *)userId;
 -(void)sendDeletePageMessage:(NSString *)roomId userId:(NSString *)userId pageNum:(int) pageNum;
 -(void)closeMQTTClient;
+-(void)connectMQTT;
 -(void)disConnectServer;
 @end
 

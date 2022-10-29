@@ -10,6 +10,7 @@
 #import "UpdateToMQTT.h"
 @interface BoardViewController ()<PageMQTTDelegate>
 @property (nonatomic,strong)DrawView *rootDrawView;
+@property (nonatomic,strong)UpdateToMQTT *mMQTT;
 @property (nonatomic,strong)NSMutableArray<DrawView*> *rootDrawViewArray;
 @property (nonatomic,strong)UIButton *pageButton;
 @property (nonatomic)int currentPage;
@@ -26,7 +27,11 @@
 @end
 
 @implementation BoardViewController
-
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [self.mMQTT disConnectServer];
+    self.mMQTT = nil;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.currentPage = 1;
@@ -39,7 +44,11 @@
     roomIdLabel.textColor = [UIColor blackColor];
     roomIdLabel.font = [UIFont systemFontOfSize:18.0];
     [self.view addSubview:roomIdLabel];
-    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId];
+    
+    self.mMQTT = [[UpdateToMQTT alloc]initWithTopic:self.roomId];
+    self.mMQTT.pageMQTTdelegate = self;
+    [self.mMQTT connectMQTT];
+    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
     [self.rootDrawViewArray addObject:self.rootDrawView];
     if(!self.isCreater){
         
@@ -61,11 +70,9 @@
     UIPanGestureRecognizer *doublePanGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(doublePanGestureClick:)];
     doublePanGesture.minimumNumberOfTouches = 2;
     [self.view addGestureRecognizer:doublePanGesture];
-
+    
     self.rootDrawView.layer.borderWidth = 1;
     self.rootDrawView.layer.borderColor = [UIColor blackColor].CGColor;
-    self.rootDrawView.uploadMQTT.pageMQTTdelegate = self;
-    
     self.addPageButton = [[UIButton alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH-50, MAIN_SCREEN_HEIGHT-70, 30, 30)];
     self.addPageButton.backgroundColor = [UIColor clearColor];
     [self.addPageButton setImage:[UIImage imageNamed:@"addPage"] forState:UIControlStateNormal];
@@ -243,7 +250,8 @@
         view.uploadMQTT.pageMQTTdelegate = nil;
         view.hidden = YES;
     }
-    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId];
+    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
+    
     [self.rootDrawViewArray addObject:self.rootDrawView];
     if(!self.isCreater){
         
@@ -277,6 +285,7 @@
         view.uploadMQTT.pageMQTTdelegate = nil;
     }
     self.rootDrawView = self.rootDrawViewArray[self.currentPage-1];
+    self.rootDrawView.uploadMQTT = self.mMQTT;
     [self setPageButtonText:self.currentPage pageCount:self.pageCount];
     self.pancilButton.tintColor = [self.rootDrawView getLineColor];
     self.rootDrawView.uploadMQTT.pageMQTTdelegate = self;
@@ -296,7 +305,10 @@
         }
         int i =1;
         [self.rootDrawView deleteView];
+        self.rootDrawView.uploadMQTT = nil;
+        [self.rootDrawView removeFromSuperview];
         [self.rootDrawViewArray removeObject:self.rootDrawView];
+        
         for (DrawView *view in self.rootDrawViewArray) {
             view.uploadMQTT.currentPage = i;
             view.hidden = YES;

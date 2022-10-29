@@ -30,7 +30,7 @@
 
 @property (nonatomic, strong) DrawBoardModel  *drawBoardModel;
 
-@property (nonatomic, strong,readwrite) UpdateToMQTT * uploadMQTT;
+//@property (nonatomic, strong,readwrite) UpdateToMQTT * uploadMQTT;
 
 @property (nonatomic,strong) UISlider *sliderWidth;
 
@@ -54,7 +54,7 @@
 //    [self.view sendSubviewToBack:view2];
 
 @implementation DrawView
-- (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId
+- (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId MQTT:(nonnull UpdateToMQTT *)mqtt
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -77,7 +77,7 @@
         self.drawBoardModel = [[DrawBoardModel alloc]init];
         self.drawBoardModel.color = self.currentColor;
 //        [self addSubview:self.btnCancelDraw];
-        self.uploadMQTT = [[UpdateToMQTT alloc]initWithTopic:roomId];
+        self.uploadMQTT = mqtt;
         self.uploadMQTT.updateToMQTTdelegate = self;
         
 
@@ -217,7 +217,7 @@
     [self.drawBoardModelArray removeAllObjects];
     self.downBoardModel = nil;
     self.drawBoardModel = nil;
-    [self.uploadMQTT disConnectServer];
+    self.uploadMQTT.updateToMQTTdelegate = nil;
     self.uploadMQTT = nil;
     [self setNeedsDisplay];
     
@@ -480,6 +480,9 @@
 
     }
     self.pointArray = [NSMutableArray array];//将点数组清空
+}
+-(void)dealloc{
+    NSLog(@"drawView Dealloc");
 }
 /*
  // Only override drawRect: if you perform custom drawing.

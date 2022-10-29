@@ -6,10 +6,10 @@
 //
 
 #import "UpdateToMQTT.h"
-#import <MQTTClient/MQTTClient.h>
+//#import <MQTTClient/MQTTClient.h>
 //#import "MQTTClient.h"
 @interface UpdateToMQTT()<MQTTSessionDelegate>
-@property(nonatomic,strong)MQTTSession *mySession;
+//@property(nonatomic,strong)MQTTSession *mySession;
 @property(nonatomic,strong)NSMutableArray<NSString *> *topics;
 @property (nonatomic,strong,readwrite)NSString *topic;
 @end
@@ -29,7 +29,7 @@
         [self.topics addObject:@"addPage"];
         self.currentPage = 1;
         self.pageCount = 1;
-        [self connectMQTT];
+//        [self connectMQTT];
     }
     return self;
 }
