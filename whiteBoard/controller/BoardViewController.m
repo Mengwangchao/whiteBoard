@@ -269,7 +269,7 @@
     self.currentPage++;
     self.pageCount++;
     self.mMQTT.pageCount = self.pageCount;
-    self.mMQTT.currentPage = self.currentPage;
+    self.mMQTT.currentPage = self.pageCount;
     for (DrawView *view in self.rootDrawViewArray) {
         [view setDrawHidden:YES];
     }
