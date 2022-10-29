@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)addPage:(NSString *)roomId userId:(NSString *)userId;
 -(void)deletePage:(NSString *)roomId userId:(NSString *)userId pageNum:(int)pageNum;
+-(void)nextPage:(NSString *)roomId userId:(NSString *)userId;
+-(void)upPage:(NSString *)roomId userId:(NSString *)userId;
 
 //-(void)getJoinRoomReturn:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
 
@@ -54,6 +56,8 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)sendDeleteRoom:(NSString *)roomId userId:(NSString *)userId;
 -(void)sendAddPageMessage:(NSString *)roomId userId:(NSString *)userId;
 -(void)sendDeletePageMessage:(NSString *)roomId userId:(NSString *)userId pageNum:(int) pageNum;
+-(void)sendUpPageMessage:(NSString *)roomId userId:(NSString *)userId;
+-(void)sendNextPageMessage:(NSString *)roomId userId:(NSString *)userId;
 -(void)closeMQTTClient;
 -(void)connectMQTT;
 -(void)disConnectServer;

@@ -61,6 +61,7 @@
         self.backgroundColor = [UIColor clearColor];
 //        [self addSubview:self.sliderWidth];
         self.imageRootViewId = 0;
+        self.currentPage = 1;
         self.imageRootViewArray = [NSMutableArray array];
         self.downPointArray = [NSMutableArray array];
         self.downArrayLine = [NSMutableArray array];
@@ -92,7 +93,7 @@
         return;
     }
     
-    if (self.uploadMQTT.currentPage != currentPage) {
+    if (self.currentPage != currentPage) {
         return;
     }
     NSString *strPoint = NSStringFromCGPoint(point);
@@ -106,7 +107,7 @@
     if ([userId isEqual:self.userId]){
         return;
     }
-    if (self.uploadMQTT.currentPage != currentPage) {
+    if (self.currentPage != currentPage) {
         return;
     }
     
@@ -133,7 +134,7 @@
         return;
     }
     
-    if (self.uploadMQTT.currentPage != currentPage) {
+    if (self.currentPage != currentPage) {
         return;
     }
     NSString *strPoint = NSStringFromCGPoint(point);
@@ -182,6 +183,12 @@
     [self sendSubviewToBack:midView];
 }
 #pragma  mark - 对外接口
+-(void)setDrawHidden:(BOOL)hidden{
+    self.hidden = hidden;
+    if (hidden == NO) {
+        self.uploadMQTT.updateToMQTTdelegate = self;
+    }
+}
 //回滚
 - (void) btnCanCelDrawClicked
 {

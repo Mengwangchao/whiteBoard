@@ -27,6 +27,8 @@
         [self.topics addObject:@"deleteRoom"];
         [self.topics addObject:@"deletePage"];
         [self.topics addObject:@"addPage"];
+        [self.topics addObject:@"nextPage"];
+        [self.topics addObject:@"upPage"];
         self.currentPage = 1;
         self.pageCount = 1;
 //        [self connectMQTT];
@@ -154,6 +156,16 @@
         }else if([topic isEqual:@"deletePage"]){
             if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(deletePage:userId:pageNum:)]){
                 [weakSelf.pageMQTTdelegate deletePage:dic[@"roomId"] userId:dic[@"userId"] pageNum:[dic[@"pageNum"] intValue]];
+            }
+        }
+        else if([topic isEqual:@"nextPage"]){
+            if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(nextPage:userId:)]){
+                [weakSelf.pageMQTTdelegate nextPage:dic[@"roomId"] userId:dic[@"userId"]];
+            }
+        }
+        else if([topic isEqual:@"upPage"]){
+            if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(upPage:userId:)]){
+                [weakSelf.pageMQTTdelegate upPage:dic[@"roomId"] userId:dic[@"userId"]];
             }
         }else{
             if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getMassagePoint:userId:color:currentPage:)]){
@@ -362,7 +374,44 @@
         }];
     });
 }
-
+-(void)sendNextPageMessage:(NSString *)roomId userId:(NSString *)userId{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("nextPage", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"nextPage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+-(void)sendUpPageMessage:(NSString *)roomId userId:(NSString *)userId{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("upPage", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"upPage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
 //cmp 0 -> r  1 -> g  2 -> b  3 -> a
 - (void)cx_getRGBComponents:(CGFloat [4])cmp forColor:(UIColor *)color {
     unsigned long int fNum = CGColorGetNumberOfComponents(color.CGColor);
