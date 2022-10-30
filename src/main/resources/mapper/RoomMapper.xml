@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxxx.whiteboard.mapper.RoomMapper">
+
+    <!-- 以roomId作表名，建立一个新房间的空表 -->
+    <insert id="createRoom" parameterType="java.lang.String">
+        CREATE TABLE
+            `${roomId}`
+        (
+            `room_id`    varchar(20) NOT NULL COMMENT '房间id',
+            `room_state` int NULL COMMENT '房间状态',
+            `authority`  int NULL COMMENT '房间模式-只读还是写作',
+            PRIMARY KEY (`room_id`)
+        );
+    </insert>
+
+</mapper>

@@ -1,5 +1,6 @@
 package com.xxxx.whiteboard.mqttConn;
 
+import com.xxxx.whiteboard.util.JsonTool;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -38,5 +39,12 @@ public class Callback implements MqttCallback {
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         //  TODO    此处可以将订阅得到的消息进行业务处理、数据存储
         log.info("收到来自 " + topic + " 的消息：{}", new String(message.getPayload()));
+        // 在此处判断主题，将字节数组转换成json串
+        // https://blog.csdn.net/weixin_54821991/article/details/123347774
+        // 或者将String转换成JsonObject
+        // https://blog.csdn.net/PacosonSWJTU/article/details/122881817
+        //if (topic == "touchStart"){
+        //    JsonTool.touchStartDecoding();
+        //}
     }
 }

@@ -1,7 +1,7 @@
 package com.xxxx.whiteboard.util;
 
-import com.xxxx.whiteboard.entity.Color;
-import com.xxxx.whiteboard.entity.Point;
+import com.xxxx.whiteboard.pojo.Color;
+import com.xxxx.whiteboard.pojo.Point;
 import org.json.JSONException;
 import org.json.JSONObject;
 /**
@@ -13,7 +13,7 @@ public class JsonTool {
     /*
     * 完成接口主题touchStart的数据解析
     * */
-    public void touchStartDecoding(JSONObject startJson) throws JSONException {
+    public static void touchStartDecoding(JSONObject startJson) throws JSONException {
         startJson.get("userId");
         startJson.get("roomId");
         Color color = JsonSubTool.getColor((JSONObject) startJson.get("color"));

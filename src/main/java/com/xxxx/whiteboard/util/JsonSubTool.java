@@ -1,7 +1,7 @@
 package com.xxxx.whiteboard.util;
 
-import com.xxxx.whiteboard.entity.Color;
-import com.xxxx.whiteboard.entity.Point;
+import com.xxxx.whiteboard.pojo.Color;
+import com.xxxx.whiteboard.pojo.Point;
 import org.json.JSONException;
 import org.json.JSONObject;
 

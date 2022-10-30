@@ -1,9 +1,7 @@
 package com.xxxx.whiteboard.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xxxx.whiteboard.entity.User;
-
-import java.util.List;
+import com.xxxx.whiteboard.pojo.User;
 
 /**
  * @Author: fan yang

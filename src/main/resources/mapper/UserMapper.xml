@@ -2,11 +2,11 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.atguigu.mybatisplus.mapper.UserMapper">
+<mapper namespace="com.xxxx.whiteboard.mapper.UserMapper">
 
 
     <!--&lt;!&ndash; 查询所有用户 &ndash;&gt;-->
-    <!--<select id="findAllUsers" resultType="com.xxxx.whiteboard.entity.User">-->
+    <!--<select id="findAllUsers" resultType="com.xxxx.whiteboard.pojo.User">-->
     <!--    SELECT * FROM user;-->
     <!--</select>-->
 

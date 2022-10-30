@@ -1,10 +1,7 @@
 package com.xxxx.whiteboard.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.xxxx.whiteboard.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
+import com.xxxx.whiteboard.pojo.User;
 
 /**
  * @Author: fan yang
