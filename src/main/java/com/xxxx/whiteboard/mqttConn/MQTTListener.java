@@ -30,6 +30,7 @@ public class MQTTListener implements ApplicationListener<ContextRefreshedEvent> 
         try {
             server.setMqttClient("emqx_user", "emqx_password", new Callback());
             server.sub("touchStart"); // 项目启动就开始监听touchStart主题
+
         } catch (MqttException e) {
             log.error(e.getMessage(), e);
         }

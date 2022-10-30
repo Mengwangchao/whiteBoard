@@ -1,13 +1,11 @@
 package com.xxxx.whiteboard.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.xxxx.whiteboard.entity.User;
+import com.xxxx.whiteboard.pojo.User;
 import com.xxxx.whiteboard.mapper.UserMapper;
 import com.xxxx.whiteboard.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * @Author: fan yang

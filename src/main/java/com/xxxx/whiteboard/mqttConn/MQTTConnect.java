@@ -117,6 +117,6 @@ public class MQTTConnect {
         mqttConnect.setMqttClient("emqx_user", "emqx_password", new Callback());
         mqttConnect.sub("com/iot/init");
         mqttConnect.sub("touchStart");
-        mqttConnect.pub("com/iot/init", "Mr.Qu" + (int) (Math.random() * 100000000));
+        mqttConnect.pub("com/iot/init", "fan yang" + (int) (Math.random() * 100000000));
     }
 }
