@@ -24,6 +24,7 @@
 		5076C9D5290908F7007763E7 /* UpdateToMQTT.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9D4290908F7007763E7 /* UpdateToMQTT.m */; };
 		50773D05290938BC00300931 /* MQTTClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50773D032909389900300931 /* MQTTClient.framework */; };
 		50773D06290938BC00300931 /* MQTTClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 50773D032909389900300931 /* MQTTClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BACA105E290D0275009B4D4C /* ImageViewOfDrawView.m in Sources */ = {isa = PBXBuildFile; fileRef = BACA105D290D0275009B4D4C /* ImageViewOfDrawView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +89,8 @@
 		5076C9D3290908F7007763E7 /* UpdateToMQTT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UpdateToMQTT.h; sourceTree = "<group>"; };
 		5076C9D4290908F7007763E7 /* UpdateToMQTT.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UpdateToMQTT.m; sourceTree = "<group>"; };
 		50773D032909389900300931 /* MQTTClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MQTTClient.framework; sourceTree = "<group>"; };
+		BACA105C290D0275009B4D4C /* ImageViewOfDrawView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageViewOfDrawView.h; sourceTree = "<group>"; };
+		BACA105D290D0275009B4D4C /* ImageViewOfDrawView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageViewOfDrawView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,6 +185,8 @@
 			children = (
 				5076C9B42908D0F4007763E7 /* DrawView.h */,
 				5076C9B52908D0F4007763E7 /* DrawView.m */,
+				BACA105C290D0275009B4D4C /* ImageViewOfDrawView.h */,
+				BACA105D290D0275009B4D4C /* ImageViewOfDrawView.m */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -353,6 +358,7 @@
 				5076C9BC2908E8B2007763E7 /* BoardViewController.m in Sources */,
 				5076C9CF2909061A007763E7 /* DrawBoardModel.m in Sources */,
 				5076C9D5290908F7007763E7 /* UpdateToMQTT.m in Sources */,
+				BACA105E290D0275009B4D4C /* ImageViewOfDrawView.m in Sources */,
 				5076C9842908D057007763E7 /* SceneDelegate.m in Sources */,
 				5076C9CC2909055C007763E7 /* WordModel.m in Sources */,
 				5076C9B62908D0F4007763E7 /* DrawView.m in Sources */,

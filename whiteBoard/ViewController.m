@@ -32,13 +32,13 @@
     [joinButton setTitle:@"匿名加入" forState:UIControlStateNormal];
     joinButton.titleLabel.font = FONT_MEDIUM(14);
     [self.view addSubview:joinButton];
-    UIButton *sendButton = [[UIButton alloc] initWithFrame:CGRectMake(70, MAIN_SCREEN_HEIGHT/2+100, MAIN_SCREEN_WIDTH - 140, 34)];
-    sendButton.backgroundColor = BUTTON_BACKGROUNDCOLOR;
-    sendButton.layer.cornerRadius = 3;
-    [sendButton addTarget:self action:@selector(sendButtonAction:) forControlEvents:UIControlEventTouchDown];
-    [sendButton setTitle:@"发送消息" forState:UIControlStateNormal];
-    sendButton.titleLabel.font = FONT_MEDIUM(14);
-    [self.view addSubview:sendButton];
+//    UIButton *sendButton = [[UIButton alloc] initWithFrame:CGRectMake(70, MAIN_SCREEN_HEIGHT/2+100, MAIN_SCREEN_WIDTH - 140, 34)];
+//    sendButton.backgroundColor = BUTTON_BACKGROUNDCOLOR;
+//    sendButton.layer.cornerRadius = 3;
+//    [sendButton addTarget:self action:@selector(sendButtonAction:) forControlEvents:UIControlEventTouchDown];
+//    [sendButton setTitle:@"发送消息" forState:UIControlStateNormal];
+//    sendButton.titleLabel.font = FONT_MEDIUM(14);
+//    [self.view addSubview:sendButton];
 //    self.update = [[UpdateToMQTT alloc]initWithTopic:@"userid"];
     // Do any additional setup after loading the view.
 }

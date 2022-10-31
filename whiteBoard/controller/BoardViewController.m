@@ -8,6 +8,7 @@
 #import "BoardViewController.h"
 #import "DrawView.h"
 #import "UpdateToMQTT.h"
+#import "ImageViewOfDrawView.h"
 @interface BoardViewController ()<PageMQTTDelegate>
 @property (nonatomic,strong)DrawView *rootDrawView;
 @property (nonatomic,strong)UpdateToMQTT *mMQTT;
