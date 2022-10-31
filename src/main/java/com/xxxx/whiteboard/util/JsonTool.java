@@ -28,7 +28,7 @@ public class JsonTool {
     static UserMapper userMapper;
 
     /*
-    * 完成接口主题touchStart的数据解析
+    * 完成接口主题touchStart的相关操作
     * */
     public static void touchStart(JSONObject jsonObject) throws JSONException {
         userId = (String) jsonObject.get("userId");
@@ -41,10 +41,26 @@ public class JsonTool {
         userId = (String) jsonObject.get("userId");
         roomId = (String) jsonObject.get("roomId");
         authority = (int) jsonObject.get("authority");
-        roomMapper.insertRoom(new Room(roomId, 1, authority)); // 在room表插入新房间
+        roomMapper.insertRoom(new Room(roomId, 1, authority, 1)); // 在room表插入新房间
         userMapper.insert(new User(userId, roomId)); // 在user里面也添加一下
     }
 
+    /*
+     * 加入房间
+     * 这里应该要返回所有的
+     * @Return: jsonObject
+     * */
+    public static void joinRoom(JSONObject jsonObject) throws Exception{
+        userId = (String) jsonObject.get("userId");
+        roomId = (String) jsonObject.get("roomId");
+        userMapper.insert(new User(userId, roomId));
+    }
 
+    public static void deleteRoom(JSONObject jsonObject) throws Exception{
+        userId = (String) jsonObject.get("userId");
+        roomId = (String) jsonObject.get("roomId");
+        roomMapper.deleteById(roomId);
+        userMapper.deleteById(userId);
+    }
 
 }

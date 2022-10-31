@@ -50,6 +50,7 @@ public class MQTTCallback implements MqttCallback {
             case "touchEnd": // 手指结束滑动，实时同步所有短当前手指即将离开屏幕，可以释放和保存资源
                 break;
             case "joinRoom":
+                JsonTool.joinRoom(jsonObject);
                 break;
             case "createRoom":
                 JsonTool.createRoom(jsonObject);
@@ -57,6 +58,7 @@ public class MQTTCallback implements MqttCallback {
             case "joinRoomReturn":
                 break;
             case "deleteRoom":
+                JsonTool.deleteRoom(jsonObject);
                 break;
             case "addPage":
                 break;
