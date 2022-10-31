@@ -5,9 +5,10 @@
 <mapper namespace="com.xxxx.whiteboard.mapper.RoomMapper">
 
     <!-- 以roomId作表名，建立一个新房间的空表 -->
-    <insert id="createRoom" parameterType="java.lang.String">
+    <insert id="createRoom" parameterType="com.xxxx.whiteboard.pojo.Room">
+        -- 如果这个表存在，就删掉
         CREATE TABLE
-            `${roomId}`
+            `room${room.roomId}`
         (
             `room_id`    varchar(20) NOT NULL COMMENT '房间id',
             `room_state` int NULL COMMENT '房间状态',
@@ -16,4 +17,9 @@
         );
     </insert>
 
+    <insert id="insertRoom" parameterType="com.xxxx.whiteboard.pojo.Room">
+        INSERT INTO
+            `room`
+        VALUES(${room.roomId}, ${room.roomState}, ${room.authority});
+    </insert>
 </mapper>

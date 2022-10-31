@@ -52,6 +52,7 @@ public class MQTTCallback implements MqttCallback {
             case "joinRoom":
                 break;
             case "createRoom":
+                JsonTool.createRoom(jsonObject);
                 break;
             case "joinRoomReturn":
                 break;

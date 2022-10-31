@@ -1,11 +1,14 @@
 package com.xxxx.whiteboard;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.xxxx.whiteboard.mapper.RoomMapper;
 import com.xxxx.whiteboard.pojo.Color;
+import com.xxxx.whiteboard.pojo.Room;
 import com.xxxx.whiteboard.pojo.User;
 import com.xxxx.whiteboard.mapper.UserMapper;
-import com.xxxx.whiteboard.mqttConn.Callback;
+import com.xxxx.whiteboard.mqttConn.MQTTCallback;
 import com.xxxx.whiteboard.mqttConn.MQTTConnect;
+import com.xxxx.whiteboard.util.RunSqlScript;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +41,7 @@ class MyTests {
     @Test
     void mqttConnTest() throws MqttException {
         MQTTConnect mqttConnect = new MQTTConnect();
-        mqttConnect.setMqttClient("emqx_user", "emqx_password", new Callback());
+        mqttConnect.setMqttClient("emqx_user", "emqx_password", new MQTTCallback());
         mqttConnect.sub("com/iot/init");
         mqttConnect.sub("touchStart");
         mqttConnect.pub("com/iot/init", "Mr.Qu" + (int) (Math.random() * 100000000));
@@ -70,7 +73,26 @@ class MyTests {
     * */
     @Test
     void dynamicTableTest() {
-        roomMapper.createRoom("132412341");
+        String roomId = "134123454";
+        String tableName = "room" + roomId;
+        roomMapper.createRoom(new Room("134123454", 1, 1));
+        roomMapper.insert(new Room("134123454", 1, 1));
+    }
+
+    /*
+    测试运行SQL脚本
+    * */
+    //@Test
+    //void runSqlTest(){
+    //    RunSqlScript.run("createRoom");
+    //}
+
+        /*
+    测试插入房间
+    * */
+    @Test
+    void insertRoomTest(){
+        roomMapper.insertRoom(new Room("1234", 1, 1));
     }
 
 

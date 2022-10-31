@@ -1,17 +1,24 @@
 package com.xxxx.whiteboard.mapper;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.xxxx.whiteboard.pojo.Room;
 import org.apache.ibatis.annotations.Param;
 
 /**
  * @Author: fan yang
  * @Description:
  */
-public interface RoomMapper {
+public interface RoomMapper extends BaseMapper<Room> {
 
     /*
-    以roomId作表名，建立一个新房间的空表
+    * 新建房间表
     * */
-    void createRoom(@Param(value = "roomId") String roomId);
+    void createRoom(@Param(value = "room") Room room);
 
+    /*
+     * 插入一个新房间
+     * */
+    int insertRoom(@Param(value = "room") Room room);
 
 }
