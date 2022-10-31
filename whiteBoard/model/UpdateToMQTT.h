@@ -58,6 +58,12 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)sendDeletePageMessage:(NSString *)roomId userId:(NSString *)userId pageNum:(int) pageNum;
 -(void)sendUpPageMessage:(NSString *)roomId userId:(NSString *)userId;
 -(void)sendNextPageMessage:(NSString *)roomId userId:(NSString *)userId;
+-(void)sendAddImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId;
+-(void)sendLockImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId;
+-(void)sendTranslationImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point;
+-(void)sendRotateImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId rotate:(float)rotate;
+-(void)sendZoomImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId size:(CGSize)size;
+
 -(void)closeMQTTClient;
 -(void)connectMQTT;
 -(void)disConnectServer;

@@ -115,13 +115,14 @@
    [upButton addTarget:self action:@selector(upButtonClick) forControlEvents:UIControlEventTouchUpInside];
    [self.view addSubview:upButton];
    
-    self.image = [[ImageViewOfDrawView alloc]initWithFrame:CGRectMake(100, 100, 100, 100) imageId:1];
-    self.image.userInteractionEnabled = YES;
-    [self.view addSubview:self.image];
-    UIButton *bu = [[UIButton alloc]initWithFrame:CGRectMake(50, 100, 50, 50)];
-    bu.backgroundColor = [UIColor redColor];
-    [bu addTarget:self action:@selector(buClick) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:bu];
+//    self.image = [[ImageViewOfDrawView alloc]initWithFrame:CGRectMake(100, 100, 100, 100) image:[UIImage imageNamed:@"LOGO"]];
+//    self.image.userInteractionEnabled = YES;
+//    [self.view addSubview:self.image];
+//    UIButton *bu = [[UIButton alloc]initWithFrame:CGRectMake(50, 100, 50, 50)];
+//    bu.backgroundColor = [UIColor redColor];
+//    [bu addTarget:self action:@selector(buClick) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:bu];
+    [self.rootDrawView addImageView:[UIImage imageNamed:@"LOGO"]];
     //保证最后创建
     [self addColorView];
     // Do any additional setup after loading the view.

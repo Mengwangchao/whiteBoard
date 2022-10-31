@@ -6,8 +6,11 @@
 //
 
 #import "DrawViewAndImageView.h"
-@interface DrawViewAndImageView()
+#import "ImageViewOfDrawView.h"
+@interface DrawViewAndImageView()<ImageViewOfDrawViewDelegate>
 @property (nonatomic , strong)DrawView *rootDrawView;
+@property (nonatomic , strong)ImageViewOfDrawView *imageView;
+@property (nonatomic , strong)NSMutableArray<ImageViewOfDrawView*> * imageViewArray;
 @end
 @implementation DrawViewAndImageView
 - (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId MQTT:(UpdateToMQTT *)mqtt{
@@ -20,6 +23,22 @@
         [self addSubview:self.rootDrawView];
     }
     return self;
+}
+
+
+#pragma mark - 对外接口
+-(void)addImageView:(UIImage *)image{
+    self.imageView = [[ImageViewOfDrawView alloc]initWithFrame:CGRectMake(100, 200,200 , 200) image:image];
+    [self addSubview:self.imageView];
+    self.imageView.imageViewOfDrawViewDelegate = self;
+    
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    __block int i =0;
+    [self.imageViewArray addObject:self.imageView];
+    
+}
+-(void)okButtonClick:(ImageViewOfDrawView *)view{
+    NSLog(@"click");
 }
 -(void)setDrawHidden:(BOOL)hidden{
     self.hidden = hidden;
