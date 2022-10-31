@@ -3,25 +3,21 @@ package com.example.writeboard;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.example.writeboard.utils.DrawUtils;
-
-import java.util.Arrays;
-import java.util.List;
+import com.example.writeboard.utils.MqttClient;
 
 public class MainActivity extends AppCompatActivity {
-    ImageView color_bt;
-    List<ImageView> colorList;
-    ImageView mFirst_bt, mSecond_bt, mThird_bt, mForth_bt;
-    private boolean colorAnimationIsFinshed = true;
-    private boolean colorIsOpen = false;
-    private float space;
+
+    private Button button;
+    private Button button2;
+    private Button button3;
+    private TextView textView;
+    private  MqttClient mqttClient;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,39 +25,45 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
 
-        colorList = Arrays.asList(new ImageView[]{mFirst_bt, mSecond_bt, mThird_bt, mForth_bt});
-        color_bt.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("hao", "点击画板");
-
-                if (colorAnimationIsFinshed) {
-                    if (colorIsOpen) {
-                        space = DrawUtils.dptopx(getApplication(), 70);
-                    } else {
-                        space = -DrawUtils.dptopx(getApplication(), 70);
-                    }
-                }
-                for (ImageView image : colorList) {
-                    int index = colorList.indexOf(image);
-                    image.animate().translationYBy((index + 1) * space).setDuration(800).setInterpolator(new LinearInterpolator()).start();
-                    image.setVisibility(View.VISIBLE);
-                    Log.i("hao", image.getId() + "===" + index + "====" + (index + 1) * space);
-                }
-                colorIsOpen = !colorIsOpen;
+                 mqttClient=new MqttClient();
+                mqttClient.connect(MainActivity.this);
+                mqttClient.setGos(1);
 
             }
-
         });
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mqttClient.unsubscribe("a/b");
+mqttClient.diconnect();
+
+            }
+        });
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mqttClient.subscribe("a/b");
+                mqttClient.publish("a/b","{\n" +
+                        "  \"msg\": \"小浩\"\n" +
+                        "}",false);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     void initView() {
-        color_bt = findViewById(R.id.color_bt);
-        mFirst_bt = findViewById(R.id.first_color);
-        mSecond_bt = findViewById(R.id.second_color);
-        mThird_bt = findViewById(R.id.third_color);
-        mForth_bt = findViewById(R.id.forth_color);
-
+        button=findViewById(R.id.test_bt);
+        button2=findViewById(R.id.test2_bt);
+        button3=findViewById(R.id.button3);
+        textView=findViewById(R.id.message);
 
     }
 

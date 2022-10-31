@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.BoardActivity">
+
+    <com.example.writeboard.view.PaletteView
+        android:id="@+id/paletteView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/moshi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="mode"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.091"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.022" />
+
+    <Button
+        android:id="@+id/redo_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="redo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/paletteView" />
+
+    <Button
+        android:id="@+id/undo_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ondo"
+        app:layout_constraintEnd_toEndOf="@+id/redo_bt"
+        app:layout_constraintStart_toStartOf="@+id/redo_bt"
+        app:layout_constraintTop_toBottomOf="@+id/redo_bt" />
+
+    <Button
+        android:id="@+id/eraser_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="eraser"
+        app:layout_constraintEnd_toEndOf="@+id/undo_bt"
+        app:layout_constraintStart_toStartOf="@+id/undo_bt"
+        app:layout_constraintTop_toBottomOf="@+id/undo_bt" />
+
+    <Button
+        android:id="@+id/clear_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="clear"
+        app:layout_constraintEnd_toEndOf="@+id/eraser_bt"
+        app:layout_constraintStart_toStartOf="@+id/eraser_bt"
+        app:layout_constraintTop_toBottomOf="@+id/eraser_bt" />
+
+    <Button
+        android:id="@+id/save_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="save"
+        app:layout_constraintEnd_toEndOf="@+id/clear_bt"
+        app:layout_constraintStart_toStartOf="@+id/clear_bt"
+        app:layout_constraintTop_toBottomOf="@+id/clear_bt" />
+
+    <Button
+        android:id="@+id/size_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="size"
+        app:layout_constraintEnd_toEndOf="@+id/save_bt"
+        app:layout_constraintStart_toStartOf="@+id/save_bt"
+        app:layout_constraintTop_toBottomOf="@+id/save_bt" />
+
+    <Button
+        android:id="@+id/color_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="color"
+        app:layout_constraintEnd_toEndOf="@+id/size_bt"
+        app:layout_constraintStart_toStartOf="@+id/size_bt"
+        app:layout_constraintTop_toBottomOf="@+id/size_bt" />
+</androidx.constraintlayout.widget.ConstraintLayout>
