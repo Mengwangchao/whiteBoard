@@ -14,15 +14,26 @@
 @property (nonatomic , strong)UIButton *cancelButton;
 @property (nonatomic)float startWidth;
 @property (nonatomic)float startHeight;
+@property (nonatomic, strong) NSString *userId;
+@property (nonatomic, strong) NSString *roomId;
+@property (nonatomic) int imageId;
+@property (nonatomic) float rotate;
+@property (nonatomic, strong) UIImage *image;
 @end
 @implementation ImageViewOfDrawView
 
--(instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image{
+-(instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image imageId:(int)imageId userId:(NSString *)userId roomId:(NSString *)roomId MQTT:(UpdateToMQTT*)mqtt{
     self = [super initWithFrame:frame];
     if (self) {
         [self addImage:image];
+        self.uploadMQTT = mqtt;
+        self.userId = userId;
+        self.roomId = roomId;
+        self.imageId = imageId;
+        self.rotate = 0;
         self.startWidth = frame.size.width;
         self.startHeight = frame.size.height;
+        self.currentPage =1;
         self.userInteractionEnabled = YES;
         self.okButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
         self.okButton.layer.cornerRadius = 15;
@@ -54,32 +65,49 @@
 //    [imageView setImage:[UIImage imageNamed:@"LOGO"]];
 //    [self addSubview:imageView];
     [self setImage:image];
-    
+    self.image = image;
 //    [self.imageRootViewArray addObject:imageView];
     
     
 }
 -(void)okButtonClick{
     if(self.imageViewOfDrawViewDelegate !=nil && [self.imageViewOfDrawViewDelegate respondsToSelector:@selector(okButtonClick:)]){
+        [self.uploadMQTT sendLockImage:self.roomId userId:self.userId imageId:self.imageId];
         [self.imageViewOfDrawViewDelegate okButtonClick:self];
     }
 }
 #pragma mark -- 手势事件
 - (void) gestureHandler:(UIPanGestureRecognizer *)sender
 {
-    CGPoint translation = [sender translationInView:self];
-    sender.view.center = CGPointMake(sender.view.center.x+translation.x*(self.frame.size.width/self.startWidth), sender.view.center.y+translation.y*(self.frame.size.height/self.startHeight));
-    [sender setTranslation:CGPointZero inView:self];
+//    CGPoint translation = [sender translationInView:self];
+    
+//        CGPoint translation = [sender locationInView:self];
+//    sender.view.center = translation;
+//    sender.view.center = CGPointMake(sender.view.center.x+translation.x*(self.frame.size.width/self.startWidth), sender.view.center.y+translation.y*(self.frame.size.width/self.startWidth));
+//    CGPoint ss = [sender.view convertPoint:translation toView:self];
+//    sender.view.frame = CGRectMake(translation.x, translation.y, sender.view.frame.size.width, sender.view.frame.size.height);
+//
+//    [self.uploadMQTT sendTranslationImage:self.roomId userId:self.userId imageId:self.imageId point:sender.view.center];
+//    [sender setTranslation:CGPointZero inView:self];
+    if(self.imageViewOfDrawViewDelegate!=nil && [self.imageViewOfDrawViewDelegate respondsToSelector:@selector(gestureHandler:imageId:)]){
+        [self.imageViewOfDrawViewDelegate gestureHandler:sender imageId:self.imageId];
+    }
 }
+
 - (void) rotationGestureHanlder:(UIRotationGestureRecognizer *) sender
 {
+    
     sender.view.transform = CGAffineTransformRotate(sender.view.transform, sender.rotation);
+    self.rotate = self.rotate + sender.rotation;
+    [self.uploadMQTT sendRotateImage:self.roomId userId:self.userId imageId:self.imageId rotate:self.rotate*180/M_PI];
+    
     sender.rotation = 0;
 }
 - (void) pinchGestureHanlder:(UIPinchGestureRecognizer *) sender
 {
     sender.view.transform = CGAffineTransformScale(sender.view.transform, sender.scale, sender.scale);
     self.okButton.transform = CGAffineTransformScale(self.okButton.transform, 1/sender.scale, 1/sender.scale);
+    [self.uploadMQTT sendZoomImage:self.roomId userId:self.userId imageId:self.imageId size:sender.view.frame.size];
     sender.scale = 1;
 }
 #pragma  mark - touch

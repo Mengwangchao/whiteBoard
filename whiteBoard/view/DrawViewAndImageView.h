@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic)BOOL isEraser;
 - (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId MQTT:(UpdateToMQTT *)mqtt;
 -(void)setDrawHidden:(BOOL)hidden;
--(void)addImageView:(UIImage *)image;
+-(void)addImageView:(UIImage *)image imageId:(int)imageId MQTT:(UpdateToMQTT *)mqtt;
 - (void)setLineColor:(UIColor *)color;
 - (UIColor*)getLineColor;
 -(void)deleteView;

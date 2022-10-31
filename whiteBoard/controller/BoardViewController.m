@@ -122,7 +122,7 @@
 //    bu.backgroundColor = [UIColor redColor];
 //    [bu addTarget:self action:@selector(buClick) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:bu];
-    [self.rootDrawView addImageView:[UIImage imageNamed:@"LOGO"]];
+    [self.rootDrawView addImageView:[UIImage imageNamed:@"LOGO"] imageId:1 MQTT:self.mMQTT];
     //保证最后创建
     [self addColorView];
     // Do any additional setup after loading the view.

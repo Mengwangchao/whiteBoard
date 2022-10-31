@@ -172,7 +172,35 @@
             if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(upPage:userId:)]){
                 [weakSelf.pageMQTTdelegate upPage:dic[@"roomId"] userId:dic[@"userId"]];
             }
-        }else{
+        }else if ([topic isEqual:@"addImage"]){
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImage:userId:imageId:currentPage:)]){
+                [weakSelf.imageMQTTdelegate getAddImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue]];
+            }
+        }
+        else if ([topic isEqual:@"lockImage"]){
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getLockImage:userId:imageId:currentPage:)]){
+                [weakSelf.imageMQTTdelegate getLockImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue]];
+            }
+        }
+        else if ([topic isEqual:@"translationImage"]){
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getTranslationImage:userId:imageId:point:currentPage:)]){
+                [weakSelf.imageMQTTdelegate getTranslationImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] point:point currentPage:[dic[@"currentPage"] intValue]];
+            }
+        }
+        else if ([topic isEqual:@"rotateImage"]){
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getRotateImage:userId:imageId:rotate:currentPage:)]){
+                [weakSelf.imageMQTTdelegate getRotateImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] rotate:[dic[@"rotate"] floatValue] currentPage:[dic[@"currentPage"] intValue]];
+            }
+        }
+        else if ([topic isEqual:@"zoomImage"]){
+            
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getZoomImage:userId:imageId:size:currentPage:)]){
+                NSDictionary *dicSize = dic[@"scale"];
+                CGSize size = CGSizeMake([dicSize[@"width"] floatValue], [dicSize[@"height"] floatValue]);
+                [weakSelf.imageMQTTdelegate getZoomImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] size:size currentPage:[dic[@"currentPage"] intValue]];
+            }
+        }
+        else{
             if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getMassagePoint:userId:color:currentPage:)]){
                 [weakSelf.updateToMQTTdelegate getMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue]];
             }
@@ -427,6 +455,7 @@
         
         [dic setValue:userId forKey:@"userId"];
         [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
         [dic setValue:[NSString stringWithFormat:@"%d",imageId] forKey:@"imageId"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"addImage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
@@ -447,6 +476,7 @@
         
         [dic setValue:userId forKey:@"userId"];
         [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
         [dic setValue:[NSString stringWithFormat:@"%d",imageId] forKey:@"imageId"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"lockImage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
@@ -467,6 +497,7 @@
         
         [dic setValue:userId forKey:@"userId"];
         [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
         [dic setValue:[NSString stringWithFormat:@"%d",imageId] forKey:@"imageId"];
         NSMutableDictionary *dicPoint = [NSMutableDictionary dictionary];
         [dicPoint setValue:[NSString stringWithFormat:@"%f",point.x] forKey:@"x"];
@@ -491,6 +522,7 @@
         
         [dic setValue:userId forKey:@"userId"];
         [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
         [dic setValue:[NSString stringWithFormat:@"%d",imageId] forKey:@"imageId"];
         [dic setValue:[NSString stringWithFormat:@"%f",rotate] forKey:@"rotate"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
@@ -512,6 +544,7 @@
         
         [dic setValue:userId forKey:@"userId"];
         [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
         [dic setValue:[NSString stringWithFormat:@"%d",imageId] forKey:@"imageId"];
         
         NSMutableDictionary *dicPoint = [NSMutableDictionary dictionary];

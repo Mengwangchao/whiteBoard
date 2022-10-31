@@ -29,6 +29,16 @@ NS_ASSUME_NONNULL_BEGIN
 //-(void)getJoinRoomReturn:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
 
 @end
+
+@protocol ImageMQTTDelegate <NSObject>
+
+-(void)getAddImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage;
+-(void)getLockImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage;
+-(void)getTranslationImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point currentPage:(int)currentPage;
+-(void)getRotateImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId rotate:(float)rotate currentPage:(int)currentPage;
+-(void)getZoomImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId size:(CGSize)size currentPage:(int)currentPage;
+
+@end
 typedef NS_ENUM(NSInteger, AuthorityState){
     ONLY_READ = 2, //只读
     READ_WRITE = 1 //协作
@@ -41,6 +51,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 @property (nonatomic)int currentPage;
 @property(nonatomic,strong)MQTTSession *mySession;
 @property (nonatomic,weak) id<UpdateToMQTTDelegate> updateToMQTTdelegate;
+@property (nonatomic,weak) id<ImageMQTTDelegate> imageMQTTdelegate;
 @property (nonatomic,weak) id<PageMQTTDelegate> pageMQTTdelegate;
 
 -(instancetype)init NS_UNAVAILABLE;
