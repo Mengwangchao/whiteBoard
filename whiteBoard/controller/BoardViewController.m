@@ -6,13 +6,13 @@
 //
 
 #import "BoardViewController.h"
-#import "DrawView.h"
+#import "DrawViewAndImageView.h"
 #import "UpdateToMQTT.h"
 #import "ImageViewOfDrawView.h"
-@interface BoardViewController ()<PageMQTTDelegate>
-@property (nonatomic,strong)DrawView *rootDrawView;
+@interface BoardViewController ()<PageMQTTDelegate,UIGestureRecognizerDelegate>
+@property (nonatomic,strong)DrawViewAndImageView *rootDrawView;
 @property (nonatomic,strong)UpdateToMQTT *mMQTT;
-@property (nonatomic,strong)NSMutableArray<DrawView*> *rootDrawViewArray;
+@property (nonatomic,strong)NSMutableArray<DrawViewAndImageView*> *rootDrawViewArray;
 @property (nonatomic,strong)UIButton *pageButton;
 @property (nonatomic)int currentPage;
 @property (nonatomic)int pageCount;
@@ -26,6 +26,7 @@
 @property (nonatomic,strong)UISlider *colorRedColor;
 @property (nonatomic,strong)UISlider *colorGreenColor;
 @property (nonatomic,strong)UISlider *colorBlueColor;
+@property (nonatomic,strong)ImageViewOfDrawView *image;
 @end
 
 @implementation BoardViewController
@@ -50,7 +51,7 @@
     self.mMQTT = [[UpdateToMQTT alloc]initWithTopic:self.roomId];
     self.mMQTT.pageMQTTdelegate = self;
     [self.mMQTT connectMQTT];
-    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, 1000, 1000) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
+    self.rootDrawView = [[DrawViewAndImageView alloc]initWithFrame:CGRectMake(0, 0, 1000, 1000) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
     [self.rootDrawViewArray addObject:self.rootDrawView];
     if(!self.isCreater){
         
@@ -114,11 +115,21 @@
    [upButton addTarget:self action:@selector(upButtonClick) forControlEvents:UIControlEventTouchUpInside];
    [self.view addSubview:upButton];
    
+    self.image = [[ImageViewOfDrawView alloc]initWithFrame:CGRectMake(100, 100, 100, 100) imageId:1];
+    self.image.userInteractionEnabled = YES;
+    [self.view addSubview:self.image];
+    UIButton *bu = [[UIButton alloc]initWithFrame:CGRectMake(50, 100, 50, 50)];
+    bu.backgroundColor = [UIColor redColor];
+    [bu addTarget:self action:@selector(buClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:bu];
     //保证最后创建
     [self addColorView];
     // Do any additional setup after loading the view.
 }
-
+-(void)buClick{
+    self.image.userInteractionEnabled = NO;
+    [self.view sendSubviewToBack:self.image];
+}
 -(void)addColorView{
     _colorRootView = [[UIView alloc]initWithFrame:CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50)];
         _colorRootView.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
@@ -290,10 +301,10 @@
     self.pageCount++;
     self.mMQTT.pageCount = self.pageCount;
     self.mMQTT.currentPage = self.pageCount;
-    for (DrawView *view in self.rootDrawViewArray) {
+    for (DrawViewAndImageView *view in self.rootDrawViewArray) {
         [view setDrawHidden:YES];
     }
-    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
+    self.rootDrawView = [[DrawViewAndImageView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
     
     [self.rootDrawViewArray addObject:self.rootDrawView];
     if(!self.isCreater){
@@ -335,7 +346,7 @@
             self.currentPage = self.pageCount;
         }
     }
-    for (DrawView *view in self.rootDrawViewArray) {
+    for (DrawViewAndImageView *view in self.rootDrawViewArray) {
         [view setDrawHidden:YES];
         
     }
@@ -363,7 +374,7 @@
         [self.rootDrawViewArray removeObject:self.rootDrawView];
         self.mMQTT.currentPage = self.currentPage;
         self.mMQTT.pageCount = self.pageCount;
-        for (DrawView *view in self.rootDrawViewArray) {
+        for (DrawViewAndImageView *view in self.rootDrawViewArray) {
             view.currentPage = i;
             i++;
             [view setDrawHidden:YES];
@@ -374,6 +385,7 @@
         [self.rootDrawView setDrawHidden:NO];
     }
 }
+
 /*
 #pragma mark - Navigation
 

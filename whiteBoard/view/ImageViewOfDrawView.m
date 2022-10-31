@@ -15,15 +15,16 @@
 @implementation ImageViewOfDrawView
 
 -(instancetype)initWithFrame:(CGRect)frame imageId:(int)imageId{
-    self = [super initWithFrame:frame]
+    self = [super initWithFrame:frame];
     if (self) {
         [self addImage:imageId];
+        self.userInteractionEnabled = YES;
     }
     return self;
 }
 -(void)addImage:(int)imageId{
-    UIView * imageRootView = [[UIView alloc]initWithFrame:CGRectMake(80, 250, 200, 300)];
-    imageRootView.userInteractionEnabled = YES;
+//    UIView * imageRootView = [[UIView alloc]initWithFrame:CGRectMake(80, 250, 200, 300)];
+//    imageRootView.userInteractionEnabled = YES;
     UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(gestureHandler:)];
     //旋转手势
     UIRotationGestureRecognizer *rotationGesture = [[UIRotationGestureRecognizer alloc]initWithTarget:self action:@selector(rotationGestureHanlder:)];
@@ -35,34 +36,21 @@
     [rotationGesture setDelegate:self];
     [pingGesture setDelegate:self];
     //添加手势
-    [imageRootView addGestureRecognizer:pingGesture];
-    [imageRootView addGestureRecognizer:rotationGesture];
-    [imageRootView addGestureRecognizer:panGesture];
-    [self addSubview:imageRootView];
+    [self addGestureRecognizer:pingGesture];
+    [self addGestureRecognizer:rotationGesture];
+    [self addGestureRecognizer:panGesture];
     
-    UIImageView * imageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 20, imageRootView.frame.size.width, imageRootView.frame.size.height-20)];
-    [imageView setImage:[UIImage imageNamed:@"LOGO"]];
-    [imageRootView addSubview:imageView];
+//    UIImageView * imageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 20, self.frame.size.width, self.frame.size.height-20)];
+//    [imageView setImage:[UIImage imageNamed:@"LOGO"]];
+//    [self addSubview:imageView];
+    [self setImage:[UIImage imageNamed:@"LOGO"]];
     
-    UIButton * OKButton = [[UIButton alloc]initWithFrame:CGRectMake(imageRootView.frame.size.width-50, 20, 20, 20)];
-    OKButton.backgroundColor = [UIColor greenColor];
-    [OKButton addTarget:self action:@selector(OKButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [imageRootView addSubview:OKButton];
-    OKButton.tag = self.imageRootViewId;
     self.imageRootViewId ++;
-    [self.imageRootViewArray addObject:imageView];
+//    [self.imageRootViewArray addObject:imageView];
     
     
 }
-#pragma mark - 按钮click
--(void)OKButtonClick:(UIButton *)but{
-    NSLog(@"click %ld",but.tag);
-    UIView *midView = self.imageRootViewArray[but.tag];
-    midView.userInteractionEnabled = NO;
-    
-    self.imageRootViewArray[but.tag] = midView;
-    [self sendSubviewToBack:midView];
-}
+
 #pragma mark -- 手势事件
 - (void) gestureHandler:(UIPanGestureRecognizer *)sender
 {
@@ -79,6 +67,14 @@
 {
     sender.view.transform = CGAffineTransformScale(sender.view.transform, sender.scale, sender.scale);
     sender.scale = 1;
+}
+#pragma  mark - touch
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+    if([touch.view isEqual:[ImageViewOfDrawView class]]){
+        return NO;
+    }else{
+        return  YES;
+    }
 }
 /*
 // Only override drawRect: if you perform custom drawing.

@@ -358,7 +358,13 @@
     //
     //    [string drawAtPoint:CGPointMake(25,190)withFont:helvetica];
     //    [string drawAtPoint:CGPointMake(25,190)withAttributes:helvetica];
-
+    
+//    CGContextRef context = UIGraphicsGetCurrentContext();
+//    CGContextSetRGBFillColor (context,  1, 0, 0, 1.0);//设置填充颜色
+//    UIFont  *font = [UIFont boldSystemFontOfSize:15.0];//设置
+//    [@"画圆：" drawInRect:CGRectMake(10, 20, 80, 20) withFont:font];
+//    CGContextAddArc(context, 100, 20, 15, 0, 2*M_PI, 0); //添加一个圆
+//        CGContextDrawPath(context, kCGPathStroke); //绘制路径
 }
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     for (UITouch *touch in touches) {
