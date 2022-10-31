@@ -28,7 +28,7 @@ public class MQTTListener implements ApplicationListener<ContextRefreshedEvent> 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         try {
-            server.setMqttClient("emqx_user", "emqx_password", new Callback());
+            server.setMqttClient("emqx_user", "emqx_password", new MQTTCallback());
             server.sub("touchStart"); // 项目启动就开始监听touchStart主题
 
         } catch (MqttException e) {

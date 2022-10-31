@@ -29,7 +29,7 @@ public class MQTTConnect {
     public void setMqttClient(String userName, String passWord, MqttCallback mqttCallback) throws MqttException {
         MqttConnectOptions options = mqttConnectOptions(userName, passWord);
         if (mqttCallback == null) {
-            mqttClient.setCallback(new Callback());
+            mqttClient.setCallback(new MQTTCallback());
         } else {
             mqttClient.setCallback(mqttCallback);
         }
@@ -114,7 +114,7 @@ public class MQTTConnect {
      */
     public static void main(String[] args) throws MqttException {
         MQTTConnect mqttConnect = new MQTTConnect();
-        mqttConnect.setMqttClient("emqx_user", "emqx_password", new Callback());
+        mqttConnect.setMqttClient("emqx_user", "emqx_password", new MQTTCallback());
         mqttConnect.sub("com/iot/init");
         mqttConnect.sub("touchStart");
         mqttConnect.pub("com/iot/init", "fan yang" + (int) (Math.random() * 100000000));
