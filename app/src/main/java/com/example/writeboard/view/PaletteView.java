@@ -122,10 +122,12 @@ public class PaletteView extends View {
 
     public void setEraserSize(float size) {
         mEraserSize = size;
+        mPaint.setStrokeWidth(mEraserSize);
     }
 
     public void setPenRawSize(float size) {
         mDrawSize = size;
+        mPaint.setStrokeWidth(mDrawSize);
     }
 
     public void setPenColor(int color) {
