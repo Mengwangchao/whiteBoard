@@ -14,7 +14,7 @@ public class JsonSubTool {
     /*
      * 从JsonObject获取到Color对象，并封装
      * */
-    public static Color getColor(JSONObject colorJson) throws JSONException {
+    static Color getColor(JSONObject colorJson) throws JSONException {
         float a = (float) colorJson.get("a");
         float b = (float) colorJson.get("b");
         float g = (float) colorJson.get("g");
@@ -25,7 +25,7 @@ public class JsonSubTool {
     /*
      * 从JsonObject获取到Color，并封装
      * */
-    public static Point getPoint(JSONObject pointJson, Color color) throws JSONException {
+    static Point getPoint(JSONObject pointJson, Color color) throws JSONException {
         float x = (float) pointJson.get("x");
         float y = (float) pointJson.get("y");
         return new Point(x, y, color);
