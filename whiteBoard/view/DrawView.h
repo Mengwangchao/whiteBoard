@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) UpdateToMQTT * uploadMQTT;
 @property (nonatomic) int  currentPage;
 @property (nonatomic)BOOL isEraser;
+@property (nonatomic) BOOL imageScrolling;
 - (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId MQTT:(UpdateToMQTT *)mqtt;
 -(void)setDrawHidden:(BOOL)hidden;
 - (void)setLineColor:(UIColor *)color;

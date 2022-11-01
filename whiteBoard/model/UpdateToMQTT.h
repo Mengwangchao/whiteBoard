@@ -32,7 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ImageMQTTDelegate <NSObject>
 
--(void)getAddImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage;
+-(void)getAddImageStart:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage point:(CGPoint)point;
+-(void)getAddImageScrolling:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage point:(CGPoint)point;
+-(void)getAddImageEnd:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage point:(CGPoint)point;
 -(void)getLockImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage;
 -(void)getTranslationImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point currentPage:(int)currentPage;
 -(void)getRotateImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId rotate:(float)rotate currentPage:(int)currentPage;
@@ -69,7 +71,9 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)sendDeletePageMessage:(NSString *)roomId userId:(NSString *)userId pageNum:(int) pageNum;
 -(void)sendUpPageMessage:(NSString *)roomId userId:(NSString *)userId;
 -(void)sendNextPageMessage:(NSString *)roomId userId:(NSString *)userId;
--(void)sendAddImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId;
+-(void)sendAddImageStart:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point;
+-(void)sendAddImageScrolling:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point;
+-(void)sendAddImageEnd:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point;
 -(void)sendLockImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId;
 -(void)sendTranslationImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point;
 -(void)sendRotateImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId rotate:(float)rotate;

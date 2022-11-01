@@ -84,7 +84,7 @@
         self.uploadMQTT = mqtt;
         self.uploadMQTT.updateToMQTTdelegate = self;
         
-
+        self.imageScrolling = NO;
         
     }
     return self;
@@ -369,7 +369,10 @@
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     for (UITouch *touch in touches) {
         if([touch.view isKindOfClass:[DrawView class]]){
-            
+            if(self.imageScrolling){
+                [[self nextResponder]touchesBegan:touches withEvent:event];
+                return;
+            }
             UITouch *touch = [touches anyObject];
             
             //去除每一个点
@@ -434,7 +437,10 @@
             
         }
     }
-    
+    if(self.imageScrolling){
+        [[self nextResponder]touchesMoved:touches withEvent:event];
+        return;
+    }
     UITouch *touch = [touches anyObject];
     //去除每一个点
     CGPoint myBeginPoint = [touch locationInView:self];
@@ -459,7 +465,10 @@
             
         }
     }
-    
+    if(self.imageScrolling){
+        [[self nextResponder]touchesEnded:touches withEvent:event];
+        return;
+    }
     UITouch *touch = [touches anyObject];
     //去除每一个点
     CGPoint myBeginPoint = [touch locationInView:self];

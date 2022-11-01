@@ -29,7 +29,9 @@
         [self.topics addObject:@"addPage"];
         [self.topics addObject:@"nextPage"];
         [self.topics addObject:@"upPage"];
-        [self.topics addObject:@"addImage"];
+        [self.topics addObject:@"addImageStart"];
+        [self.topics addObject:@"addImageScrolling"];
+        [self.topics addObject:@"addImageEnd"];
         [self.topics addObject:@"lockImage"];
         [self.topics addObject:@"translationImage"];
         [self.topics addObject:@"rotateImage"];
@@ -172,9 +174,19 @@
             if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(upPage:userId:)]){
                 [weakSelf.pageMQTTdelegate upPage:dic[@"roomId"] userId:dic[@"userId"]];
             }
-        }else if ([topic isEqual:@"addImage"]){
-            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImage:userId:imageId:currentPage:)]){
-                [weakSelf.imageMQTTdelegate getAddImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue]];
+        }else if ([topic isEqual:@"addImageStart"]){
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImageStart:userId:imageId:currentPage:point:)]){
+                [weakSelf.imageMQTTdelegate getAddImageStart:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue] point:point];
+            }
+        }
+        else if ([topic isEqual:@"addImageScrolling"]){
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImageScrolling:userId:imageId:currentPage:point:)]){
+                [weakSelf.imageMQTTdelegate getAddImageScrolling:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue] point:point];
+            }
+        }
+        else if ([topic isEqual:@"addImageEnd"]){
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImageEnd:userId:imageId:currentPage:point:)]){
+                [weakSelf.imageMQTTdelegate getAddImageEnd:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue] point:point];
             }
         }
         else if ([topic isEqual:@"lockImage"]){
@@ -446,10 +458,10 @@
     });
 }
 
--(void)sendAddImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId{
+-(void)sendAddImageStart:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point{
     __weak typeof(self) weakSelf = self;
     
-    dispatch_queue_t que = dispatch_queue_create("addImage", DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_t que = dispatch_queue_create("addImageStart", DISPATCH_QUEUE_SERIAL);
     dispatch_sync(que, ^{
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         
@@ -457,8 +469,62 @@
         [dic setValue:roomId forKey:@"roomId"];
         [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
         [dic setValue:[NSString stringWithFormat:@"%d",imageId] forKey:@"imageId"];
+        NSMutableDictionary *dicPoint = [NSMutableDictionary dictionary];
+        [dicPoint setValue:[NSString stringWithFormat:@"%f",point.x] forKey:@"x"];
+        [dicPoint setValue:[NSString stringWithFormat:@"%f",point.y] forKey:@"y"];
+        [dic setValue:dicPoint forKey:@"point"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
-        [weakSelf.mySession publishData:data onTopic:@"addImage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+        [weakSelf.mySession publishData:data onTopic:@"addImageStart" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+-(void)sendAddImageScrolling:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("addImageScrolling", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
+        [dic setValue:[NSString stringWithFormat:@"%d",imageId] forKey:@"imageId"];
+        NSMutableDictionary *dicPoint = [NSMutableDictionary dictionary];
+        [dicPoint setValue:[NSString stringWithFormat:@"%f",point.x] forKey:@"x"];
+        [dicPoint setValue:[NSString stringWithFormat:@"%f",point.y] forKey:@"y"];
+        [dic setValue:dicPoint forKey:@"point"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"addImageScrolling" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+-(void)sendAddImageEnd:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("addImageEnd", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
+        [dic setValue:[NSString stringWithFormat:@"%d",imageId] forKey:@"imageId"];
+        NSMutableDictionary *dicPoint = [NSMutableDictionary dictionary];
+        [dicPoint setValue:[NSString stringWithFormat:@"%f",point.x] forKey:@"x"];
+        [dicPoint setValue:[NSString stringWithFormat:@"%f",point.y] forKey:@"y"];
+        [dic setValue:dicPoint forKey:@"point"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"addImageEnd" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
                     NSLog(@"发送失败 - %@",error);
                 }else{

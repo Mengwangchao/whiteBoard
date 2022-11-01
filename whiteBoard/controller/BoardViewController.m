@@ -122,7 +122,18 @@
 //    bu.backgroundColor = [UIColor redColor];
 //    [bu addTarget:self action:@selector(buClick) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:bu];
-    [self.rootDrawView addImageView:[UIImage imageNamed:@"LOGO"] imageId:1 MQTT:self.mMQTT];
+    
+    
+    UIView *buttonRootView = [[UIView alloc]initWithFrame:CGRectMake(10, 90, 50, 100)];
+    buttonRootView.backgroundColor = [UIColor clearColor];
+    buttonRootView.userInteractionEnabled = YES;
+    [self.view addSubview:buttonRootView];
+    UIButton *addImage = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
+//    addImage.backgroundColor = [UIColor greenColor];
+    [addImage setBackgroundImage:[[UIImage imageNamed:@"addImage"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    addImage.tintColor = [UIColor blackColor];
+    [addImage addTarget:self action:@selector(addImageButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [buttonRootView addSubview:addImage];
     //保证最后创建
     [self addColorView];
     // Do any additional setup after loading the view.
@@ -243,6 +254,10 @@
     }
 }
 #pragma mark - 按钮点击事件
+-(void)addImageButtonClick{
+    
+    [self.rootDrawView addImageView:[UIImage imageNamed:@"LOGO"] imageId:1];
+}
 -(void)pancilButtonClick:(UIButton *)sender{
 //    self.pancilButton.tintColor = [UIColor greenColor];
     self.rootDrawView.isEraser = NO;

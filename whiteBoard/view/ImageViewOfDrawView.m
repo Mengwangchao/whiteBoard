@@ -79,16 +79,6 @@
 #pragma mark -- 手势事件
 - (void) gestureHandler:(UIPanGestureRecognizer *)sender
 {
-//    CGPoint translation = [sender translationInView:self];
-    
-//        CGPoint translation = [sender locationInView:self];
-//    sender.view.center = translation;
-//    sender.view.center = CGPointMake(sender.view.center.x+translation.x*(self.frame.size.width/self.startWidth), sender.view.center.y+translation.y*(self.frame.size.width/self.startWidth));
-//    CGPoint ss = [sender.view convertPoint:translation toView:self];
-//    sender.view.frame = CGRectMake(translation.x, translation.y, sender.view.frame.size.width, sender.view.frame.size.height);
-//
-//    [self.uploadMQTT sendTranslationImage:self.roomId userId:self.userId imageId:self.imageId point:sender.view.center];
-//    [sender setTranslation:CGPointZero inView:self];
     if(self.imageViewOfDrawViewDelegate!=nil && [self.imageViewOfDrawViewDelegate respondsToSelector:@selector(gestureHandler:imageId:)]){
         [self.imageViewOfDrawViewDelegate gestureHandler:sender imageId:self.imageId];
     }
