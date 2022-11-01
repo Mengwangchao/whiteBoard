@@ -4,22 +4,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xxxx.whiteboard.mapper.RoomMapper">
 
-    <!-- 以roomId作表名，建立一个新房间的空表 -->
-    <insert id="createRoom" parameterType="com.xxxx.whiteboard.pojo.Room">
+    <!-- 建立某roomId, 某currentPage下的表 -->
+    <insert id="createPage">
         -- 如果这个表存在，就删掉
-        CREATE TABLE
-            `room${room.roomId}`
+        CREATE TABLE `white_board`.`room${roomId}page${currentPage}`
         (
-            `room_id`    varchar(20) NOT NULL COMMENT '房间id',
-            `room_state` int NULL COMMENT '房间状态',
-            `authority`  int NULL COMMENT '房间模式-只读还是写作',
-            PRIMARY KEY (`room_id`)
+            `x` float NOT NULL,
+            `y` float NOT NULL,
+            `r` float NULL,
+            `g` float NULL,
+            `b` float NULL,
+            `a` float NULL,
+--             PRIMARY KEY (`x`, `y`)
         );
     </insert>
 
-    <insert id="insertRoom" parameterType="com.xxxx.whiteboard.pojo.Room">
-        INSERT INTO
-            `room`
-        VALUES(${room.roomId}, ${room.roomState}, ${room.authority});
+    <!-- 新建房间 -->
+    <insert id="createRoom" parameterType="com.xxxx.whiteboard.pojo.Room">
+        INSERT INTO `room`
+        VALUES (${room.roomId}, ${room.roomState}, ${room.authority});
     </insert>
 </mapper>

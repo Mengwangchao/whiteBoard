@@ -32,5 +32,9 @@ public class Room {
     @Range(min = 1, max = 2)
     private int authority; // 模式：写作和只读
 
-    private int page; // 房间页数
+    /** 房间页数 */
+    private int page;
+
+    /** 当前页数 */
+    private int currentPage;
 }

@@ -1,8 +1,10 @@
 package com.xxxx.whiteboard;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.xxxx.whiteboard.mapper.PointMapper;
 import com.xxxx.whiteboard.mapper.RoomMapper;
 import com.xxxx.whiteboard.pojo.Color;
+import com.xxxx.whiteboard.pojo.Point;
 import com.xxxx.whiteboard.pojo.Room;
 import com.xxxx.whiteboard.pojo.User;
 import com.xxxx.whiteboard.mapper.UserMapper;
@@ -25,6 +27,9 @@ class MyTests {
 
     @Autowired(required = false)
     private RoomMapper roomMapper;
+
+    @Autowired(required = false)
+    private PointMapper pointMapper;
 
     /*
     测试连接数据库
@@ -75,8 +80,8 @@ class MyTests {
     void dynamicTableTest() {
         String roomId = "134123454";
         String tableName = "room" + roomId;
-        roomMapper.createRoom(new Room("134123454", 1, 1));
-        roomMapper.insert(new Room("134123454", 1, 1));
+        roomMapper.createPage("134123454", 1);
+        roomMapper.insert(new Room("134123454", 1, 1, 1, 1));
     }
 
     /*
@@ -87,13 +92,25 @@ class MyTests {
     //    RunSqlScript.run("createRoom");
     //}
 
-        /*
-    测试插入房间
-    * */
+    /*
+测试插入房间
+* */
     @Test
-    void insertRoomTest(){
-        roomMapper.insertRoom(new Room("1234", 1, 1));
+    void insertRoomTest() {
+        roomMapper.createRoom(new Room("1234", 1, 1, 1, 1));
     }
 
+    /*
+测试建立某房间某页数的表，用来存储此页的所有point
+* */
+    @Test
+    void createRoomTest() {
+        roomMapper.createPage("1234", 1);
+    }
 
+    @Test
+    void savePointTest() {
+        Point point = new Point(1.0f, 2.0f, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+        pointMapper.savePoint("1234", 1, point);
+    }
 }
