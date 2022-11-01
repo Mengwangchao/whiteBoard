@@ -67,21 +67,23 @@
             } else {
                 NSLog(@"Subscription sucessfull!");
                 
-                //                [self send];
             }
         }];
+        __weak typeof(self) weakSelf = self;
+        dispatch_queue_t que = dispatch_queue_create("subscribeToTopic", DISPATCH_QUEUE_CONCURRENT);
+        dispatch_async(que, ^{
         // 方法 封装 可外部调用
-        for (NSString *topic in _topics) {
-            [session subscribeToTopic:topic atLevel:2 subscribeHandler:^(NSError *error, NSArray<NSNumber *> *gQoss){
-                if (error) {
-                    NSLog(@"Subscription failed %@", error.localizedDescription);
-                } else {
-                    NSLog(@"Subscription sucessfull!");
-                    
-                    //                [self send];
-                }
-            }];
-        }
+            for (NSString *topic in weakSelf.topics) {
+                [session subscribeToTopic:topic atLevel:2 subscribeHandler:^(NSError *error, NSArray<NSNumber *> *gQoss){
+                    if (error) {
+                        NSLog(@"Subscription failed %@", error.localizedDescription);
+                    } else {
+                        NSLog(@"Subscription sucessfull!");
+                        
+                    }
+                }];
+            }
+        });
  // this is part of the block API
  
     }else if (eventCode == MQTTSessionEventConnectionRefused) {
