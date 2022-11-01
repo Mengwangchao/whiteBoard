@@ -143,7 +143,7 @@
     self.graphicalButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 105, 30, 30)];
     self.graphicalButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
     self.graphicalButton.tintColor = [UIColor blackColor];
-    [self.graphicalButton setBackgroundImage:[[UIImage imageNamed:@"eraser"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [self.graphicalButton setBackgroundImage:[[UIImage imageNamed:@"circular"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [self.graphicalButton addTarget:self action:@selector(graphicalButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [self.buttonRootView addSubview:self.graphicalButton];
     //保证最后创建
@@ -296,6 +296,7 @@
 -(void)viewTapGesClick:(UITapGestureRecognizer *)tap{
     self.pancilButton.tintColor = tap.view.backgroundColor;
     [self.rootDrawView setLineColor:tap.view.backgroundColor];
+    self.graphicalButton.tintColor = tap.view.backgroundColor;
     [UIView animateWithDuration:0.3 animations:^{
                 self.colorRootView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
             }];
@@ -308,6 +309,7 @@
     if(sender.tag == 10){
         self.pancilButton.tintColor = self.colorChangeView.backgroundColor;
         [self.rootDrawView setLineColor:self.colorChangeView.backgroundColor];
+        self.graphicalButton.tintColor = self.colorChangeView.backgroundColor;
        
         [UIView animateWithDuration:0.3 animations:^{
                     self.colorRootView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
