@@ -20,7 +20,12 @@
 @property (nonatomic, strong) DrawBoardModel  *downBoardModel;
 @property (nonatomic, strong) NSMutableArray<DrawBoardModel *> *downPointArrayArray;
 @property (nonatomic,strong) UIColor *downPointColor;
-
+@property (nonatomic,strong) NSMutableArray *downGraphicalPointArray;
+//保存图形始末点的数组
+@property (nonatomic,strong) NSMutableArray *downGraphicalArray;
+@property (nonatomic, strong) NSMutableArray<DrawBoardGraphicalModel *> *downDrawBoardModelGraphicalArray;
+@property (nonatomic, strong) DrawBoardGraphicalModel  *downDrawBoardModelGraphical;
+@property (nonatomic) GraphicalState downGraphical;
 
 //保存线条的数组
 @property (nonatomic,strong) NSMutableArray *arrayLine;
@@ -82,6 +87,12 @@
         self.graphicalArray = [NSMutableArray array];
         self.drawBoardModelGraphicalArray = [NSMutableArray array];
         self.drawBoardModelGraphical = [[DrawBoardGraphicalModel alloc]init];
+        self.downGraphicalPointArray  = [NSMutableArray array];
+        //保存图形始末点的数组
+        self.downGraphicalArray = [NSMutableArray array];
+        self.downDrawBoardModelGraphicalArray = [NSMutableArray array];
+        self.downDrawBoardModelGraphical = [[DrawBoardGraphicalModel alloc]init];
+        self.downGraphical = LINE;
         self.userId = userId;
         self.roomId = roomId;
         _currentColor = [UIColor blackColor];
@@ -103,7 +114,7 @@
 }
 
 #pragma mark --updateToMQTTdelegate
-- (void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage{
+- (void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage graphical:(int)graphical{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -114,11 +125,12 @@
     NSString *strPoint = NSStringFromCGPoint(point);
     [self.downPointArray addObject:strPoint];
     self.downPointColor = color;
+   
     dispatch_async(dispatch_get_main_queue(), ^{
         [self setNeedsDisplay];
     });
 }
--(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage{
+-(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage graphical:(int)graphical{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -126,25 +138,57 @@
         return;
     }
     
+    if(self.downPointArray.count>0){
+        if(self.downGraphical == CIRCULAR){
+            CircularModel *cir = [[CircularModel alloc]init];
+            CGPoint startPoint = CGPointFromString(self.downPointArray.firstObject);
+            CGPoint endPoint = CGPointFromString(self.downPointArray.lastObject);
+            float width = fabs(startPoint.x-endPoint.x);
+            float height = fabs(startPoint.y - endPoint.y);
+            float length = sqrtf(width*width + height*height);
+            cir.cencerPoint = CGPointMake((startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2);
+            cir.radius = length/2;
+            cir.color = self.downPointColor;
+            cir.lineWidth = 2.0;
+            [self.downGraphicalArray addObject:cir];
+        }
+    }
     self.downPointArray = [NSMutableArray array];
-    if (color != self.downPointColor) {
-        self.downBoardModel.color = self.downPointColor;
-        self.downBoardModel.lineArray = self.downArrayLine;
-        [self.downPointArrayArray addObject:self.downBoardModel];
-        self.downBoardModel = [[DrawBoardModel alloc]init];
-        self.downArrayLine = [NSMutableArray array];
+    if (![color isEqual: self.downPointColor] ||(self.downGraphical != (GraphicalState)graphical)) {
+
+        if(self.downArrayLine.count>0){
+            
+            self.downBoardModel.color = self.downPointColor;
+            self.downBoardModel.lineArray = self.downArrayLine;
+            [self.downPointArrayArray addObject:self.downBoardModel];
+            self.downBoardModel = [[DrawBoardModel alloc]init];
+            self.downArrayLine = [NSMutableArray array];
+        }
+        if(self.downGraphicalArray.count>0){
+            
+            self.downDrawBoardModelGraphical.graphicalArray = self.downGraphicalArray;
+            self.downDrawBoardModelGraphical.graphical = self.downGraphical;
+            [self.downDrawBoardModelGraphicalArray addObject:self.downDrawBoardModelGraphical];
+            self.downDrawBoardModelGraphical = [[DrawBoardGraphicalModel alloc]init];
+            self.downGraphicalArray = [NSMutableArray array];
+        }
+        
+        
+    }else{
         
     }
+    self.downGraphical = (GraphicalState)graphical;
     NSString *strPoint = NSStringFromCGPoint(point);
     [self.downPointArray addObject:strPoint];
     self.downPointColor = color;
+
     dispatch_async(dispatch_get_main_queue(), ^{
         [self setNeedsDisplay];
     });
 
   
 }
--(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage{
+-(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage graphical:(int)graphical{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -154,7 +198,9 @@
     }
     NSString *strPoint = NSStringFromCGPoint(point);
     [self.downPointArray addObject:strPoint];
-    [self.downArrayLine addObject:self.downPointArray];
+    if((GraphicalState)graphical == LINE){
+        [self.downArrayLine addObject:self.downPointArray];
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         [self setNeedsDisplay];
     });
@@ -336,13 +382,14 @@
     }
     
 }
--(void)drawCurrentArrayGraphicalNow:(NSArray*)arr{
-        if(self.currentGraphical == CIRCULAR){
+-(void)drawCurrentArrayGraphicalNow:(NSArray*)arr graphical:(GraphicalState)graphical{
+        if(graphical == CIRCULAR){
             for (CircularModel *cir in arr) {
                 [self drawCircular:cir];
             }
         }
 }
+
 -(void)drawCircular:(CircularModel *)cir{
     
     
@@ -364,7 +411,9 @@
     }
     
     [self drawLineArrayGraphicalNow:self.drawBoardModelGraphicalArray];
-    [self drawCurrentArrayGraphicalNow:self.graphicalArray];
+    [self drawCurrentArrayGraphicalNow:self.graphicalArray graphical:self.currentGraphical];
+    [self drawLineArrayGraphicalNow:self.downDrawBoardModelGraphicalArray];
+    [self drawCurrentArrayGraphicalNow:self.downGraphicalArray graphical:self.downGraphical];
     //保存的所有点
     for (DrawBoardModel *drawBoard in self.drawBoardModelArray) {
         UIColor *color = drawBoard.color;
@@ -375,7 +424,23 @@
     
     
     //网络传过来的
-    [self drawLineNow:self.downPointArray color:self.downPointColor pencilwidth:10];
+    if(self.downGraphical == LINE){
+        
+        [self drawLineArrayNow:self.downArrayLine color:self.downPointColor pencilwidth:10];
+        [self drawLineNow:self.downPointArray color:self.downPointColor pencilwidth:10];
+    }else if(self.downGraphical == CIRCULAR){
+        
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        CGContextSetLineWidth(context, 5.0);//线的宽度
+        CGPoint startPoint = CGPointFromString(self.downPointArray.firstObject);
+        CGPoint endPoint = CGPointFromString(self.downPointArray.lastObject);
+        float width = fabs(startPoint.x-endPoint.x);
+        float height = fabs(startPoint.y - endPoint.y);
+        float length = sqrtf(width*width + height*height);
+        CGContextAddArc(context, (startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2, length/2, 0, 2*M_PI, 0); //添加一个圆
+        [self.downPointColor setStroke];
+        CGContextDrawPath(context, kCGPathStroke); //绘制路径
+    }
     if (_isEraser == YES) {
         
         //尚未保存的
@@ -422,10 +487,10 @@
             CGPoint myBeginPoint = [touch locationInView:self];
             if (self.isEraser == YES) {
                 
-                [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId];
+                [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId graphical:(int)LINE];
             }else{
                 
-                [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
+                [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId graphical:(int)self.currentGraphical];
             }
             
             if (self.isEraser == YES && self.isEraserFlag == NO) {
@@ -491,10 +556,10 @@
     [self.pointArray addObject:strPoint];
     if (_isEraser) {
         
-        [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId];
+        [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId graphical:(int)LINE];
     }else{
         
-        [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
+        [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId graphical:(int)self.currentGraphical];
     }
     [self setNeedsDisplay];
 }
@@ -517,10 +582,10 @@
     CGPoint myBeginPoint = [touch locationInView:self];
     if (self.isEraser == YES) {
         
-        [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId];
+        [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId graphical:(int)LINE];
     }else{
         
-        [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId];
+        [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId graphical:(int)self.currentGraphical];
     }
     self.lineNum ++;
     [self addArray];
