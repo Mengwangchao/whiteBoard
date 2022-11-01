@@ -12,13 +12,13 @@ import org.apache.ibatis.annotations.Param;
 public interface RoomMapper extends BaseMapper<Room> {
 
     /*
-    * 新建房间表
+    * 建立某roomId, 某currentPage下的表：用来存储所有point
     * */
-    void createRoom(@Param(value = "room") Room room);
+    void createPage(@Param("roomId") String roomId, @Param("currentPage") int currentPage);
 
     /*
      * 插入一个新房间
      * */
-    int insertRoom(@Param(value = "room") Room room);
+    int createRoom(@Param(value = "room") Room room);
 
 }
