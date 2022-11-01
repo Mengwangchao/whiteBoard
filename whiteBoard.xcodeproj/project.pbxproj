@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5031F306290F822600F738E3 /* DrawViewAndImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5031F305290F822500F738E3 /* DrawViewAndImageView.m */; };
+		5031F3092910F26200F738E3 /* DrawBoardGraphicalModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5031F3082910F26100F738E3 /* DrawBoardGraphicalModel.m */; };
 		5076C9812908D057007763E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9802908D057007763E7 /* AppDelegate.m */; };
 		5076C9842908D057007763E7 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9832908D057007763E7 /* SceneDelegate.m */; };
 		5076C9872908D057007763E7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9862908D057007763E7 /* ViewController.m */; };
@@ -63,6 +64,8 @@
 		3EECA6AAD408FD616E11B4C3 /* libPods-whiteBoard.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-whiteBoard.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5031F304290F822500F738E3 /* DrawViewAndImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawViewAndImageView.h; sourceTree = "<group>"; };
 		5031F305290F822500F738E3 /* DrawViewAndImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DrawViewAndImageView.m; sourceTree = "<group>"; };
+		5031F3072910F26100F738E3 /* DrawBoardGraphicalModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawBoardGraphicalModel.h; sourceTree = "<group>"; };
+		5031F3082910F26100F738E3 /* DrawBoardGraphicalModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DrawBoardGraphicalModel.m; sourceTree = "<group>"; };
 		5076C97C2908D057007763E7 /* whiteBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = whiteBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5076C97F2908D057007763E7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5076C9802908D057007763E7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -203,6 +206,8 @@
 				5076C9CB2909055C007763E7 /* WordModel.m */,
 				5076C9CD2909061A007763E7 /* DrawBoardModel.h */,
 				5076C9CE2909061A007763E7 /* DrawBoardModel.m */,
+				5031F3072910F26100F738E3 /* DrawBoardGraphicalModel.h */,
+				5031F3082910F26100F738E3 /* DrawBoardGraphicalModel.m */,
 				5076C9D3290908F7007763E7 /* UpdateToMQTT.h */,
 				5076C9D4290908F7007763E7 /* UpdateToMQTT.m */,
 			);
@@ -367,6 +372,7 @@
 				5031F306290F822600F738E3 /* DrawViewAndImageView.m in Sources */,
 				5076C9842908D057007763E7 /* SceneDelegate.m in Sources */,
 				5076C9CC2909055C007763E7 /* WordModel.m in Sources */,
+				5031F3092910F26200F738E3 /* DrawBoardGraphicalModel.m in Sources */,
 				5076C9B62908D0F4007763E7 /* DrawView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

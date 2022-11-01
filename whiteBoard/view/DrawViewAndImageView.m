@@ -46,6 +46,9 @@
     self.rootDrawView.imageScrolling = YES;
     
 }
+-(void)addGraphical:(GraphicalState)graphical{
+    [self.rootDrawView addGraphical:graphical];
+}
 -(void)okButtonClick:(ImageViewOfDrawView *)view{
     NSLog(@"click");
 }

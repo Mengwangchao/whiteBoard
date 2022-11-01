@@ -17,6 +17,8 @@
 @property (nonatomic)int currentPage;
 @property (nonatomic)int pageCount;
 @property (nonatomic,strong)UIButton *pancilButton;
+@property (nonatomic,strong)UIView *buttonRootView;
+@property (nonatomic,strong)UIButton *graphicalButton;
 @property(nonatomic,strong)UIButton *eraserButton;
 @property (nonatomic,strong)UIButton *addPageButton;
 @property (nonatomic,strong)UIButton *deletePageButton;
@@ -30,8 +32,8 @@
 @end
 
 @implementation BoardViewController
--(void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
     [self.mMQTT disConnectServer];
     self.mMQTT = nil;
 }
@@ -59,28 +61,7 @@
     }
     [self.view addSubview:self.rootDrawView];
     
-    self.pancilButton = [[UIButton alloc]initWithFrame:CGRectMake(20, MAIN_SCREEN_HEIGHT-80, 28, 45)];
-    UIImage * pancilImage =[UIImage imageNamed:@"pancil"];
-    
-    pancilImage = [pancilImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    
-    self.pancilButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
-    self.pancilButton.tintColor = [UIColor blackColor];
-    [self.pancilButton setBackgroundImage:pancilImage forState:UIControlStateNormal];
-    [self.pancilButton addTarget:self action:@selector(pancilButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.view addSubview:self.pancilButton];
-    
-    self.eraserButton = [[UIButton alloc]initWithFrame:CGRectMake(50, MAIN_SCREEN_HEIGHT-80, 28, 45)];
-    self.eraserButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
-    self.eraserButton.tintColor = [UIColor blackColor];
-    [self.eraserButton setBackgroundImage:[[UIImage imageNamed:@"eraser"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    [self.eraserButton addTarget:self action:@selector(eraserButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.eraserButton];
-    
-    UIPanGestureRecognizer *doublePanGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(doublePanGestureClick:)];
-    doublePanGesture.minimumNumberOfTouches = 2;
-    [self.view addGestureRecognizer:doublePanGesture];
+
     
     self.rootDrawView.layer.borderWidth = 1;
     self.rootDrawView.layer.borderColor = [UIColor blackColor].CGColor;
@@ -124,16 +105,47 @@
 //    [self.view addSubview:bu];
     
     
-    UIView *buttonRootView = [[UIView alloc]initWithFrame:CGRectMake(10, 90, 50, 100)];
-    buttonRootView.backgroundColor = [UIColor clearColor];
-    buttonRootView.userInteractionEnabled = YES;
-    [self.view addSubview:buttonRootView];
-    UIButton *addImage = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
+    UIPanGestureRecognizer *doublePanGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(doublePanGestureClick:)];
+    doublePanGesture.minimumNumberOfTouches = 2;
+    [self.view addGestureRecognizer:doublePanGesture];
+    self.buttonRootView = [[UIView alloc]initWithFrame:CGRectMake(10, 90, 40, 140)];
+    self.buttonRootView.backgroundColor = [UIColor clearColor];
+    self.buttonRootView.userInteractionEnabled = YES;
+    [self.view addSubview:self.buttonRootView];
+    
+    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(gestureHandler:)];
+    [panGesture setDelegate:self];
+    [self.buttonRootView addGestureRecognizer:panGesture];
+    UIButton *addImage = [[UIButton alloc]initWithFrame:CGRectMake(5, 0, 30, 30)];
 //    addImage.backgroundColor = [UIColor greenColor];
     [addImage setBackgroundImage:[[UIImage imageNamed:@"addImage"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     addImage.tintColor = [UIColor blackColor];
     [addImage addTarget:self action:@selector(addImageButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [buttonRootView addSubview:addImage];
+    [self.buttonRootView addSubview:addImage];
+    self.pancilButton = [[UIButton alloc]initWithFrame:CGRectMake(5,35, 30, 30)];
+    UIImage * pancilImage =[UIImage imageNamed:@"pancil"];
+    
+    pancilImage = [pancilImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    self.pancilButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    self.pancilButton.tintColor = [UIColor blackColor];
+    [self.pancilButton setBackgroundImage:pancilImage forState:UIControlStateNormal];
+    [self.pancilButton addTarget:self action:@selector(pancilButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.buttonRootView addSubview:self.pancilButton];
+    
+    self.eraserButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 70, 30, 30)];
+    self.eraserButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    self.eraserButton.tintColor = [UIColor blackColor];
+    [self.eraserButton setBackgroundImage:[[UIImage imageNamed:@"eraser"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [self.eraserButton addTarget:self action:@selector(eraserButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.buttonRootView addSubview:self.eraserButton];
+    
+    self.graphicalButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 105, 30, 30)];
+    self.graphicalButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    self.graphicalButton.tintColor = [UIColor blackColor];
+    [self.graphicalButton setBackgroundImage:[[UIImage imageNamed:@"eraser"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [self.graphicalButton addTarget:self action:@selector(graphicalButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.buttonRootView addSubview:self.graphicalButton];
     //保证最后创建
     [self addColorView];
     // Do any additional setup after loading the view.
@@ -254,6 +266,11 @@
     }
 }
 #pragma mark - 按钮点击事件
+-(void)graphicalButtonClick{
+    self.rootDrawView.isEraser = NO;
+    self.eraserButton.tintColor = [UIColor blackColor];
+    [self.rootDrawView addGraphical:CIRCULAR];
+}
 -(void)addImageButtonClick{
     
     [self.rootDrawView addImageView:[UIImage imageNamed:@"LOGO"] imageId:1];
@@ -401,7 +418,21 @@
         [self.rootDrawView setDrawHidden:NO];
     }
 }
-
+- (void) gestureHandler:(UIPanGestureRecognizer *)sender
+{
+    CGPoint translation = [sender translationInView:self.view];
+    
+    sender.view.center = CGPointMake(sender.view.center.x+translation.x, sender.view.center.y+translation.y);
+    
+    [sender setTranslation:CGPointZero inView:self.view];
+}
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+    if([touch.view isEqual:self.buttonRootView]){
+        return NO;
+    }else{
+        return  YES;
+    }
+}
 /*
 #pragma mark - Navigation
 

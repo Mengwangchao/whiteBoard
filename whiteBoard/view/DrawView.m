@@ -21,6 +21,7 @@
 @property (nonatomic, strong) NSMutableArray<DrawBoardModel *> *downPointArrayArray;
 @property (nonatomic,strong) UIColor *downPointColor;
 
+
 //保存线条的数组
 @property (nonatomic,strong) NSMutableArray *arrayLine;
 
@@ -30,7 +31,12 @@
 
 @property (nonatomic, strong) DrawBoardModel  *drawBoardModel;
 
-//@property (nonatomic, strong,readwrite) UpdateToMQTT * uploadMQTT;
+@property (nonatomic,strong) NSMutableArray *graphicalPointArray;
+//保存图形始末点的数组
+@property (nonatomic,strong) NSMutableArray *graphicalArray;
+@property (nonatomic, strong) NSMutableArray<DrawBoardGraphicalModel *> *drawBoardModelGraphicalArray;
+@property (nonatomic, strong) DrawBoardGraphicalModel  *drawBoardModelGraphical;
+@property (nonatomic) GraphicalState currentGraphical;
 
 @property (nonatomic,strong) UISlider *sliderWidth;
 
@@ -70,6 +76,12 @@
         self.downArrayLine = [NSMutableArray array];
         self.downBoardModel = [[DrawBoardModel alloc]init];
         self.downPointArrayArray = [NSMutableArray<DrawBoardModel *> array];
+        self.graphicalPointArray = [NSMutableArray array];
+        self.currentGraphical = LINE;
+        //保存图形始末点的数组
+        self.graphicalArray = [NSMutableArray array];
+        self.drawBoardModelGraphicalArray = [NSMutableArray array];
+        self.drawBoardModelGraphical = [[DrawBoardGraphicalModel alloc]init];
         self.userId = userId;
         self.roomId = roomId;
         _currentColor = [UIColor blackColor];
@@ -149,9 +161,6 @@
     
 }
 
-#pragma mark --添加图片，设置手势
-
-
 
 
 #pragma mark -- 设置多个手势并存
@@ -185,21 +194,33 @@
     self.imageRootViewArray[but.tag] = midView;
     [self sendSubviewToBack:midView];
 }
+
+
 #pragma  mark - 对外接口
+-(void)addGraphical:(GraphicalState)graphical{
+    [self saveArray];
+    self.currentGraphical = graphical;
+}
 -(void)setDrawHidden:(BOOL)hidden{
     self.hidden = hidden;
     if (hidden == NO) {
         self.uploadMQTT.updateToMQTTdelegate = self;
     }
 }
-//回滚
-- (void) btnCanCelDrawClicked
-{
-    [self.arrayLine removeLastObject];
-    [self setNeedsDisplay];
+-(void)setIsEraser:(BOOL)isEraser{
+    _isEraser = isEraser;
+    [self setCurrentGraphical:LINE];
 }
-//设置线条颜色
--(void)setLineColor:(UIColor*)color{
+-(void)saveArray{
+    if(self.graphicalArray.count>0){
+        self.drawBoardModelGraphical.graphical = self.currentGraphical;
+        self.drawBoardModelGraphical.graphicalArray = self.graphicalArray;
+        [self.drawBoardModelGraphicalArray addObject:self.drawBoardModelGraphical];
+        self.graphicalPointArray = [NSMutableArray array];
+        //保存图形始末点的数组
+        self.graphicalArray = [NSMutableArray array];
+        self.drawBoardModelGraphical = [[DrawBoardGraphicalModel alloc]init];
+    }
     if(self.arrayLine.count>0){
         if (self.isEraserFlag == YES) {
             
@@ -215,6 +236,22 @@
         self.arrayLine = [NSMutableArray array];
         self.pointArray = [NSMutableArray array];
     }
+}
+-(void)setCurrentGraphical:(GraphicalState)currentGraphical{
+    [self saveArray];
+    _currentGraphical = currentGraphical;
+    
+ 
+}
+//回滚
+- (void) btnCanCelDrawClicked
+{
+    [self.arrayLine removeLastObject];
+    [self setNeedsDisplay];
+}
+//设置线条颜色
+-(void)setLineColor:(UIColor*)color{
+    [self saveArray];
     self.currentColor = color;
     self.oldColor = color;
 //    [self setNeedsDisplay];
@@ -238,39 +275,7 @@
     [self setNeedsDisplay];
     
 }
--(void)addImage:(int)imageId{
-    UIView * imageRootView = [[UIView alloc]initWithFrame:CGRectMake(80, 250, 200, 300)];
-    imageRootView.userInteractionEnabled = YES;
-    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(gestureHandler:)];
-    //旋转手势
-    UIRotationGestureRecognizer *rotationGesture = [[UIRotationGestureRecognizer alloc]initWithTarget:self action:@selector(rotationGestureHanlder:)];
-    //缩放手势
-    UIPinchGestureRecognizer *pingGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(pinchGestureHanlder:)];
-    
-    //设置手势代理
-    [panGesture setDelegate:self];
-    [rotationGesture setDelegate:self];
-    [pingGesture setDelegate:self];
-    //添加手势
-    [imageRootView addGestureRecognizer:pingGesture];
-    [imageRootView addGestureRecognizer:rotationGesture];
-    [imageRootView addGestureRecognizer:panGesture];
-    [self addSubview:imageRootView];
-    
-    UIImageView * imageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 20, imageRootView.frame.size.width, imageRootView.frame.size.height-20)];
-    [imageView setImage:[UIImage imageNamed:@"LOGO"]];
-    [imageRootView addSubview:imageView];
-    
-    UIButton * OKButton = [[UIButton alloc]initWithFrame:CGRectMake(imageRootView.frame.size.width-50, 20, 20, 20)];
-    OKButton.backgroundColor = [UIColor greenColor];
-    [OKButton addTarget:self action:@selector(OKButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [imageRootView addSubview:OKButton];
-    OKButton.tag = self.imageRootViewId;
-    self.imageRootViewId ++;
-    [self.imageRootViewArray addObject:imageView];
-    
-    
-}
+
 #pragma mark --重新绘制
 -(void)drawLineNow:(NSArray*)arr color : (UIColor *)color pencilwidth:(int)pencilwidth{
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -319,6 +324,34 @@
         }
     }
 }
+-(void)drawLineArrayGraphicalNow:(NSArray*)arr{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    for (DrawBoardGraphicalModel *model in arr) {
+        if(model.graphical == CIRCULAR){
+            for (CircularModel *cir in model.graphicalArray) {
+                
+                    [self drawCircular:cir];
+            }
+        }
+    }
+    
+}
+-(void)drawCurrentArrayGraphicalNow:(NSArray*)arr{
+        if(self.currentGraphical == CIRCULAR){
+            for (CircularModel *cir in arr) {
+                [self drawCircular:cir];
+            }
+        }
+}
+-(void)drawCircular:(CircularModel *)cir{
+    
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetLineWidth(context, cir.lineWidth);//线的宽度
+    CGContextAddArc(context, cir.cencerPoint.x, cir.cencerPoint.y, cir.radius, 0, 2*M_PI, 0); //添加一个圆
+    [cir.color setStroke];
+    CGContextDrawPath(context, kCGPathStroke); //绘制路径
+}
 - (void)drawRect:(CGRect)rect
 {
 
@@ -329,7 +362,9 @@
         [self drawLineArrayNow:arr color:color pencilwidth:10];
 
     }
-
+    
+    [self drawLineArrayGraphicalNow:self.drawBoardModelGraphicalArray];
+    [self drawCurrentArrayGraphicalNow:self.graphicalArray];
     //保存的所有点
     for (DrawBoardModel *drawBoard in self.drawBoardModelArray) {
         UIColor *color = drawBoard.color;
@@ -348,10 +383,24 @@
         //当前正在画的
         [self drawLineNow:self.pointArray color:[UIColor whiteColor] pencilwidth:10];
     }else{
+        
         //尚未保存的
         [self drawLineArrayNow:self.arrayLine color:self.currentColor pencilwidth:10];
-        //当前正在画的
-        [self drawLineNow:self.pointArray color:self.currentColor pencilwidth:10];
+        if(self.currentGraphical == LINE){
+            //当前正在画的
+            [self drawLineNow:self.pointArray color:self.currentColor pencilwidth:10];
+        }else if(self.currentGraphical == CIRCULAR){
+            CGContextRef context = UIGraphicsGetCurrentContext();
+            CGContextSetLineWidth(context, 5.0);//线的宽度
+            CGPoint startPoint = CGPointFromString(self.pointArray.firstObject);
+            CGPoint endPoint = CGPointFromString(self.pointArray.lastObject);
+            float width = fabs(startPoint.x-endPoint.x);
+            float height = fabs(startPoint.y - endPoint.y);
+            float length = sqrtf(width*width + height*height);
+            CGContextAddArc(context, (startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2, length/2, 0, 2*M_PI, 0); //添加一个圆
+            [self.currentColor setStroke];
+            CGContextDrawPath(context, kCGPathStroke); //绘制路径
+        }
     }
     //    UIFont *helvetica = [UIFont fontWithName:@"HelveticaNeue-Bold"size:30.0f];
     //    NSString *string =@"李先森";
@@ -359,12 +408,6 @@
     //    [string drawAtPoint:CGPointMake(25,190)withFont:helvetica];
     //    [string drawAtPoint:CGPointMake(25,190)withAttributes:helvetica];
     
-//    CGContextRef context = UIGraphicsGetCurrentContext();
-//    CGContextSetRGBFillColor (context,  1, 0, 0, 1.0);//设置填充颜色
-//    UIFont  *font = [UIFont boldSystemFontOfSize:15.0];//设置
-//    [@"画圆：" drawInRect:CGRectMake(10, 20, 80, 20) withFont:font];
-//    CGContextAddArc(context, 100, 20, 15, 0, 2*M_PI, 0); //添加一个圆
-//        CGContextDrawPath(context, kCGPathStroke); //绘制路径
 }
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     for (UITouch *touch in touches) {
@@ -515,7 +558,6 @@
 }
 -(void)btnClicked{
     _currentColor = [UIColor colorWithRed:(float)rand()/RAND_MAX green:(float)rand()/RAND_MAX blue:(float)rand()/RAND_MAX alpha:1.0];
-//    [self addImage:1];
 }
 - (UISlider *)sliderWidth
 {
@@ -557,8 +599,23 @@
 {
     if(self.pointArray!=nil)
     {
-        
-        [self.arrayLine addObject:self.pointArray];//将点得数组放入存到线的数组
+        if (self.currentGraphical == LINE) {
+            
+            [self.arrayLine addObject:self.pointArray];//将点得数组放入存到线的数组
+        }
+        else if (self.currentGraphical == CIRCULAR){
+            CircularModel *cir = [[CircularModel alloc]init];
+            CGPoint startPoint = CGPointFromString(self.pointArray.firstObject);
+            CGPoint endPoint = CGPointFromString(self.pointArray.lastObject);
+            float width = fabs(startPoint.x-endPoint.x);
+            float height = fabs(startPoint.y - endPoint.y);
+            float length = sqrtf(width*width + height*height);
+            cir.cencerPoint = CGPointMake((startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2);
+            cir.radius = length/2;
+            cir.color = self.currentColor;
+            cir.lineWidth = 2.0;
+            [self.graphicalArray addObject:cir];
+        }
         
 
     }

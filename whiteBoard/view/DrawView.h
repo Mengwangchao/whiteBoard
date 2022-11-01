@@ -7,7 +7,10 @@
 
 #import <UIKit/UIKit.h>
 #import "UpdateToMQTT.h"
+#import "DrawBoardGraphicalModel.h"
+
 NS_ASSUME_NONNULL_BEGIN
+
 
 @interface DrawView : UIView
 
@@ -18,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId MQTT:(UpdateToMQTT *)mqtt;
 -(void)setDrawHidden:(BOOL)hidden;
 - (void)setLineColor:(UIColor *)color;
+-(void)addGraphical:(GraphicalState)graphical;
 - (UIColor*)getLineColor;
 -(void)deleteView;
 @end
