@@ -65,9 +65,14 @@
 -(void)deleteView{
     [self.rootDrawView deleteView];
 }
+-(void)setLineWith:(float)lineWith{
+    [self.rootDrawView setLineWith:lineWith];
+}
 -(void)setIsEraser:(BOOL)isEraser{
-    _isEraser = isEraser;
-    self.rootDrawView.isEraser = isEraser;
+    if (_isEraser != isEraser) {
+        _isEraser = isEraser;
+        self.rootDrawView.isEraser = isEraser;
+    }
 }
 -(void)setCurrentPage:(int)currentPage{
     _currentPage = currentPage;

@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DrawBoardModel : NSObject
 @property (nonatomic,strong) NSMutableArray *lineArray;
 @property (nonatomic,strong) UIColor *color;
+@property (nonatomic) float lineWidth;
 @end
 
 NS_ASSUME_NONNULL_END

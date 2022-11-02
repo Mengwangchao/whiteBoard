@@ -51,6 +51,8 @@
 @property (nonatomic,strong) UIColor *currentColor;//画笔默认颜色
 @property (nonatomic,copy) UIColor *oldColor;//画笔默认颜色
 
+@property (nonatomic) float lineWidth;
+@property (nonatomic) float downLineWidth;
 @property (nonatomic,strong) UIButton *btnCancelDraw;//撤销画笔
 
 @property (nonatomic, strong) UIButton *btnChangeColor;//改变颜色
@@ -76,6 +78,8 @@
         self.currentPage = 1;
         self.isEraser = NO;
         self.isEraserFlag =NO;
+        self.lineWidth = 5.0;
+        self.downLineWidth = 5.0;
         self.imageRootViewArray = [NSMutableArray array];
         self.downPointArray = [NSMutableArray array];
         self.downArrayLine = [NSMutableArray array];
@@ -114,7 +118,7 @@
 }
 
 #pragma mark --updateToMQTTdelegate
-- (void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage graphical:(int)graphical{
+- (void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage graphical:(int)graphical lineWidth:(float)lineWidth{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -125,12 +129,12 @@
     NSString *strPoint = NSStringFromCGPoint(point);
     [self.downPointArray addObject:strPoint];
     self.downPointColor = color;
-   
+    self.downLineWidth = lineWidth;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self setNeedsDisplay];
     });
 }
--(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage graphical:(int)graphical{
+-(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage graphical:(int)graphical lineWidth:(float)lineWidth{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -139,25 +143,14 @@
     }
     
     if(self.downPointArray.count>0){
-        if(self.downGraphical == CIRCULAR){
-            CircularModel *cir = [[CircularModel alloc]init];
-            CGPoint startPoint = CGPointFromString(self.downPointArray.firstObject);
-            CGPoint endPoint = CGPointFromString(self.downPointArray.lastObject);
-            float width = fabs(startPoint.x-endPoint.x);
-            float height = fabs(startPoint.y - endPoint.y);
-            float length = sqrtf(width*width + height*height);
-            cir.cencerPoint = CGPointMake((startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2);
-            cir.radius = length/2;
-            cir.color = self.downPointColor;
-            cir.lineWidth = 2.0;
-            [self.downGraphicalArray addObject:cir];
-        }
+
+        [self saveDownGrraphical:self.downGraphical];
     }
     self.downPointArray = [NSMutableArray array];
-    if (![color isEqual: self.downPointColor] ||(self.downGraphical != (GraphicalState)graphical)) {
+    if (![color isEqual: self.downPointColor] ||lineWidth != self.downLineWidth ||(self.downGraphical != (GraphicalState)graphical)) {
 
         if(self.downArrayLine.count>0){
-            
+            self.downBoardModel.lineWidth = self.downLineWidth;
             self.downBoardModel.color = self.downPointColor;
             self.downBoardModel.lineArray = self.downArrayLine;
             [self.downPointArrayArray addObject:self.downBoardModel];
@@ -181,14 +174,14 @@
     NSString *strPoint = NSStringFromCGPoint(point);
     [self.downPointArray addObject:strPoint];
     self.downPointColor = color;
-
+    self.downLineWidth = lineWidth;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self setNeedsDisplay];
     });
 
   
 }
--(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage graphical:(int)graphical{
+-(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage graphical:(int)graphical lineWidth:(float)lineWidth{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -215,22 +208,22 @@
     return YES;
 }
 #pragma mark -- 手势事件
-- (void) gestureHandler:(UIPanGestureRecognizer *)sender
-{
-    CGPoint translation = [sender translationInView:self];
-    sender.view.center = CGPointMake(sender.view.center.x+translation.x, sender.view.center.y+translation.y);
-    [sender setTranslation:CGPointZero inView:self];
-}
-- (void) rotationGestureHanlder:(UIRotationGestureRecognizer *) sender
-{
-    sender.view.transform = CGAffineTransformRotate(sender.view.transform, sender.rotation);
-    sender.rotation = 0;
-}
-- (void) pinchGestureHanlder:(UIPinchGestureRecognizer *) sender
-{
-    sender.view.transform = CGAffineTransformScale(sender.view.transform, sender.scale, sender.scale);
-    sender.scale = 1;
-}
+//- (void) gestureHandler:(UIPanGestureRecognizer *)sender
+//{
+//    CGPoint translation = [sender translationInView:self];
+//    sender.view.center = CGPointMake(sender.view.center.x+translation.x, sender.view.center.y+translation.y);
+//    [sender setTranslation:CGPointZero inView:self];
+//}
+//- (void) rotationGestureHanlder:(UIRotationGestureRecognizer *) sender
+//{
+//    sender.view.transform = CGAffineTransformRotate(sender.view.transform, sender.rotation);
+//    sender.rotation = 0;
+//}
+//- (void) pinchGestureHanlder:(UIPinchGestureRecognizer *) sender
+//{
+//    sender.view.transform = CGAffineTransformScale(sender.view.transform, sender.scale, sender.scale);
+//    sender.scale = 1;
+//}
 
 -(void)OKButtonClick:(UIButton *)but{
     NSLog(@"click %ld",but.tag);
@@ -244,7 +237,7 @@
 
 #pragma  mark - 对外接口
 -(void)addGraphical:(GraphicalState)graphical{
-    [self saveArray];
+//    [self saveArray];
     self.currentGraphical = graphical;
 }
 -(void)setDrawHidden:(BOOL)hidden{
@@ -259,6 +252,7 @@
 }
 -(void)saveArray{
     if(self.graphicalArray.count>0){
+        
         self.drawBoardModelGraphical.graphical = self.currentGraphical;
         self.drawBoardModelGraphical.graphicalArray = self.graphicalArray;
         [self.drawBoardModelGraphicalArray addObject:self.drawBoardModelGraphical];
@@ -275,6 +269,7 @@
             
             self.drawBoardModel.color = self.oldColor;
         }
+        self.drawBoardModel.lineWidth = self.lineWidth;
 //        [self.arrayLine addObject:self.pointArray];
         self.drawBoardModel.lineArray = self.arrayLine;
         [self.drawBoardModelArray addObject:self.drawBoardModel];
@@ -302,7 +297,11 @@
     self.oldColor = color;
 //    [self setNeedsDisplay];
 }
-
+-(void)setLineWith:(float)lineWith{
+    [self saveArray];
+    self.lineWidth = lineWith;
+//    [self setNeedsDisplay];
+}
 - (UIColor*)getLineColor{
     return  self.currentColor;
 }
@@ -314,6 +313,12 @@
     [self.downPointArrayArray removeAllObjects];
     [self.arrayLine removeAllObjects];
     [self.drawBoardModelArray removeAllObjects];
+    [self.graphicalArray removeAllObjects];
+    [self.drawBoardModelGraphicalArray removeAllObjects];
+    [self.graphicalPointArray removeAllObjects];
+    [self.downGraphicalArray removeAllObjects];
+    [self.downGraphicalPointArray removeAllObjects];
+    [self.downDrawBoardModelGraphicalArray removeAllObjects];
     self.downBoardModel = nil;
     self.drawBoardModel = nil;
     self.uploadMQTT.updateToMQTTdelegate = nil;
@@ -371,7 +376,6 @@
     }
 }
 -(void)drawLineArrayGraphicalNow:(NSArray*)arr{
-    CGContextRef context = UIGraphicsGetCurrentContext();
     for (DrawBoardGraphicalModel *model in arr) {
         if(model.graphical == CIRCULAR){
             for (CircularModel *cir in model.graphicalArray) {
@@ -379,19 +383,54 @@
                     [self drawCircular:cir];
             }
         }
+        else if(model.graphical == RECTANGLE){
+            for (RectangleModel *rect in model.graphicalArray) {
+                [self drawRectangle:rect];
+            }
+        }
+        else if(model.graphical == ROUNDED_RECTANGLE){
+            for (RoundedRectangleModel *rect in model.graphicalArray) {
+                [self drawRoundedRectangle:rect];
+            }
+        }
     }
     
 }
 -(void)drawCurrentArrayGraphicalNow:(NSArray*)arr graphical:(GraphicalState)graphical{
-        if(graphical == CIRCULAR){
-            for (CircularModel *cir in arr) {
-                [self drawCircular:cir];
-            }
+    if(graphical == CIRCULAR){
+        for (CircularModel *cir in arr) {
+            [self drawCircular:cir];
         }
+    }
+    else if(graphical == RECTANGLE){
+        for (RectangleModel *rect in arr) {
+            [self drawRectangle:rect];
+        }
+    }
+    else if(graphical == ROUNDED_RECTANGLE){
+        for (RoundedRectangleModel *rect in arr) {
+            [self drawRoundedRectangle:rect];
+        }
+    }
 }
-
+-(void)drawRectangle:(RectangleModel*)rect{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetLineWidth(context, rect.lineWidth);//线的宽度
+    CGContextAddRect(context, CGRectMake(rect.startPoint.x, rect.startPoint.y, rect.endPoint.x-rect.startPoint.x, rect.endPoint.y-rect.startPoint.y));
+    CGContextSetStrokeColorWithColor(context, rect.color.CGColor);//线框颜色
+    CGContextDrawPath(context, kCGPathStroke); //绘制路径
+}
+-(void)drawRoundedRectangle:(RoundedRectangleModel*)rect{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetLineWidth(context, rect.lineWidth);//线的宽度
+    CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
+//    CGContextStrokeRect(context,CGRectMake(rect.startPoint.x, rect.startPoint.y, rect.endPoint.x-rect.startPoint.x, rect.endPoint.y-rect.startPoint.y));//画方框
+    CGContextAddRect(context, CGRectMake(rect.startPoint.x, rect.startPoint.y, rect.endPoint.x-rect.startPoint.x, rect.endPoint.y-rect.startPoint.y));
+//    [rect.color setStroke];
+    CGContextSetStrokeColorWithColor(context, rect.color.CGColor);//线框颜色
+    CGContextDrawPath(context, kCGPathStroke); //绘制路径
+}
 -(void)drawCircular:(CircularModel *)cir{
-    
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetLineWidth(context, cir.lineWidth);//线的宽度
@@ -406,19 +445,18 @@
     for (DrawBoardModel *drawBoard in self.downPointArrayArray) {
         UIColor *color = drawBoard.color;
         NSArray *arr = drawBoard.lineArray;
-        [self drawLineArrayNow:arr color:color pencilwidth:10];
+        [self drawLineArrayNow:arr color:color pencilwidth:drawBoard.lineWidth];
 
     }
     
     [self drawLineArrayGraphicalNow:self.drawBoardModelGraphicalArray];
-    [self drawCurrentArrayGraphicalNow:self.graphicalArray graphical:self.currentGraphical];
     [self drawLineArrayGraphicalNow:self.downDrawBoardModelGraphicalArray];
     [self drawCurrentArrayGraphicalNow:self.downGraphicalArray graphical:self.downGraphical];
     //保存的所有点
     for (DrawBoardModel *drawBoard in self.drawBoardModelArray) {
         UIColor *color = drawBoard.color;
         NSArray *arr = drawBoard.lineArray;
-        [self drawLineArrayNow:arr color:color pencilwidth:10];
+        [self drawLineArrayNow:arr color:color pencilwidth:drawBoard.lineWidth];
 
     }
     
@@ -426,45 +464,28 @@
     //网络传过来的
     if(self.downGraphical == LINE){
         
-        [self drawLineArrayNow:self.downArrayLine color:self.downPointColor pencilwidth:10];
-        [self drawLineNow:self.downPointArray color:self.downPointColor pencilwidth:10];
-    }else if(self.downGraphical == CIRCULAR){
+        [self drawLineArrayNow:self.downArrayLine color:self.downPointColor pencilwidth:self.downLineWidth];
+        [self drawLineNow:self.downPointArray color:self.downPointColor pencilwidth:self.downLineWidth];
+    }else{
         
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextSetLineWidth(context, 5.0);//线的宽度
-        CGPoint startPoint = CGPointFromString(self.downPointArray.firstObject);
-        CGPoint endPoint = CGPointFromString(self.downPointArray.lastObject);
-        float width = fabs(startPoint.x-endPoint.x);
-        float height = fabs(startPoint.y - endPoint.y);
-        float length = sqrtf(width*width + height*height);
-        CGContextAddArc(context, (startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2, length/2, 0, 2*M_PI, 0); //添加一个圆
-        [self.downPointColor setStroke];
-        CGContextDrawPath(context, kCGPathStroke); //绘制路径
+        [self drawGraphical:self.downGraphical color:self.downPointColor width:self.downLineWidth point:self.downPointArray];
     }
     if (_isEraser == YES) {
         
         //尚未保存的
-        [self drawLineArrayNow:self.arrayLine color:[UIColor whiteColor] pencilwidth:10];
+        [self drawLineArrayNow:self.arrayLine color:[UIColor whiteColor] pencilwidth:self.lineWidth];
         //当前正在画的
-        [self drawLineNow:self.pointArray color:[UIColor whiteColor] pencilwidth:10];
+        [self drawLineNow:self.pointArray color:[UIColor whiteColor] pencilwidth:self.lineWidth];
     }else{
         
+        [self drawCurrentArrayGraphicalNow:self.graphicalArray graphical:self.currentGraphical];
         //尚未保存的
-        [self drawLineArrayNow:self.arrayLine color:self.currentColor pencilwidth:10];
+        [self drawLineArrayNow:self.arrayLine color:self.currentColor pencilwidth:self.lineWidth];
         if(self.currentGraphical == LINE){
             //当前正在画的
-            [self drawLineNow:self.pointArray color:self.currentColor pencilwidth:10];
-        }else if(self.currentGraphical == CIRCULAR){
-            CGContextRef context = UIGraphicsGetCurrentContext();
-            CGContextSetLineWidth(context, 5.0);//线的宽度
-            CGPoint startPoint = CGPointFromString(self.pointArray.firstObject);
-            CGPoint endPoint = CGPointFromString(self.pointArray.lastObject);
-            float width = fabs(startPoint.x-endPoint.x);
-            float height = fabs(startPoint.y - endPoint.y);
-            float length = sqrtf(width*width + height*height);
-            CGContextAddArc(context, (startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2, length/2, 0, 2*M_PI, 0); //添加一个圆
-            [self.currentColor setStroke];
-            CGContextDrawPath(context, kCGPathStroke); //绘制路径
+            [self drawLineNow:self.pointArray color:self.currentColor pencilwidth:self.lineWidth];
+        }else{
+            [self drawGraphical:self.currentGraphical color:self.currentColor width:self.lineWidth point:self.pointArray];
         }
     }
     //    UIFont *helvetica = [UIFont fontWithName:@"HelveticaNeue-Bold"size:30.0f];
@@ -473,6 +494,32 @@
     //    [string drawAtPoint:CGPointMake(25,190)withFont:helvetica];
     //    [string drawAtPoint:CGPointMake(25,190)withAttributes:helvetica];
     
+}
+-(void)drawGraphical:(GraphicalState)graphical color:(UIColor*)color width:(float)fontWidth point:(NSMutableArray *)arr{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetLineWidth(context, fontWidth);//线的宽度
+    CGPoint startPoint = CGPointFromString(arr.firstObject);
+    CGPoint endPoint = CGPointFromString(arr.lastObject);
+    float width = fabs(startPoint.x-endPoint.x);
+    float height = fabs(startPoint.y - endPoint.y);
+    if(graphical == CIRCULAR){
+        float length = sqrtf(width*width + height*height);
+        CGContextAddArc(context, (startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2, length/2, 0, 2*M_PI, 0); //添加一个圆
+    }
+    else if(graphical == RECTANGLE){
+        
+//        CGContextStrokeRect(context,CGRectMake(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y));//画方框
+        CGContextAddRect(context, CGRectMake(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y));
+    }
+    else if (graphical == ROUNDED_RECTANGLE){
+        
+        CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
+//        CGContextStrokeRect(context,CGRectMake(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y));//画方框
+        CGContextAddRect(context, CGRectMake(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y));
+    }
+//    [color setStroke];
+    CGContextSetStrokeColorWithColor(context, color.CGColor);//线框颜色
+    CGContextDrawPath(context, kCGPathStroke); //绘制路径
 }
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     for (UITouch *touch in touches) {
@@ -487,14 +534,15 @@
             CGPoint myBeginPoint = [touch locationInView:self];
             if (self.isEraser == YES) {
                 
-                [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId graphical:(int)LINE];
+                [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId graphical:(int)LINE lineWidth:self.lineWidth];
             }else{
                 
-                [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId graphical:(int)self.currentGraphical];
+                [self.uploadMQTT sendStartPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId graphical:(int)self.currentGraphical lineWidth:self.lineWidth];
             }
             
             if (self.isEraser == YES && self.isEraserFlag == NO) {
                 self.isEraserFlag = YES;
+                self.drawBoardModel.lineWidth = self.lineWidth;
                 self.drawBoardModel.color = self.oldColor;
                 self.drawBoardModel.lineArray = self.arrayLine;
                 [self.drawBoardModelArray addObject:self.drawBoardModel];
@@ -503,7 +551,7 @@
             }
             else{
                 if (self.isEraser == NO && self.isEraserFlag == YES) {
-                    
+                    self.drawBoardModel.lineWidth = self.lineWidth;
                     self.drawBoardModel.color = [UIColor whiteColor];
                     self.drawBoardModel.lineArray = self.arrayLine;
                     [self.drawBoardModelArray addObject:self.drawBoardModel];
@@ -520,6 +568,7 @@
                     
                 }
                 else{
+                    self.drawBoardModel.lineWidth = self.lineWidth;
                     self.drawBoardModel.color = self.oldColor;
                     self.drawBoardModel.lineArray = self.arrayLine;
                     [self.drawBoardModelArray addObject:self.drawBoardModel];
@@ -556,10 +605,10 @@
     [self.pointArray addObject:strPoint];
     if (_isEraser) {
         
-        [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId graphical:(int)LINE];
+        [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId graphical:(int)LINE lineWidth:self.lineWidth];
     }else{
         
-        [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId graphical:(int)self.currentGraphical];
+        [self.uploadMQTT sendPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId graphical:(int)self.currentGraphical lineWidth:self.lineWidth];
     }
     [self setNeedsDisplay];
 }
@@ -582,10 +631,10 @@
     CGPoint myBeginPoint = [touch locationInView:self];
     if (self.isEraser == YES) {
         
-        [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId graphical:(int)LINE];
+        [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:[UIColor whiteColor] roomId:self.roomId graphical:(int)LINE lineWidth:self.lineWidth];
     }else{
         
-        [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId graphical:(int)self.currentGraphical];
+        [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId graphical:(int)self.currentGraphical lineWidth:self.lineWidth];
     }
     self.lineNum ++;
     [self addArray];
@@ -621,9 +670,7 @@
     }
     return _btnChangeColor;
 }
--(void)btnClicked{
-    _currentColor = [UIColor colorWithRed:(float)rand()/RAND_MAX green:(float)rand()/RAND_MAX blue:(float)rand()/RAND_MAX alpha:1.0];
-}
+
 - (UISlider *)sliderWidth
 {
     if(!_sliderWidth)
@@ -668,23 +715,76 @@
             
             [self.arrayLine addObject:self.pointArray];//将点得数组放入存到线的数组
         }
-        else if (self.currentGraphical == CIRCULAR){
-            CircularModel *cir = [[CircularModel alloc]init];
-            CGPoint startPoint = CGPointFromString(self.pointArray.firstObject);
-            CGPoint endPoint = CGPointFromString(self.pointArray.lastObject);
-            float width = fabs(startPoint.x-endPoint.x);
-            float height = fabs(startPoint.y - endPoint.y);
-            float length = sqrtf(width*width + height*height);
-            cir.cencerPoint = CGPointMake((startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2);
-            cir.radius = length/2;
-            cir.color = self.currentColor;
-            cir.lineWidth = 2.0;
-            [self.graphicalArray addObject:cir];
+        else {
+            [self saveGrraphical:self.currentGraphical];
         }
         
 
     }
     self.pointArray = [NSMutableArray array];//将点数组清空
+}
+-(void)saveGrraphical:(GraphicalState)graphical{
+    CGPoint startPoint = CGPointFromString(self.pointArray.firstObject);
+    CGPoint endPoint = CGPointFromString(self.pointArray.lastObject);
+    float width = fabs(startPoint.x-endPoint.x);
+    float height = fabs(startPoint.y - endPoint.y);
+    if (graphical == CIRCULAR){
+        CircularModel *cir = [[CircularModel alloc]init];
+        float length = sqrtf(width*width + height*height);
+        cir.cencerPoint = CGPointMake((startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2);
+        cir.radius = length/2;
+        cir.color = self.currentColor;
+        
+        cir.lineWidth = self.lineWidth;
+        [self.graphicalArray addObject:cir];
+    }
+    else if(graphical == RECTANGLE){
+        RectangleModel *rect = [[RectangleModel alloc]init];
+        rect.endPoint = endPoint;
+        rect.startPoint = startPoint;
+        rect.color = self.currentColor;
+        rect.lineWidth = self.lineWidth;
+        [self.graphicalArray addObject:rect];
+    }
+    else if(graphical == ROUNDED_RECTANGLE){
+        RoundedRectangleModel *rect = [[RoundedRectangleModel alloc]init];
+        rect.endPoint = endPoint;
+        rect.startPoint = startPoint;
+        rect.color = self.currentColor;
+        rect.lineWidth = self.lineWidth;
+        [self.graphicalArray addObject:rect];
+    }
+}
+-(void)saveDownGrraphical:(GraphicalState)graphical{
+    CGPoint startPoint = CGPointFromString(self.downPointArray.firstObject);
+    CGPoint endPoint = CGPointFromString(self.downPointArray.lastObject);
+    float width = fabs(startPoint.x-endPoint.x);
+    float height = fabs(startPoint.y - endPoint.y);
+    if(self.downGraphical == CIRCULAR){
+        CircularModel *cir = [[CircularModel alloc]init];
+        float length = sqrtf(width*width + height*height);
+        cir.cencerPoint = CGPointMake((startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2);
+        cir.radius = length/2;
+        cir.color = self.downPointColor;
+        cir.lineWidth = self.lineWidth;
+        [self.downGraphicalArray addObject:cir];
+    }
+    else if(graphical == RECTANGLE){
+        RectangleModel *rect = [[RectangleModel alloc]init];
+        rect.endPoint = endPoint;
+        rect.startPoint = startPoint;
+        rect.color = self.downPointColor;
+        rect.lineWidth = self.lineWidth;
+        [self.downGraphicalArray addObject:rect];
+    }
+    else if(graphical == ROUNDED_RECTANGLE){
+        RoundedRectangleModel *rect = [[RoundedRectangleModel alloc]init];
+        rect.endPoint = endPoint;
+        rect.startPoint = startPoint;
+        rect.color = self.downPointColor;
+        rect.lineWidth = self.lineWidth;
+        [self.downGraphicalArray addObject:rect];
+    }
 }
 -(void)dealloc{
     NSLog(@"drawView Dealloc");

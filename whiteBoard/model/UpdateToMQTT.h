@@ -11,9 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 @protocol UpdateToMQTTDelegate <NSObject>
 
--(void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color currentPage:(int)currentPage graphical:(int)graphical;
--(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color currentPage:(int)currentPage graphical:(int)graphical;
--(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color currentPage:(int)currentPage graphical:(int)graphical;
+-(void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color currentPage:(int)currentPage graphical:(int)graphical lineWidth:(float)lineWidth;
+-(void)getStartMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color currentPage:(int)currentPage graphical:(int)graphical lineWidth:(float)lineWidth;
+-(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color currentPage:(int)currentPage graphical:(int)graphical lineWidth:(float)lineWidth;
 
 //-(void)getJoinRoomReturn:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
 
@@ -60,10 +60,10 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(instancetype)initWithTopic:(NSString *)topic;
 
 
--(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId graphical:(int)graphical;
+-(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId graphical:(int)graphical lineWidth:(float)lineWidth;
 
--(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId graphical:(int)graphical;
--(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId graphical:(int)graphical;
+-(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId graphical:(int)graphical lineWidth:(float)lineWidth;
+-(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId graphical:(int)graphical lineWidth:(float)lineWidth;
 -(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId;
 -(void)sendCreateRoom:(NSString *)roomId userId:(NSString *)userId authority :(AuthorityState) authority;
 -(void)sendDeleteRoom:(NSString *)roomId userId:(NSString *)userId;

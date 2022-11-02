@@ -13,3 +13,7 @@
 @implementation CircularModel
 
 @end
+@implementation RectangleModel
+@end
+@implementation RoundedRectangleModel
+@end

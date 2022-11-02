@@ -46,8 +46,8 @@
     
     
     MQTTCFSocketTransport *tranport = [[MQTTCFSocketTransport alloc]init];
-    tranport.host = @"od434124.cn-shenzhen.emqx.cloud";
-    tranport.port = 11753;
+    tranport.host = @"39.105.149.69";
+    tranport.port = 1883;
     self.mySession = [[MQTTSession alloc]init];
     self.mySession.transport = tranport;
     self.mySession.delegate = self;
@@ -150,13 +150,13 @@
         }
         if ([topic isEqual:@"touchStart"]) {
             
-            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getStartMassagePoint:userId:color:currentPage:graphical:)]){
-                [weakSelf.updateToMQTTdelegate getStartMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue] graphical:[dic[@"graphical"] intValue]];
+            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getStartMassagePoint:userId:color:currentPage:graphical:lineWidth:)]){
+                [weakSelf.updateToMQTTdelegate getStartMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue] graphical:[dic[@"graphical"] intValue] lineWidth:[dic[@"lineWidth"] floatValue]];
             }
         }
         else if([topic isEqual:@"touchEnd"]){
-            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getEndMassagePoint:userId:color:currentPage:graphical:)]){
-                [weakSelf.updateToMQTTdelegate getEndMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue]  graphical:[dic[@"graphical"] intValue]];
+            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getEndMassagePoint:userId:color:currentPage:graphical:lineWidth:)]){
+                [weakSelf.updateToMQTTdelegate getEndMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue]  graphical:[dic[@"graphical"] intValue] lineWidth:[dic[@"lineWidth"] floatValue]];
             }
         }else if([topic isEqual:@"addPage"]){
             if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(addPage:userId:)]){
@@ -215,8 +215,8 @@
             }
         }
         else{
-            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getMassagePoint:userId:color:currentPage:graphical:)]){
-                [weakSelf.updateToMQTTdelegate getMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue] graphical:[dic[@"graphical"] intValue]];
+            if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getMassagePoint:userId:color:currentPage:graphical:lineWidth:)]){
+                [weakSelf.updateToMQTTdelegate getMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue] graphical:[dic[@"graphical"] intValue] lineWidth:[dic[@"lineWidth"] floatValue]];
             }
         }
     });
@@ -272,7 +272,7 @@
     _topic=nil;//单个主题订阅
     _topics=nil;//多个主题订阅
 }
--(void)sendPointMassage:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color topic:(NSString *)topic roomId:(NSString *)roomId graphical:(int)graphical{
+-(void)sendPointMassage:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color topic:(NSString *)topic roomId:(NSString *)roomId graphical:(int)graphical lineWidth:(float)lineWidth{
     
     __weak typeof(self) weakSelf = self;
     
@@ -299,6 +299,7 @@
         [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
         [dic setValue:[NSString stringWithFormat:@"%d",self.pageCount] forKey:@"pageCount"];
         [dic setValue:[NSString stringWithFormat:@"%d",graphical] forKey:@"graphical"];
+        [dic setValue:[NSString stringWithFormat:@"%f",lineWidth] forKey:@"lineWidth"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:topic retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
@@ -313,14 +314,14 @@
         }];
     });
 }
--(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color roomId:(NSString *)roomId graphical:(int)graphical{
-    [self sendPointMassage:point userId:userId color:color topic:@"touchStart" roomId:roomId graphical:graphical];
+-(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color roomId:(NSString *)roomId graphical:(int)graphical lineWidth:(float)lineWidth{
+    [self sendPointMassage:point userId:userId color:color topic:@"touchStart" roomId:roomId graphical:graphical lineWidth:lineWidth];
 }
--(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color roomId:(NSString *)roomId graphical:(int)graphical{
-    [self sendPointMassage:point userId:userId color:color topic:@"touchEnd" roomId:roomId graphical:graphical];
+-(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color roomId:(NSString *)roomId graphical:(int)graphical lineWidth:(float)lineWidth{
+    [self sendPointMassage:point userId:userId color:color topic:@"touchEnd" roomId:roomId graphical:graphical lineWidth:lineWidth];
 }
--(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color roomId:(NSString *)roomId graphical:(int)graphical{
-    [self sendPointMassage:point userId:userId color:color topic:self.topic roomId:roomId graphical:graphical];
+-(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color roomId:(NSString *)roomId graphical:(int)graphical lineWidth:(float)lineWidth{
+    [self sendPointMassage:point userId:userId color:color topic:self.topic roomId:roomId graphical:graphical lineWidth:lineWidth];
 }
 -(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId{
     __weak typeof(self) weakSelf = self;

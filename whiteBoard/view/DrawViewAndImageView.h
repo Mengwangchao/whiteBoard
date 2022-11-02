@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setLineColor:(UIColor *)color;
 - (UIColor*)getLineColor;
 -(void)addGraphical:(GraphicalState)graphical;
+-(void)setLineWith:(float)lineWith;
 -(void)deleteView;
 @end
 
