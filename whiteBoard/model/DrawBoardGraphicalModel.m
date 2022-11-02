@@ -17,3 +17,5 @@
 @end
 @implementation RoundedRectangleModel
 @end
+@implementation TriangleModel
+@end

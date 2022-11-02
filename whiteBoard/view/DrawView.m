@@ -378,9 +378,15 @@
                 [self drawRoundedRectangle:rect];
             }
         }
+        else if (model.graphical == TRIANGLE){
+            for (TriangleModel *rect in model.graphicalArray) {
+                [self drawTriangleModel:rect];
+            }
+        }
     }
     
 }
+
 -(void)drawCurrentArrayGraphicalNow:(NSArray*)arr graphical:(GraphicalState)graphical{
     if(graphical == CIRCULAR){
         for (CircularModel *cir in arr) {
@@ -397,6 +403,23 @@
             [self drawRoundedRectangle:rect];
         }
     }
+    else if(graphical == TRIANGLE){
+        for (TriangleModel *rect in arr) {
+            [self drawTriangleModel:rect];
+        }
+    }
+}
+-(void)drawTriangleModel:(TriangleModel *)triangleModel{
+    CGPoint sPoints[3];//坐标点
+    sPoints[0] =CGPointMake(triangleModel.startPoint.x, triangleModel.startPoint.y);//坐标1
+    sPoints[1] =CGPointMake((triangleModel.startPoint.x+triangleModel.endPoint.x)/2, triangleModel.endPoint.y);//坐标2
+    sPoints[2] =CGPointMake(triangleModel.endPoint.x, triangleModel.startPoint.y);//坐标3
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetLineWidth(context, triangleModel.lineWidth);//线的宽度
+    CGContextAddLines(context, sPoints, 3);
+    CGContextClosePath(context);
+    CGContextSetStrokeColorWithColor(context, triangleModel.color.CGColor);//线框颜色
+    CGContextDrawPath(context, kCGPathStroke); //绘制路径
 }
 -(void)drawRectangle:(RectangleModel*)rect{
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -517,6 +540,14 @@
         CGContextAddArcToPoint(context, endPoint.x, startPoint.y, startPoint.x, startPoint.y, 10);
         CGContextAddArcToPoint(context, startPoint.x, startPoint.y, startPoint.x, endPoint.y, 10);
         
+    }
+    else if (graphical == TRIANGLE){
+        CGPoint sPoints[3];//坐标点
+        sPoints[0] =CGPointMake(startPoint.x, startPoint.y);//坐标1
+        sPoints[1] =CGPointMake((startPoint.x+endPoint.x)/2, endPoint.y);//坐标2
+        sPoints[2] =CGPointMake(endPoint.x, startPoint.y);//坐标3
+        CGContextAddLines(context, sPoints, 3);
+        CGContextClosePath(context);
     }
 //    [color setStroke];
     CGContextSetStrokeColorWithColor(context, color.CGColor);//线框颜色
@@ -755,6 +786,14 @@
         rect.lineWidth = self.lineWidth;
         [self.graphicalArray addObject:rect];
     }
+    else if(graphical == TRIANGLE){
+        TriangleModel *rect = [[TriangleModel alloc]init];
+        rect.endPoint = endPoint;
+        rect.startPoint = startPoint;
+        rect.color = self.currentColor;
+        rect.lineWidth = self.lineWidth;
+        [self.graphicalArray addObject:rect];
+    }
 }
 -(void)saveDownGrraphical:(GraphicalState)graphical{
     CGPoint startPoint = CGPointFromString(self.downPointArray.firstObject);
@@ -780,6 +819,14 @@
     }
     else if(graphical == ROUNDED_RECTANGLE){
         RoundedRectangleModel *rect = [[RoundedRectangleModel alloc]init];
+        rect.endPoint = endPoint;
+        rect.startPoint = startPoint;
+        rect.color = self.downPointColor;
+        rect.lineWidth = self.lineWidth;
+        [self.downGraphicalArray addObject:rect];
+    }
+    else if(graphical == TRIANGLE){
+        TriangleModel *rect = [[TriangleModel alloc]init];
         rect.endPoint = endPoint;
         rect.startPoint = startPoint;
         rect.color = self.downPointColor;

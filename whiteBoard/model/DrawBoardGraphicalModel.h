@@ -13,7 +13,8 @@ typedef NS_ENUM(NSInteger, GraphicalState){
     LINE = 1, //任意线
     CIRCULAR = 2, //圆形
     RECTANGLE = 3, //直角矩形
-    ROUNDED_RECTANGLE = 4 //圆角矩形
+    ROUNDED_RECTANGLE = 4, //圆角矩形
+    TRIANGLE = 5 //三角形
 };
 @interface DrawBoardGraphicalModel : NSObject
 @property (nonatomic,strong) NSMutableArray *graphicalArray;
@@ -34,6 +35,12 @@ typedef NS_ENUM(NSInteger, GraphicalState){
 @end
 
 @interface RoundedRectangleModel : NSObject
+@property (nonatomic) CGPoint startPoint;
+@property (nonatomic) CGPoint endPoint;
+@property (nonatomic,strong) UIColor *color;
+@property (nonatomic) float lineWidth;
+@end
+@interface TriangleModel : NSObject
 @property (nonatomic) CGPoint startPoint;
 @property (nonatomic) CGPoint endPoint;
 @property (nonatomic,strong) UIColor *color;
