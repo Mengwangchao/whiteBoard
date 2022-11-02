@@ -3,6 +3,7 @@ package com.xxxx.whiteboard.mqttConn;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 /**
@@ -85,6 +86,21 @@ public class MQTTConnect {
         MqttMessage mqttMessage = new MqttMessage();
         mqttMessage.setQos(qos);
         mqttMessage.setPayload(msg.getBytes());
+        MqttTopic mqttTopic = mqttClient.getTopic(topic);
+        MqttDeliveryToken token = mqttTopic.publish(mqttMessage);
+        token.waitForCompletion();
+    }
+    /**
+     * 向某个主题发布Json消息
+     *
+     * @param topic: 发布的主题
+     * @param msg:   发布的消息
+     * @param qos:   消息质量    Qos：0、1、2
+     */
+    public void pub(String topic, JSONObject msg, int qos) throws MqttException {
+        MqttMessage mqttMessage = new MqttMessage();
+        mqttMessage.setQos(qos);
+        mqttMessage.setPayload(msg.toString().getBytes());
         MqttTopic mqttTopic = mqttClient.getTopic(topic);
         MqttDeliveryToken token = mqttTopic.publish(mqttMessage);
         token.waitForCompletion();

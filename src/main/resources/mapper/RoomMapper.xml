@@ -24,4 +24,25 @@
         INSERT INTO `room`
         VALUES (${room.roomId}, ${room.roomState}, ${room.authority});
     </insert>
+
+    <update id="setRoomState">
+        UPDATE `room`
+        SET room_state = ${roomState}
+        WHERE room_id = ${roomId}
+    </update>
+
+
+    <delete id="deletePageOfRoom">
+        DROP TABLE IF EXISTS room${roomId}page${pageNo}
+    </delete>
+
+    <!--/*-->
+    <!--* 改变roomStatus-->
+    <!--* */-->
+    <!--int setRoomStatus(@Param("roomId") String roomId, @Param("roomStatus") int roomStatus);-->
+
+    <!--/*-->
+    <!--* 判断房间是否活跃，返回房间人数-->
+    <!--* */-->
+    <!--int isRoomActivity(@Param("room") Room room);-->
 </mapper>

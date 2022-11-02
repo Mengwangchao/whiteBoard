@@ -37,4 +37,7 @@ public class Room {
 
     /** 当前页数 */
     private int currentPage;
+
+    /* 比如说页数1、3、5、6， 那就是说最大的页数就是6 */
+    private int maxPage;
 }

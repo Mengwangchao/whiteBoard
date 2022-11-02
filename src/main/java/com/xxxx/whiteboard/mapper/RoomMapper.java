@@ -19,6 +19,19 @@ public interface RoomMapper extends BaseMapper<Room> {
     /*
      * 插入一个新房间
      * */
-    int createRoom(@Param(value = "room") Room room);
+    int createRoom(@Param("room") Room room);
+
+    /*
+     * 改变roomState
+     * */
+    int setRoomState(@Param("roomId") String roomId, @Param("roomState") int roomStatus);
+
+
+    /*
+     * 删除掉某个room某个page
+     * */
+    int deletePageOfRoom(@Param("roomId") String roomId, @Param("pageNo") int pageNo);
+
+
 
 }

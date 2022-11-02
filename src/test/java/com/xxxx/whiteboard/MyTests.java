@@ -17,6 +17,9 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.w3c.dom.stylesheets.LinkStyle;
+
+import java.util.List;
 
 @SpringBootTest
 class MyTests {
@@ -93,24 +96,49 @@ class MyTests {
     //}
 
     /*
-测试插入房间
-* */
+    测试插入房间
+    * */
     @Test
     void insertRoomTest() {
         roomMapper.createRoom(new Room("1234", 1, 1, 1, 1));
     }
 
     /*
-测试建立某房间某页数的表，用来存储此页的所有point
-* */
+    测试建立某房间某页数的表，用来存储此页的所有point
+    * */
     @Test
     void createRoomTest() {
         roomMapper.createPage("1234", 1);
     }
 
+    /*
+    测试保存一个点到数据库
+    * */
     @Test
     void savePointTest() {
         Point point = new Point(1.0f, 2.0f, new Color(1.0f, 1.0f, 1.0f, 1.0f));
         pointMapper.savePoint("1234", 1, point);
+    }
+
+    /*
+    * 测试获取某房间某页的所有点
+    * */
+    @Test
+    void getAllPointTest(){
+        List<Point> points = pointMapper.getAllPoint("1234", 1);
+        System.out.println(points.toString());
+    }
+
+    /*
+     * 测试改变房间的room_state
+     * */
+    @Test
+    void setRoomState(){
+        roomMapper.setRoomState("1234", 10);
+    }
+
+    @Test
+    void deletePageOfRoomTest(){
+        roomMapper.deletePageOfRoom("12345", 1);
     }
 }

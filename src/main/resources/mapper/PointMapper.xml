@@ -4,10 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xxxx.whiteboard.mapper.PointMapper">
 
-    <!-- 改成坐标和color，都传进来 -->
+    <!-- 保存所有点 -->
     <insert id="savePoint">
         INSERT INTO
             `room${roomId}page${currentPage}`
         VALUES (${point.x}, ${point.y}, ${point.pointColor.r}, ${point.pointColor.g}, ${point.pointColor.b}, ${point.pointColor.a});
     </insert>
+
+    <select id="getAllPoint" resultType="com.xxxx.whiteboard.pojo.Point">
+        SELECT * FROM `room${roomId}page${currentPage}`
+    </select>
+
+
 </mapper>

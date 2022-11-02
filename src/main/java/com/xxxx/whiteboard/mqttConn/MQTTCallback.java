@@ -64,10 +64,10 @@ public class MQTTCallback implements MqttCallback {
                 break;
             case "deletePage":
                 break;
-            case "nextPage":
-                break;
-            case "upPage":
-                break;
+            //case "nextPage":
+            //    break;
+            //case "upPage":
+            //    break;
             default:
                 break; // 12位数字的roomId: 手指正在滑动，实时同步所有端当前手指所在坐标
         }
