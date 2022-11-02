@@ -208,22 +208,7 @@
     return YES;
 }
 #pragma mark -- 手势事件
-//- (void) gestureHandler:(UIPanGestureRecognizer *)sender
-//{
-//    CGPoint translation = [sender translationInView:self];
-//    sender.view.center = CGPointMake(sender.view.center.x+translation.x, sender.view.center.y+translation.y);
-//    [sender setTranslation:CGPointZero inView:self];
-//}
-//- (void) rotationGestureHanlder:(UIRotationGestureRecognizer *) sender
-//{
-//    sender.view.transform = CGAffineTransformRotate(sender.view.transform, sender.rotation);
-//    sender.rotation = 0;
-//}
-//- (void) pinchGestureHanlder:(UIPinchGestureRecognizer *) sender
-//{
-//    sender.view.transform = CGAffineTransformScale(sender.view.transform, sender.scale, sender.scale);
-//    sender.scale = 1;
-//}
+
 
 -(void)OKButtonClick:(UIButton *)but{
     NSLog(@"click %ld",but.tag);
@@ -424,11 +409,20 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetLineWidth(context, rect.lineWidth);//线的宽度
     CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
-//    CGContextStrokeRect(context,CGRectMake(rect.startPoint.x, rect.startPoint.y, rect.endPoint.x-rect.startPoint.x, rect.endPoint.y-rect.startPoint.y));//画方框
-    CGContextAddRect(context, CGRectMake(rect.startPoint.x, rect.startPoint.y, rect.endPoint.x-rect.startPoint.x, rect.endPoint.y-rect.startPoint.y));
+    
+    if(rect.endPoint.y-rect.startPoint.y>0){
+        CGContextMoveToPoint(context, rect.startPoint.x, rect.startPoint.y+10);
+    }else{
+        CGContextMoveToPoint(context, rect.startPoint.x, rect.startPoint.y-10);
+    }
+    CGContextAddArcToPoint(context, rect.startPoint.x, rect.endPoint.y, rect.endPoint.x, rect.endPoint.y, 10);
+    CGContextAddArcToPoint(context, rect.endPoint.x, rect.endPoint.y, rect.endPoint.x, rect.startPoint.y, 10);
+    CGContextAddArcToPoint(context, rect.endPoint.x, rect.startPoint.y, rect.startPoint.x, rect.startPoint.y, 10);
+    CGContextAddArcToPoint(context, rect.startPoint.x, rect.startPoint.y, rect.startPoint.x, rect.endPoint.y, 10);
 //    [rect.color setStroke];
     CGContextSetStrokeColorWithColor(context, rect.color.CGColor);//线框颜色
     CGContextDrawPath(context, kCGPathStroke); //绘制路径
+
 }
 -(void)drawCircular:(CircularModel *)cir{
     
@@ -513,9 +507,16 @@
     }
     else if (graphical == ROUNDED_RECTANGLE){
         
-        CGContextSetLineJoin(context, kCGLineJoinRound);//设置拐角样式
-//        CGContextStrokeRect(context,CGRectMake(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y));//画方框
-        CGContextAddRect(context, CGRectMake(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y));
+        if(endPoint.y-startPoint.y>0){
+            CGContextMoveToPoint(context, startPoint.x, startPoint.y+10);
+        }else{
+            CGContextMoveToPoint(context, startPoint.x, startPoint.y-10);
+        }
+        CGContextAddArcToPoint(context, startPoint.x, endPoint.y, endPoint.x, endPoint.y, 10);
+        CGContextAddArcToPoint(context, endPoint.x, endPoint.y, endPoint.x, startPoint.y, 10);
+        CGContextAddArcToPoint(context, endPoint.x, startPoint.y, startPoint.x, startPoint.y, 10);
+        CGContextAddArcToPoint(context, startPoint.x, startPoint.y, startPoint.x, endPoint.y, 10);
+        
     }
 //    [color setStroke];
     CGContextSetStrokeColorWithColor(context, color.CGColor);//线框颜色
