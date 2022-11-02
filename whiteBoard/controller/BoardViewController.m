@@ -31,6 +31,7 @@
 @property (nonatomic,strong)ImageViewOfDrawView *image;
 @property (nonatomic,strong)UIView* graphicalView;
 @property (nonatomic,strong)UIButton *lineWidthButton;
+@property (nonatomic,strong)UISlider *lineWidthSlider;
 @end
 
 @implementation BoardViewController
@@ -59,7 +60,7 @@
     [self.rootDrawViewArray addObject:self.rootDrawView];
     if(!self.isCreater){
         
-//        self.rootDrawView.userInteractionEnabled = NO;  //开启后就是只读模式
+        self.rootDrawView.userInteractionEnabled = NO;  //开启后就是只读模式
     }
     [self.view addSubview:self.rootDrawView];
     
@@ -149,6 +150,12 @@
     [self.lineWidthButton setBackgroundImage:[[UIImage imageNamed:@"lineWidth"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [self.lineWidthButton addTarget:self action:@selector(lineWidthButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [self.buttonRootView addSubview:self.lineWidthButton];
+    self.lineWidthSlider = [[UISlider alloc]initWithFrame:CGRectMake(30, MAIN_SCREEN_HEIGHT-120, MAIN_SCREEN_WIDTH-60, 30)];
+    self.lineWidthSlider.maximumValue = 50.0;
+    self.lineWidthSlider.minimumValue = 0.0;
+    self.lineWidthSlider.hidden = YES;
+    [self.lineWidthSlider addTarget:self action:@selector(lineWidthSliderChange) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:self.lineWidthSlider];
     //保证最后创建
     [self addGraphicalView];
     [self addColorView];
@@ -365,7 +372,8 @@
 -(void)addPageButtonClick{
     [self.rootDrawView.uploadMQTT sendAddPageMessage:self.roomId userId:self.userId];
     [self addPage];
-  
+    
+    [self.rootDrawView setLineWith:self.lineWidthSlider.value];
 }
 -(void)addPage{
     self.currentPage++;
@@ -398,10 +406,12 @@
     [self.mMQTT sendNextPageMessage:self.roomId userId:self.userId];
     [self selectPage:YES];
     
+    [self.rootDrawView setLineWith:self.lineWidthSlider.value];
 }
 -(void)upButtonClick{
     [self.mMQTT sendUpPageMessage:self.roomId userId:self.userId];
     [self selectPage:NO];
+    [self.rootDrawView setLineWith:self.lineWidthSlider.value];
 }
 -(void)selectPage: (BOOL)isNext{
     if (isNext) {
@@ -430,6 +440,7 @@
     [self.rootDrawView.uploadMQTT sendDeletePageMessage:self.roomId userId:self.userId pageNum:self.currentPage];
     [self deletePage];
     
+    [self.rootDrawView setLineWith:self.lineWidthSlider.value];
 }
 -(void)deletePage{
     if (self.pageCount>1) {
@@ -472,7 +483,16 @@
     }
 }
 -(void)lineWidthButtonClick{
-    [self.rootDrawView setLineWith:30];
+    if(self.lineWidthSlider.isHidden == YES){
+        self.lineWidthSlider.hidden = NO;
+    }
+    else{
+        self.lineWidthSlider.hidden =YES;
+    }
+}
+-(void)lineWidthSliderChange{
+    
+    [self.rootDrawView setLineWith:self.lineWidthSlider.value];
 }
 /*
 #pragma mark - Navigation

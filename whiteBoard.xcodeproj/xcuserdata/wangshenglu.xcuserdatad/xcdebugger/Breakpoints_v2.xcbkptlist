@@ -606,10 +606,10 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
-            landmarkName = "BoardViewController"
-            landmarkType = "3">
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "-viewDidDisappear:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -686,8 +686,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
             landmarkName = "-viewDidLoad"
             landmarkType = "7">
          </BreakpointContent>
@@ -894,8 +894,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "158"
-            endingLineNumber = "158"
+            startingLineNumber = "165"
+            endingLineNumber = "165"
             landmarkName = "-buClick"
             landmarkType = "7">
          </BreakpointContent>
@@ -1246,8 +1246,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "468"
-            endingLineNumber = "468"
+            startingLineNumber = "479"
+            endingLineNumber = "479"
             landmarkName = "-gestureRecognizer:shouldReceiveTouch:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1422,8 +1422,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "335"
-            endingLineNumber = "335"
+            startingLineNumber = "342"
+            endingLineNumber = "342"
             landmarkName = "-graphicalViewTapGesClick:"
             landmarkType = "7">
          </BreakpointContent>
