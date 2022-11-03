@@ -1,6 +1,7 @@
 package com.xxxx.whiteboard.mqttConn;
 
 import com.xxxx.whiteboard.util.JsonTool;
+import com.xxxx.whiteboard.validator.ValidatorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -42,6 +43,9 @@ public class MQTTCallback implements MqttCallback {
         log.info("收到来自 " + topic + " 的消息：{}", new String(message.getPayload()));
         // 将接收到的数据转换成 json 数据
         JSONObject jsonObject = new JSONObject(new String(message.getPayload()));
+        if (ValidatorUtil.isRoomId(topic)){
+            // 这个是正在画点的时候
+        }
         // 判断主题
         switch (topic){
             case "touchStart":
@@ -71,12 +75,5 @@ public class MQTTCallback implements MqttCallback {
             default:
                 break; // 12位数字的roomId: 手指正在滑动，实时同步所有端当前手指所在坐标
         }
-        // 在此处判断主题，将字节数组转换成json串
-        // https://blog.csdn.net/weixin_54821991/article/details/123347774
-        // 或者将String转换成JsonObject
-        // https://blog.csdn.net/PacosonSWJTU/article/details/122881817
-        //if (topic == "touchStart"){
-        //    JsonTool.touchStartDecoding();
-        //}
     }
 }

@@ -30,8 +30,4 @@ public interface RoomMapper extends BaseMapper<Room> {
     /*
      * 删除掉某个room某个page
      * */
-    int deletePageOfRoom(@Param("roomId") String roomId, @Param("pageNo") int pageNo);
-
-
-
-}
+    int deletePageOfRoom(@Param("roomId") String roomId, @Param("pageNo") int pageNo);}
