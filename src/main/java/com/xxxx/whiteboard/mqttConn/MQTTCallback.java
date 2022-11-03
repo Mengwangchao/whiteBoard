@@ -38,42 +38,49 @@ public class MQTTCallback implements MqttCallback {
      * subscribe订阅后得到的消息会执行到这里
      */
     @Override
-    public void messageArrived(String topic, MqttMessage message) throws Exception {
+    public void messageArrived(String topic, MqttMessage message) {
         // 此处可以将订阅得到的消息进行业务处理、数据存储
         log.info("收到来自 " + topic + " 的消息：{}", new String(message.getPayload()));
         // 将接收到的数据转换成 json 数据
-        JSONObject jsonObject = new JSONObject(new String(message.getPayload()));
-        if (ValidatorUtil.isRoomId(topic)){
-            // 这个是正在画点的时候
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(new String(message.getPayload())); // 成功说明可以转换成json
+
+            if (ValidatorUtil.isRoomId(topic)){
+                // 这个是正在画点的时候
+            }
+            // 判断主题
+            switch (topic){
+                case "touchStart":
+                    JsonTool.touchStart(jsonObject); // 我认为这个touchStart对后端来说就是
+                    break;
+                case "touchEnd": // 手指结束滑动，实时同步所有短当前手指即将离开屏幕，可以释放和保存资源
+                    break;
+                case "joinRoom":
+                    JsonTool.joinRoom(jsonObject);
+                    break;
+                case "createRoom":
+                    JsonTool.createRoom(jsonObject);
+                    break;
+                case "joinRoomReturn":
+                    break;
+                case "deleteRoom":
+                    JsonTool.deleteRoom(jsonObject);
+                    break;
+                case "addPage":
+                    break;
+                case "deletePage":
+                    break;
+                //case "nextPage":
+                //    break;
+                //case "upPage":
+                //    break;
+                default:
+                    break; // 12位数字的roomId: 手指正在滑动，实时同步所有端当前手指所在坐标
+            }
+        } catch (Exception e){
+            // 说明发过来的数据是字符串类型，不是jsonObject类型
         }
-        // 判断主题
-        switch (topic){
-            case "touchStart":
-                JsonTool.touchStart(jsonObject); // 我认为这个touchStart对后端来说就是
-                break;
-            case "touchEnd": // 手指结束滑动，实时同步所有短当前手指即将离开屏幕，可以释放和保存资源
-                break;
-            case "joinRoom":
-                JsonTool.joinRoom(jsonObject);
-                break;
-            case "createRoom":
-                JsonTool.createRoom(jsonObject);
-                break;
-            case "joinRoomReturn":
-                break;
-            case "deleteRoom":
-                JsonTool.deleteRoom(jsonObject);
-                break;
-            case "addPage":
-                break;
-            case "deletePage":
-                break;
-            //case "nextPage":
-            //    break;
-            //case "upPage":
-            //    break;
-            default:
-                break; // 12位数字的roomId: 手指正在滑动，实时同步所有端当前手指所在坐标
-        }
+
     }
 }

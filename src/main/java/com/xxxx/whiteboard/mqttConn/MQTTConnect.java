@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MQTTConnect {
 
-    private String HOST = "wss://od434124.cn-shenzhen.emqx.cloud:14011"; //mqtt服务器的地址和端口号
+    private final String HOST = "ws://39.105.149.69:8083"; //mqtt服务器的地址和端口号
     private final String clientId = "DC" + (int) (Math.random() * 100000000); // 随机生成用户id
     private MqttClient mqttClient; // MqttClient
 
@@ -66,7 +66,7 @@ public class MQTTConnect {
      * @param topic:发布的主题
      * @param msg：发布的消息
      */
-    public void pub(String topic, String msg) throws MqttException {
+    public void pubS(String topic, String msg) throws MqttException {
         MqttMessage mqttMessage = new MqttMessage();
         //mqttMessage.setQos(2);
         mqttMessage.setPayload(msg.getBytes());
@@ -133,6 +133,6 @@ public class MQTTConnect {
         mqttConnect.setMqttClient("emqx_user", "emqx_password", new MQTTCallback());
         mqttConnect.sub("com/iot/init");
         mqttConnect.sub("touchStart");
-        mqttConnect.pub("com/iot/init", "fan yang" + (int) (Math.random() * 100000000));
+        mqttConnect.pubS("com/iot/init", "fan yang" + (int) (Math.random() * 100000000));
     }
 }
