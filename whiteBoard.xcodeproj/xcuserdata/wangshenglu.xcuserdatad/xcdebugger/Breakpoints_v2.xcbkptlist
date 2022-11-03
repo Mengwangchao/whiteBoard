@@ -238,8 +238,8 @@
             filePath = "whiteBoard/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
+            startingLineNumber = "95"
+            endingLineNumber = "95"
             landmarkName = "-getUserId"
             landmarkType = "7">
          </BreakpointContent>
@@ -270,8 +270,8 @@
             filePath = "whiteBoard/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "94"
-            endingLineNumber = "94"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
             landmarkName = "-getUserId"
             landmarkType = "7">
          </BreakpointContent>
@@ -830,8 +830,8 @@
             filePath = "whiteBoard/view/ImageViewOfDrawView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "106"
-            endingLineNumber = "106"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
             landmarkName = "-gestureRecognizer:shouldReceiveTouch:"
             landmarkType = "7">
          </BreakpointContent>
@@ -846,8 +846,8 @@
             filePath = "whiteBoard/view/ImageViewOfDrawView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "108"
-            endingLineNumber = "108"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
             landmarkName = "-gestureRecognizer:shouldReceiveTouch:"
             landmarkType = "7">
          </BreakpointContent>
@@ -926,8 +926,8 @@
             filePath = "whiteBoard/view/ImageViewOfDrawView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
             landmarkName = "-pinchGestureHanlder:"
             landmarkType = "7">
          </BreakpointContent>
@@ -942,8 +942,8 @@
             filePath = "whiteBoard/view/ImageViewOfDrawView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "100"
-            endingLineNumber = "100"
+            startingLineNumber = "99"
+            endingLineNumber = "99"
             landmarkName = "-pinchGestureHanlder:"
             landmarkType = "7">
          </BreakpointContent>
@@ -958,9 +958,9 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "579"
-            endingLineNumber = "579"
-            landmarkName = "-sendTranslationImage:userId:imageId:point:"
+            startingLineNumber = "584"
+            endingLineNumber = "584"
+            landmarkName = "-sendTranslationImage:userId:imageId:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -974,9 +974,9 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "581"
-            endingLineNumber = "581"
-            landmarkName = "-sendTranslationImage:userId:imageId:point:"
+            startingLineNumber = "586"
+            endingLineNumber = "586"
+            landmarkName = "-sendTranslationImage:userId:imageId:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -990,9 +990,9 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "566"
-            endingLineNumber = "566"
-            landmarkName = "-sendTranslationImage:userId:imageId:point:"
+            startingLineNumber = "570"
+            endingLineNumber = "570"
+            landmarkName = "-sendTranslationImage:userId:imageId:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1006,9 +1006,9 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "568"
-            endingLineNumber = "568"
-            landmarkName = "-sendTranslationImage:userId:imageId:point:"
+            startingLineNumber = "572"
+            endingLineNumber = "572"
+            landmarkName = "-sendTranslationImage:userId:imageId:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1022,9 +1022,9 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "564"
-            endingLineNumber = "564"
-            landmarkName = "-sendTranslationImage:userId:imageId:point:"
+            startingLineNumber = "568"
+            endingLineNumber = "568"
+            landmarkName = "-sendTranslationImage:userId:imageId:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1038,8 +1038,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
             landmarkName = "-addImageView:imageId:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1054,8 +1054,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
             landmarkName = "-initWithFrame:userId:roomId:MQTT:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1070,9 +1070,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "156"
-            endingLineNumber = "156"
-            landmarkName = "-getTranslationImage:userId:imageId:point:currentPage:"
+            startingLineNumber = "183"
+            endingLineNumber = "183"
+            landmarkName = "-getTranslationImage:userId:imageId:point:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1134,9 +1134,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "154"
-            endingLineNumber = "154"
-            landmarkName = "-getTranslationImage:userId:imageId:point:currentPage:"
+            startingLineNumber = "178"
+            endingLineNumber = "178"
+            landmarkName = "-getTranslationImage:userId:imageId:point:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1150,9 +1150,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
-            landmarkName = "-getTranslationImage:userId:imageId:point:currentPage:"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
+            landmarkName = "-getTranslationImage:userId:imageId:point:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1166,9 +1166,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "181"
-            endingLineNumber = "181"
-            landmarkName = "-getRotateImage:userId:imageId:rotate:currentPage:"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
+            landmarkName = "-getRotateImage:userId:imageId:rotate:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1182,9 +1182,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
-            landmarkName = "-gestureHandler:imageId:"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
+            landmarkName = "-gestureHandler:imageId:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1198,8 +1198,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
             landmarkName = "-touchesBegan:withEvent:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1230,8 +1230,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "479"
-            endingLineNumber = "479"
+            startingLineNumber = "503"
+            endingLineNumber = "503"
             landmarkName = "-gestureRecognizer:shouldReceiveTouch:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1278,8 +1278,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
             landmarkName = "-addGraphical:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1344,7 +1344,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "391"
             endingLineNumber = "391"
-            landmarkName = "-drawTriangleModel:"
+            landmarkName = "-drawCurrentArrayGraphicalNow:graphical:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1406,8 +1406,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "342"
-            endingLineNumber = "342"
+            startingLineNumber = "353"
+            endingLineNumber = "353"
             landmarkName = "-graphicalViewTapGesClick:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1424,7 +1424,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "430"
             endingLineNumber = "430"
-            landmarkName = "-drawRoundedRectangle:"
+            landmarkName = "-drawRectangle:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1473,6 +1473,22 @@
             startingLineNumber = "552"
             endingLineNumber = "552"
             landmarkName = "-drawGraphical:color:width:point:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "227C690A-926D-4333-9C6A-1204347DD934"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "whiteBoard/view/DrawViewAndImageView.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "211"
+            endingLineNumber = "211"
+            landmarkName = "-getRotateImage:userId:imageId:rotate:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

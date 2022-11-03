@@ -73,6 +73,8 @@
         }else{
             joinViewController.roomId = textField.text;
             joinViewController.userId = [self getUserId];
+            joinViewController.isCreater = NO;
+            joinViewController.authority = NO;
             [self.navigationController pushViewController:joinViewController animated:YES];
         }
     }];

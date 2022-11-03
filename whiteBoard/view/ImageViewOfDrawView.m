@@ -10,7 +10,6 @@
 @interface ImageViewOfDrawView()<UIGestureRecognizerDelegate>
 
 @property (nonatomic,strong) NSMutableArray *imageRootViewArray;
-@property (nonatomic , strong)UIButton *okButton;
 @property (nonatomic , strong)UIButton *cancelButton;
 @property (nonatomic)float startWidth;
 @property (nonatomic)float startHeight;
@@ -37,7 +36,7 @@
         self.userInteractionEnabled = YES;
         self.okButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
         self.okButton.layer.cornerRadius = 15;
-        [self.okButton addTarget:self action:@selector(okButtonClick) forControlEvents:UIControlEventTouchUpInside];
+        [self.okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         self.okButton.backgroundColor = [UIColor greenColor];
         [self addSubview:self.okButton];
     }
@@ -70,17 +69,17 @@
     
     
 }
--(void)okButtonClick{
-    if(self.imageViewOfDrawViewDelegate !=nil && [self.imageViewOfDrawViewDelegate respondsToSelector:@selector(okButtonClick:)]){
-        [self.uploadMQTT sendLockImage:self.roomId userId:self.userId imageId:self.imageId];
-        [self.imageViewOfDrawViewDelegate okButtonClick:self];
+-(void)okButtonClick:(UIButton *)sender{
+    if(self.imageViewOfDrawViewDelegate !=nil && [self.imageViewOfDrawViewDelegate respondsToSelector:@selector(okButtonClick:sender:imageNum:)]){
+        [self.uploadMQTT sendLockImage:self.roomId userId:self.userId imageId:self.imageId imageNum:self.imageNum];
+        [self.imageViewOfDrawViewDelegate okButtonClick:self sender:sender imageNum:self.imageNum];
     }
 }
 #pragma mark -- 手势事件
 - (void) gestureHandler:(UIPanGestureRecognizer *)sender
 {
-    if(self.imageViewOfDrawViewDelegate!=nil && [self.imageViewOfDrawViewDelegate respondsToSelector:@selector(gestureHandler:imageId:)]){
-        [self.imageViewOfDrawViewDelegate gestureHandler:sender imageId:self.imageId];
+    if(self.imageViewOfDrawViewDelegate!=nil && [self.imageViewOfDrawViewDelegate respondsToSelector:@selector(gestureHandler:imageId:imageNum:)]){
+        [self.imageViewOfDrawViewDelegate gestureHandler:sender imageId:self.imageId imageNum:self.imageNum];
     }
 }
 
@@ -89,7 +88,7 @@
     
     sender.view.transform = CGAffineTransformRotate(sender.view.transform, sender.rotation);
     self.rotate = self.rotate + sender.rotation;
-    [self.uploadMQTT sendRotateImage:self.roomId userId:self.userId imageId:self.imageId rotate:self.rotate*180/M_PI];
+    [self.uploadMQTT sendRotateImage:self.roomId userId:self.userId imageId:self.imageId rotate:self.rotate*180/M_PI imageNum:self.imageNum];
     
     sender.rotation = 0;
 }
@@ -97,7 +96,7 @@
 {
     sender.view.transform = CGAffineTransformScale(sender.view.transform, sender.scale, sender.scale);
     self.okButton.transform = CGAffineTransformScale(self.okButton.transform, 1/sender.scale, 1/sender.scale);
-    [self.uploadMQTT sendZoomImage:self.roomId userId:self.userId imageId:self.imageId size:sender.view.frame.size];
+    [self.uploadMQTT sendZoomImage:self.roomId userId:self.userId imageId:self.imageId size:sender.view.frame.size imageNum:self.imageNum];
     sender.scale = 1;
 }
 #pragma  mark - touch

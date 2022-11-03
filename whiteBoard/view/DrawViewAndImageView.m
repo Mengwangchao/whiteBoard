@@ -10,11 +10,15 @@
 @interface DrawViewAndImageView()<ImageViewOfDrawViewDelegate,ImageMQTTDelegate>
 @property (nonatomic , strong)DrawView *rootDrawView;
 @property (nonatomic , strong)ImageViewOfDrawView *imageView;
+@property (nonatomic , strong)ImageViewOfDrawView *downImageView;
 @property (nonatomic , strong)NSMutableArray<ImageViewOfDrawView*> * imageViewArray;
 @property (nonatomic, strong) NSString *userId;
 @property (nonatomic, strong) NSString *roomId;
 @property (nonatomic) BOOL imageScrolling;
 @property (nonatomic) CGPoint imageStartPoint;
+@property (nonatomic) CGPoint downImageStartPoint;
+@property (nonatomic) int  imageNum;
+@property (nonatomic) int  downImageNum;
 @end
 @implementation DrawViewAndImageView
 - (instancetype)initWithFrame:(CGRect)frame userId:(NSString *)userId roomId:(NSString *)roomId MQTT:(UpdateToMQTT *)mqtt{
@@ -27,7 +31,9 @@
         mqtt.imageMQTTdelegate = self;
         self.roomId = roomId;
         self.currentPage = 1;
+        self.imageNum =0;
         self.imageScrolling = NO;
+        self.imageViewArray = [NSMutableArray array];
         self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height) userId:userId roomId:roomId MQTT:mqtt];
         [self addSubview:self.rootDrawView];
     }
@@ -37,20 +43,38 @@
 
 #pragma mark - 对外接口
 -(void)addImageView:(UIImage *)image imageId:(int)imageId{
-    self.imageView = [[ImageViewOfDrawView alloc]initWithFrame:CGRectMake(0, 0, 0 , 0) image:image imageId:imageId userId:self.userId roomId:self.roomId MQTT:self.uploadMQTT];
-    self.imageView.tag = imageId;
-    [self addSubview:self.imageView];
-    self.imageView.imageViewOfDrawViewDelegate = self;
-    [self.imageViewArray addObject:self.imageView];
+    
+    ImageViewOfDrawView *imageView = [[ImageViewOfDrawView alloc]initWithFrame:CGRectMake(0, 0, 0 , 0) image:image imageId:imageId userId:self.userId roomId:self.roomId MQTT:self.uploadMQTT];
+    imageView.tag = imageId;
+    [self addSubview:imageView];
+    imageView.imageViewOfDrawViewDelegate = self;
+    [self.imageViewArray addObject:imageView];
+    self.imageNum = (int)self.imageViewArray.count;
+    imageView.imageNum = self.imageNum;
     self.imageScrolling = YES;
+    self.imageView = imageView;
     self.rootDrawView.imageScrolling = YES;
+    
+}
+-(void)addDownImageView:(UIImage *)image imageId:(int)imageId{
+    
+    ImageViewOfDrawView *imageView = [[ImageViewOfDrawView alloc]initWithFrame:CGRectMake(0, 0, 0 , 0) image:image imageId:imageId userId:self.userId roomId:self.roomId MQTT:self.uploadMQTT];
+    imageView.tag = imageId;
+    [self addSubview:imageView];
+    imageView.imageViewOfDrawViewDelegate = self;
+    [self.imageViewArray addObject:imageView];
+    self.downImageNum = (int)self.imageViewArray.count;
+    imageView.imageNum = self.downImageNum;
+    self.downImageView = imageView;
     
 }
 -(void)addGraphical:(GraphicalState)graphical{
     [self.rootDrawView addGraphical:graphical];
 }
--(void)okButtonClick:(ImageViewOfDrawView *)view{
-    NSLog(@"click");
+-(void)okButtonClick:(ImageViewOfDrawView *)view sender:(UIButton *)sender imageNum:(int)imageNum{
+    sender.hidden = YES;
+    view.userInteractionEnabled = NO;
+    [self sendSubviewToBack:view];
 }
 -(void)setDrawHidden:(BOOL)hidden{
     self.hidden = hidden;
@@ -89,7 +113,7 @@
     if(self.imageScrolling){
         CGPoint startPoint = [touch locationInView:self];
         self.imageStartPoint = startPoint;
-        [self.uploadMQTT sendAddImageStart:self.roomId userId:self.userId imageId:(int)self.imageView.tag point:startPoint];
+        [self.uploadMQTT sendAddImageStart:self.roomId userId:self.userId imageId:(int)self.imageView.tag point:startPoint imageNum:self.imageNum];
         self.imageView.frame = CGRectMake(startPoint.x, startPoint.y, 0, 0);
     }
 }
@@ -97,55 +121,55 @@
     UITouch *touch = [touches anyObject];
     if(self.imageScrolling){
         CGPoint point = [touch locationInView:self];
-        [self.uploadMQTT sendAddImageScrolling:self.roomId userId:self.userId imageId:(int)self.imageView.tag point:point];
-       self.imageView.frame = [self getImageFrame:point];
+        [self.uploadMQTT sendAddImageScrolling:self.roomId userId:self.userId imageId:(int)self.imageView.tag point:point imageNum:self.imageNum];
+       self.imageView.frame = [self getImageFrame:point strartPoint:self.imageStartPoint view:self.imageView];
     }
 }
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     UITouch *touch = [touches anyObject];
     if(self.imageScrolling){
         CGPoint point = [touch locationInView:self];
-        [self.uploadMQTT sendAddImageEnd:self.roomId userId:self.userId imageId:(int)self.imageView.tag point:point];
-       self.imageView.frame = [self getImageFrame:point];
+        [self.uploadMQTT sendAddImageEnd:self.roomId userId:self.userId imageId:(int)self.imageView.tag point:point imageNum:self.imageNum];
+       self.imageView.frame = [self getImageFrame:point strartPoint:self.imageStartPoint view:self.imageView];
         self.imageScrolling = NO;
         self.rootDrawView.imageScrolling = NO;
     }
 }
 
--(CGRect)getImageFrame:(CGPoint)startPoint{
+-(CGRect)getImageFrame:(CGPoint)endPoint strartPoint:(CGPoint)startPoint view:(ImageViewOfDrawView *)view{
         CGPoint originPoint;
         CGSize size ;
-        if(startPoint.x-self.imageStartPoint.x>=0&&startPoint.y-self.imageStartPoint.y>=0){
+        if(endPoint.x-startPoint.x>=0&&endPoint.y-startPoint.y>=0){
 
-            self.imageView.layer.transform = CATransform3DMakeRotation(0, 0, 0, 0);
-            size = CGSizeMake(startPoint.x-self.imageStartPoint.x, startPoint.y-self.imageStartPoint.y);
-            originPoint = self.imageStartPoint;
+            view.layer.transform = CATransform3DMakeRotation(0, 0, 0, 0);
+            size = CGSizeMake(endPoint.x-startPoint.x, endPoint.y-startPoint.y);
+            originPoint = startPoint;
 
-        }else if (startPoint.x-self.imageStartPoint.x>=0&&startPoint.y-self.imageStartPoint.y<0){
+        }else if (endPoint.x-startPoint.x>=0&&endPoint.y-startPoint.y<0){
 
-            self.imageView.layer.transform = CATransform3DMakeRotation(M_PI, 1, 0, 0);
-            originPoint = CGPointMake(self.imageStartPoint.x,startPoint.y);
-            size = CGSizeMake(startPoint.x-self.imageStartPoint.x, self.imageStartPoint.y-startPoint.y);
+            view.layer.transform = CATransform3DMakeRotation(M_PI, 1, 0, 0);
+            originPoint = CGPointMake(startPoint.x,endPoint.y);
+            size = CGSizeMake(endPoint.x-startPoint.x, startPoint.y-endPoint.y);
 
-        }else if (startPoint.x-self.imageStartPoint.x<0&&startPoint.y-self.imageStartPoint.y>=0){
+        }else if (endPoint.x-startPoint.x<0&&endPoint.y-startPoint.y>=0){
 
             
-            self.imageView.layer.transform = CATransform3DMakeRotation(M_PI, 0, 1, 0);
-            originPoint = CGPointMake(startPoint.x,self.imageStartPoint.y);
-            size = CGSizeMake(self.imageStartPoint.x-startPoint.x, startPoint.y-self.imageStartPoint.y);
+            view.layer.transform = CATransform3DMakeRotation(M_PI, 0, 1, 0);
+            originPoint = CGPointMake(endPoint.x,startPoint.y);
+            size = CGSizeMake(startPoint.x-endPoint.x, endPoint.y-startPoint.y);
 
-        }else if (startPoint.x-self.imageStartPoint.x<0&&startPoint.y-self.imageStartPoint.y<0){
+        }else if (endPoint.x-startPoint.x<0&&endPoint.y-startPoint.y<0){
 
-            self.imageView.layer.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
-            originPoint = CGPointMake(startPoint.x,startPoint.y);
-            size = CGSizeMake(self.imageStartPoint.x-startPoint.x, self.imageStartPoint.y-startPoint.y);
+            view.layer.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
+            originPoint = CGPointMake(endPoint.x,endPoint.y);
+            size = CGSizeMake(startPoint.x-endPoint.x, startPoint.y-endPoint.y);
 
         }
         return CGRectMake(originPoint.x, originPoint.y, size.width, size.height);
 }
 
 #pragma mark - delegate
--(void)getTranslationImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point currentPage:(int)currentPage{
+-(void)getTranslationImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point currentPage:(int)currentPage imageNum:(int)imageNum{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -153,10 +177,13 @@
     if (self.currentPage != currentPage) {
         return;
     }
-    self.imageView.center = point;
+    if (![self.downImageView isEqual:self.imageViewArray[imageNum-1]]) {
+        self.downImageView = self.imageViewArray[imageNum-1];
+    }
+    self.downImageView.center = point;
 }
 
--(void)getZoomImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId size:(CGSize)size currentPage:(int)currentPage{
+-(void)getZoomImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId size:(CGSize)size currentPage:(int)currentPage imageNum:(int)imageNum{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -164,12 +191,15 @@
     if (self.currentPage != currentPage) {
         return;
     }
-    CGPoint center = self.imageView.center;
-    self.imageView.frame = CGRectMake(self.imageView.frame.origin.x, self.imageView.frame.origin.y, size.width, size.height);
-    self.imageView.center = center;
+    if (![self.downImageView isEqual:self.imageViewArray[imageNum-1]]) {
+        self.downImageView = self.imageViewArray[imageNum-1];
+    }
+    CGPoint center = self.downImageView.center;
+    self.downImageView.frame = CGRectMake(self.downImageView.frame.origin.x, self.downImageView.frame.origin.y, size.width, size.height);
+    self.downImageView.center = center;
 }
 
--(void)getRotateImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId rotate:(float)rotate currentPage:(int)currentPage{
+-(void)getRotateImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId rotate:(float)rotate currentPage:(int)currentPage imageNum:(int)imageNum{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -177,21 +207,23 @@
     if (self.currentPage != currentPage) {
         return;
     }
-    
+    if (self.downImageView.imageNum != imageNum) {
+        self.downImageView = self.imageViewArray[imageNum-1];
+    }
     CGAffineTransform transform = CGAffineTransformIdentity;
-    self.imageView.transform = CGAffineTransformRotate(transform, rotate/180.0*M_PI);
+    self.downImageView.transform = CGAffineTransformRotate(transform, rotate/180.0*M_PI);
     
 }
--(void)gestureHandler:(UIPanGestureRecognizer *)sender imageId:(int)imageId{
+-(void)gestureHandler:(UIPanGestureRecognizer *)sender imageId:(int)imageId imageNum:(int)imageNum{
     
     CGPoint translation = [sender translationInView:self];
     
     sender.view.center = CGPointMake(sender.view.center.x+translation.x, sender.view.center.y+translation.y);
     
-    [self.uploadMQTT sendTranslationImage:self.roomId userId:self.userId imageId:imageId point:sender.view.center];
+    [self.uploadMQTT sendTranslationImage:self.roomId userId:self.userId imageId:imageId point:sender.view.center imageNum:imageNum];
     [sender setTranslation:CGPointZero inView:self];
 }
-- (void)getAddImageEnd:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage point:(CGPoint)point{
+- (void)getAddImageEnd:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage point:(CGPoint)point imageNum:(int)imageNum{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -199,9 +231,9 @@
     if (self.currentPage != currentPage) {
         return;
     }
-   self.imageView.frame = [self getImageFrame:point];
+   self.downImageView.frame = [self getImageFrame:point strartPoint:self.downImageStartPoint view:self.downImageView];
 }
--(void)getAddImageStart:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage point:(CGPoint)point{
+-(void)getAddImageStart:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage point:(CGPoint)point imageNum:(int)imageNum{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -209,11 +241,12 @@
     if (self.currentPage != currentPage) {
         return;
     }
-    [self addImageView:[UIImage imageNamed:@"LOGO"] imageId:imageId];
-    self.imageStartPoint = point;
-    self.imageView.frame = CGRectMake(point.x, point.y, 0, 0);
+    [self addDownImageView:[UIImage imageNamed:@"LOGO"] imageId:imageId];
+    self.downImageStartPoint = point;
+    self.downImageView.imageNum = imageNum;
+    self.downImageView.frame = CGRectMake(point.x, point.y, 0, 0);
 }
--(void)getAddImageScrolling:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage point:(CGPoint)point{
+-(void)getAddImageScrolling:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage point:(CGPoint)point imageNum:(int)imageNum{
     if ([userId isEqual:self.userId]){
         return;
     }
@@ -221,7 +254,13 @@
     if (self.currentPage != currentPage) {
         return;
     }
-   self.imageView.frame = [self getImageFrame:point];
+   self.downImageView.frame = [self getImageFrame:point strartPoint:self.downImageStartPoint view:self.downImageView];
+}
+-(void)getLockImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage imageNum:(int)imageNum{
+    self.downImageView = self.imageViewArray[imageNum-1];
+    self.downImageView.userInteractionEnabled = NO;
+    self.downImageView.okButton.hidden = YES;
+    [self sendSubviewToBack:self.downImageView];
 }
 /*
  // Only override drawRect: if you perform custom drawing.

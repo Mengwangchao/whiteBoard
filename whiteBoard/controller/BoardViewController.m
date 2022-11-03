@@ -58,7 +58,7 @@
     [self.mMQTT connectMQTT];
     self.rootDrawView = [[DrawViewAndImageView alloc]initWithFrame:CGRectMake(0, 0, 1000, 1000) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
     [self.rootDrawViewArray addObject:self.rootDrawView];
-    if(!self.isCreater){
+    if(!self.isCreater&&self.authority == NO){
         
         self.rootDrawView.userInteractionEnabled = NO;  //开启后就是只读模式
     }
@@ -300,6 +300,9 @@
 }
 #pragma mark - 按钮点击事件
 -(void)graphicalButtonClick{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
     self.rootDrawView.isEraser = NO;
     self.eraserButton.tintColor = [UIColor blackColor];
     [UIView animateWithDuration:0.3 animations:^{
@@ -307,10 +310,15 @@
     }];
 }
 -(void)addImageButtonClick{
-    
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
     [self.rootDrawView addImageView:[UIImage imageNamed:@"LOGO"] imageId:1];
 }
 -(void)pancilButtonClick:(UIButton *)sender{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
 //    self.pancilButton.tintColor = [UIColor greenColor];
     self.rootDrawView.isEraser = NO;
     self.eraserButton.tintColor = [UIColor blackColor];
@@ -320,6 +328,9 @@
     
 }
 -(void)eraserButtonClick{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
     if (self.rootDrawView.isEraser == NO) {
         self.eraserButton.tintColor = [UIColor greenColor];
         self.rootDrawView.isEraser = YES;
@@ -370,12 +381,16 @@
     [sender setTranslation:CGPointZero inView:self.view];
 }
 -(void)addPageButtonClick{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
     [self.rootDrawView.uploadMQTT sendAddPageMessage:self.roomId userId:self.userId];
     [self addPage];
     
     [self.rootDrawView setLineWith:self.lineWidthSlider.value];
 }
 -(void)addPage{
+    
     self.currentPage++;
     self.pageCount++;
     self.mMQTT.pageCount = self.pageCount;
@@ -403,12 +418,18 @@
     [self setPageButtonText:self.currentPage pageCount:self.pageCount];
 }
 -(void)nextButtonClick{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
     [self.mMQTT sendNextPageMessage:self.roomId userId:self.userId];
     [self selectPage:YES];
     
     [self.rootDrawView setLineWith:self.lineWidthSlider.value];
 }
 -(void)upButtonClick{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
     [self.mMQTT sendUpPageMessage:self.roomId userId:self.userId];
     [self selectPage:NO];
     [self.rootDrawView setLineWith:self.lineWidthSlider.value];
@@ -437,6 +458,9 @@
     [self.rootDrawView setDrawHidden: NO];
 }
 -(void)deletePageButtonClick{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
     [self.rootDrawView.uploadMQTT sendDeletePageMessage:self.roomId userId:self.userId pageNum:self.currentPage];
     [self deletePage];
     
@@ -483,6 +507,9 @@
     }
 }
 -(void)lineWidthButtonClick{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
     if(self.lineWidthSlider.isHidden == YES){
         self.lineWidthSlider.hidden = NO;
     }

@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BoardViewController : UIViewController
 
 @property (nonatomic)BOOL isCreater;
+@property (nonatomic)BOOL authority;
 //房间名
 @property (nonatomic,strong)NSString * roomId;
 //用户名

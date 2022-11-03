@@ -177,41 +177,41 @@
                 [weakSelf.pageMQTTdelegate upPage:dic[@"roomId"] userId:dic[@"userId"]];
             }
         }else if ([topic isEqual:@"addImageStart"]){
-            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImageStart:userId:imageId:currentPage:point:)]){
-                [weakSelf.imageMQTTdelegate getAddImageStart:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue] point:point];
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImageStart:userId:imageId:currentPage:point:imageNum:)]){
+                [weakSelf.imageMQTTdelegate getAddImageStart:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue] point:point imageNum:[dic[@"imageNum"] intValue]];
             }
         }
         else if ([topic isEqual:@"addImageScrolling"]){
-            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImageScrolling:userId:imageId:currentPage:point:)]){
-                [weakSelf.imageMQTTdelegate getAddImageScrolling:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue] point:point];
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImageScrolling:userId:imageId:currentPage:point:imageNum:)]){
+                [weakSelf.imageMQTTdelegate getAddImageScrolling:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue] point:point imageNum:[dic[@"imageNum"] intValue]];
             }
         }
         else if ([topic isEqual:@"addImageEnd"]){
-            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImageEnd:userId:imageId:currentPage:point:)]){
-                [weakSelf.imageMQTTdelegate getAddImageEnd:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue] point:point];
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getAddImageEnd:userId:imageId:currentPage:point:imageNum:)]){
+                [weakSelf.imageMQTTdelegate getAddImageEnd:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue] point:point imageNum:[dic[@"imageNum"] intValue]];
             }
         }
         else if ([topic isEqual:@"lockImage"]){
-            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getLockImage:userId:imageId:currentPage:)]){
-                [weakSelf.imageMQTTdelegate getLockImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue]];
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getLockImage:userId:imageId:currentPage:imageNum:)]){
+                [weakSelf.imageMQTTdelegate getLockImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] currentPage:[dic[@"currentPage"] intValue] imageNum:[dic[@"imageNum"] intValue]];
             }
         }
         else if ([topic isEqual:@"translationImage"]){
-            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getTranslationImage:userId:imageId:point:currentPage:)]){
-                [weakSelf.imageMQTTdelegate getTranslationImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] point:point currentPage:[dic[@"currentPage"] intValue]];
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getTranslationImage:userId:imageId:point:currentPage:imageNum:)]){
+                [weakSelf.imageMQTTdelegate getTranslationImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] point:point currentPage:[dic[@"currentPage"] intValue] imageNum:[dic[@"imageNum"] intValue]];
             }
         }
         else if ([topic isEqual:@"rotateImage"]){
-            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getRotateImage:userId:imageId:rotate:currentPage:)]){
-                [weakSelf.imageMQTTdelegate getRotateImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] rotate:[dic[@"rotate"] floatValue] currentPage:[dic[@"currentPage"] intValue]];
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getRotateImage:userId:imageId:rotate:currentPage:imageNum:)]){
+                [weakSelf.imageMQTTdelegate getRotateImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] rotate:[dic[@"rotate"] floatValue] currentPage:[dic[@"currentPage"] intValue] imageNum:[dic[@"imageNum"] intValue]];
             }
         }
         else if ([topic isEqual:@"zoomImage"]){
             
-            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getZoomImage:userId:imageId:size:currentPage:)]){
+            if (weakSelf.imageMQTTdelegate!=nil && [weakSelf.imageMQTTdelegate respondsToSelector:@selector(getZoomImage:userId:imageId:size:currentPage:imageNum:)]){
                 NSDictionary *dicSize = dic[@"scale"];
                 CGSize size = CGSizeMake([dicSize[@"width"] floatValue], [dicSize[@"height"] floatValue]);
-                [weakSelf.imageMQTTdelegate getZoomImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] size:size currentPage:[dic[@"currentPage"] intValue]];
+                [weakSelf.imageMQTTdelegate getZoomImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] size:size currentPage:[dic[@"currentPage"] intValue] imageNum:[dic[@"imageNum"] intValue]];
             }
         }
         else{
@@ -462,7 +462,7 @@
     });
 }
 
--(void)sendAddImageStart:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point{
+-(void)sendAddImageStart:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point imageNum:(int)imageNum{
     __weak typeof(self) weakSelf = self;
     
     dispatch_queue_t que = dispatch_queue_create("addImageStart", DISPATCH_QUEUE_SERIAL);
@@ -477,6 +477,7 @@
         [dicPoint setValue:[NSString stringWithFormat:@"%f",point.x] forKey:@"x"];
         [dicPoint setValue:[NSString stringWithFormat:@"%f",point.y] forKey:@"y"];
         [dic setValue:dicPoint forKey:@"point"];
+        [dic setValue:[NSString stringWithFormat:@"%d",imageNum] forKey:@"imageNum"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"addImageStart" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
@@ -487,7 +488,7 @@
         }];
     });
 }
--(void)sendAddImageScrolling:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point{
+-(void)sendAddImageScrolling:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point imageNum:(int)imageNum{
     __weak typeof(self) weakSelf = self;
     
     dispatch_queue_t que = dispatch_queue_create("addImageScrolling", DISPATCH_QUEUE_SERIAL);
@@ -502,6 +503,7 @@
         [dicPoint setValue:[NSString stringWithFormat:@"%f",point.x] forKey:@"x"];
         [dicPoint setValue:[NSString stringWithFormat:@"%f",point.y] forKey:@"y"];
         [dic setValue:dicPoint forKey:@"point"];
+        [dic setValue:[NSString stringWithFormat:@"%d",imageNum] forKey:@"imageNum"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"addImageScrolling" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
@@ -512,7 +514,7 @@
         }];
     });
 }
--(void)sendAddImageEnd:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point{
+-(void)sendAddImageEnd:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point imageNum:(int)imageNum{
     __weak typeof(self) weakSelf = self;
     
     dispatch_queue_t que = dispatch_queue_create("addImageEnd", DISPATCH_QUEUE_SERIAL);
@@ -527,6 +529,7 @@
         [dicPoint setValue:[NSString stringWithFormat:@"%f",point.x] forKey:@"x"];
         [dicPoint setValue:[NSString stringWithFormat:@"%f",point.y] forKey:@"y"];
         [dic setValue:dicPoint forKey:@"point"];
+        [dic setValue:[NSString stringWithFormat:@"%d",imageNum] forKey:@"imageNum"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"addImageEnd" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
@@ -537,7 +540,7 @@
         }];
     });
 }
--(void)sendLockImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId{
+-(void)sendLockImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId imageNum:(int)imageNum{
     __weak typeof(self) weakSelf = self;
     
     dispatch_queue_t que = dispatch_queue_create("lockImage", DISPATCH_QUEUE_SERIAL);
@@ -548,6 +551,7 @@
         [dic setValue:roomId forKey:@"roomId"];
         [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
         [dic setValue:[NSString stringWithFormat:@"%d",imageId] forKey:@"imageId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",imageNum] forKey:@"imageNum"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"lockImage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
@@ -558,7 +562,7 @@
         }];
     });
 }
--(void)sendTranslationImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point{
+-(void)sendTranslationImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point imageNum:(int)imageNum{
     __weak typeof(self) weakSelf = self;
     
     dispatch_queue_t que = dispatch_queue_create("translationImage", DISPATCH_QUEUE_SERIAL);
@@ -573,6 +577,7 @@
         [dicPoint setValue:[NSString stringWithFormat:@"%f",point.x] forKey:@"x"];
         [dicPoint setValue:[NSString stringWithFormat:@"%f",point.y] forKey:@"y"];
         [dic setValue:dicPoint forKey:@"point"];
+        [dic setValue:[NSString stringWithFormat:@"%d",imageNum] forKey:@"imageNum"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"translationImage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
@@ -583,7 +588,7 @@
         }];
     });
 }
--(void)sendRotateImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId rotate:(float)rotate{
+-(void)sendRotateImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId rotate:(float)rotate imageNum:(int)imageNum{
     __weak typeof(self) weakSelf = self;
     
     dispatch_queue_t que = dispatch_queue_create("rotateImage", DISPATCH_QUEUE_SERIAL);
@@ -595,6 +600,7 @@
         [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
         [dic setValue:[NSString stringWithFormat:@"%d",imageId] forKey:@"imageId"];
         [dic setValue:[NSString stringWithFormat:@"%f",rotate] forKey:@"rotate"];
+        [dic setValue:[NSString stringWithFormat:@"%d",imageNum] forKey:@"imageNum"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"rotateImage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
@@ -605,7 +611,7 @@
         }];
     });
 }
--(void)sendZoomImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId size:(CGSize)size{
+-(void)sendZoomImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId size:(CGSize)size imageNum:(int)imageNum{
     __weak typeof(self) weakSelf = self;
     
     dispatch_queue_t que = dispatch_queue_create("zoomImage", DISPATCH_QUEUE_SERIAL);
@@ -621,6 +627,7 @@
         [dicPoint setValue:[NSString stringWithFormat:@"%f",size.width] forKey:@"width"];
         [dicPoint setValue:[NSString stringWithFormat:@"%f",size.height] forKey:@"height"];
         [dic setValue:dicPoint forKey:@"scale"];
+        [dic setValue:[NSString stringWithFormat:@"%d",imageNum] forKey:@"imageNum"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"zoomImage" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
