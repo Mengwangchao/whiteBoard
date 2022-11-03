@@ -1,6 +1,6 @@
 package com.xxxx.whiteboard;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.xxxx.whiteboard.file.MyFileUtil;
 import com.xxxx.whiteboard.mapper.PointMapper;
 import com.xxxx.whiteboard.mapper.RoomMapper;
 import com.xxxx.whiteboard.pojo.Color;
@@ -10,7 +10,6 @@ import com.xxxx.whiteboard.pojo.User;
 import com.xxxx.whiteboard.mapper.UserMapper;
 import com.xxxx.whiteboard.mqttConn.MQTTCallback;
 import com.xxxx.whiteboard.mqttConn.MQTTConnect;
-import com.xxxx.whiteboard.util.RunSqlScript;
 import com.xxxx.whiteboard.validator.ValidatorUtil;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONException;
@@ -18,9 +17,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.w3c.dom.stylesheets.LinkStyle;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @SpringBootTest
@@ -54,7 +51,7 @@ class MyTests {
         mqttConnect.setMqttClient("emqx_user", "emqx_password", new MQTTCallback());
         mqttConnect.sub("com/iot/init");
         mqttConnect.sub("touchStart");
-        mqttConnect.pub("com/iot/init", "Mr.Qu" + (int) (Math.random() * 100000000));
+        mqttConnect.pubS("com/iot/init", "Mr.Qu" + (int) (Math.random() * 100000000));
     }
 
     /*
@@ -151,4 +148,26 @@ class MyTests {
         System.out.println(roomMapper.selectById("1234"));
         System.out.println(room);
     }
+
+    /*
+    * 创建json文件并写入
+    * */
+    @Test
+    void createJsonFileTest() throws JSONException {
+        String nowPath = "src/test/java/com/xxxx/whiteboard";
+        // String nowPath = System.getProperty("user.dir");
+        System.out.println(nowPath);
+        MyFileUtil.createJsonFile(nowPath, "aha");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.putOpt("nihao", "nihao");
+        MyFileUtil.writeToJsonFile(nowPath, "aha", jsonObject.toString());
+    }
+
+    @Test
+    void customConfigurationFileTest(){
+        String nowPath = System.getProperty("user.dir") + "/files"; // 获取到项目的目录
+        System.out.println(nowPath);
+
+    }
+
 }

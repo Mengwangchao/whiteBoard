@@ -14,10 +14,4 @@ mybatis-plus:
   # 配置Mybatis数据返回类型别名（默认别名是类名）
   type-aliases-package: com.xxxx.seckill.pojo
 
-  # Mybatis SQL打印（方法接口所在的包，不是Mapper.xml所在的包）
-#  logging:
-#    level:
-#      root: info
-  #    com.xxxx.seckill.mapper: debug
-
 
