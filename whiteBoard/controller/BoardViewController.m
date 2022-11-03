@@ -19,7 +19,8 @@
 @property (nonatomic,strong)UIButton *colorButton;
 @property (nonatomic,strong)UIButton *pancilButton;
 @property (nonatomic,strong)UIButton *addImageButton;
-@property (nonatomic,strong)UIView *buttonRootView;
+@property (nonatomic,strong)UIView *leftButtonRootView;
+@property (nonatomic,strong)UIView *rightButtonRootView;
 @property (nonatomic,strong)UIButton *graphicalButton;
 @property(nonatomic,strong)UIButton *eraserButton;
 @property (nonatomic,strong)UIButton *addPageButton;
@@ -107,26 +108,26 @@
     UIPanGestureRecognizer *doublePanGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(doublePanGestureClick:)];
     doublePanGesture.minimumNumberOfTouches = 2;
     [self.view addGestureRecognizer:doublePanGesture];
-    self.buttonRootView = [[UIView alloc]initWithFrame:CGRectMake(10, 90, 40, 210)];
-    self.buttonRootView.backgroundColor = [UIColor clearColor];
-    self.buttonRootView.userInteractionEnabled = YES;
-    [self.view addSubview:self.buttonRootView];
+    self.leftButtonRootView = [[UIView alloc]initWithFrame:CGRectMake(10, 90, 40, 210)];
+    self.leftButtonRootView.backgroundColor = [UIColor clearColor];
+    self.leftButtonRootView.userInteractionEnabled = YES;
+    [self.view addSubview:self.leftButtonRootView];
     self.pancilButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 35, 30, 30)];
 //    addImage.backgroundColor = [UIColor greenColor];
     [self.pancilButton setBackgroundImage:[[UIImage imageNamed:@"pancil"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     self.pancilButton.tintColor = [UIColor greenColor];
     [self.pancilButton addTarget:self action:@selector(pancilButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.buttonRootView addSubview:self.pancilButton];
+    [self.leftButtonRootView addSubview:self.pancilButton];
     
     UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(gestureHandler:)];
     [panGesture setDelegate:self];
-    [self.buttonRootView addGestureRecognizer:panGesture];
+    [self.leftButtonRootView addGestureRecognizer:panGesture];
     self.addImageButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 0, 30, 30)];
 //    addImage.backgroundColor = [UIColor greenColor];
     [self.addImageButton setBackgroundImage:[[UIImage imageNamed:@"addImage"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     self.addImageButton.tintColor = [UIColor blackColor];
     [self.addImageButton addTarget:self action:@selector(addImageButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.buttonRootView addSubview:self.addImageButton];
+    [self.leftButtonRootView addSubview:self.addImageButton];
 
     
     self.eraserButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 70, 30, 30)];
@@ -134,21 +135,21 @@
     self.eraserButton.tintColor = [UIColor blackColor];
     [self.eraserButton setBackgroundImage:[[UIImage imageNamed:@"eraser"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [self.eraserButton addTarget:self action:@selector(eraserButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.buttonRootView addSubview:self.eraserButton];
+    [self.leftButtonRootView addSubview:self.eraserButton];
     
     self.graphicalButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 105, 30, 30)];
     self.graphicalButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
     self.graphicalButton.tintColor = [UIColor blackColor];
     [self.graphicalButton setBackgroundImage:[[UIImage imageNamed:@"2"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [self.graphicalButton addTarget:self action:@selector(graphicalButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.buttonRootView addSubview:self.graphicalButton];
+    [self.leftButtonRootView addSubview:self.graphicalButton];
     
     self.lineWidthButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 140, 30, 30)];
     self.lineWidthButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
     self.lineWidthButton.tintColor = [UIColor blackColor];
     [self.lineWidthButton setBackgroundImage:[[UIImage imageNamed:@"lineWidth"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [self.lineWidthButton addTarget:self action:@selector(lineWidthButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.buttonRootView addSubview:self.lineWidthButton];
+    [self.leftButtonRootView addSubview:self.lineWidthButton];
     self.lineWidthSlider = [[UISlider alloc]initWithFrame:CGRectMake(30, MAIN_SCREEN_HEIGHT-120, MAIN_SCREEN_WIDTH-60, 30)];
     self.lineWidthSlider.maximumValue = 50.0;
     self.lineWidthSlider.minimumValue = 0.0;
@@ -166,7 +167,20 @@
     self.colorButton.layer.cornerRadius = 15;
 //    [self.colorButton setBackgroundImage:pancilImage forState:UIControlStateNormal];
     [self.colorButton addTarget:self action:@selector(colorButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.buttonRootView addSubview:self.colorButton];
+    [self.leftButtonRootView addSubview:self.colorButton];
+    
+    
+    self.rightButtonRootView = [[UIView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH-50,90, 40, 210)];
+    self.rightButtonRootView.backgroundColor = [UIColor clearColor];
+    self.rightButtonRootView.userInteractionEnabled = YES;
+    [self.view addSubview:self.rightButtonRootView];
+    [self.rightButtonRootView addGestureRecognizer:panGesture];
+    UIButton *undoButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
+    undoButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    [undoButton setImage:[[UIImage imageNamed:@"2"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    undoButton.tintColor = [UIColor blackColor];
+    [undoButton addTarget:self action:@selector(undoButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.rightButtonRootView addSubview:undoButton];
     //保证最后创建
     [self addGraphicalView];
     [self addColorView];
@@ -529,7 +543,7 @@
     [sender setTranslation:CGPointZero inView:self.view];
 }
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
-    if([touch.view isEqual:self.buttonRootView]){
+    if([touch.view isEqual:self.leftButtonRootView]){
         return NO;
     }else{
         return  YES;
@@ -550,6 +564,10 @@
 -(void)lineWidthSliderChange{
     
     [self.rootDrawView setLineWith:self.lineWidthSlider.value];
+}
+
+-(void)undoButtonClick{
+    [self.rootDrawView undoClick:YES];
 }
 /*
 #pragma mark - Navigation

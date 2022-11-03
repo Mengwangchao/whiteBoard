@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)addGraphical:(GraphicalState)graphical;
 -(void)setLineWith:(float)lineWith;
 -(void)deleteView;
+-(void)undoClick:(BOOL)isLine;
 @end
 
 NS_ASSUME_NONNULL_END

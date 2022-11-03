@@ -270,9 +270,69 @@
  
 }
 //回滚
-- (void) btnCanCelDrawClicked
+- (void)undoClick:(BOOL)isLine
 {
-    [self.arrayLine removeLastObject];
+    if(isLine){
+        if(self.pointArray.count>0){
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
+                [self.controldelegate deleteGraphical:LINE color:self.currentColor lineWidth:self.lineWidth array:self.pointArray];
+            }
+            self.pointArray = [NSMutableArray array];
+        }
+        else if(self.arrayLine.count>0){
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
+                [self.controldelegate deleteGraphical:LINE color:self.currentColor lineWidth:self.lineWidth array:self.arrayLine];
+            }
+            [self.arrayLine removeLastObject];
+        }else{
+           DrawBoardModel *model = [self.drawBoardModelArray lastObject];
+            NSMutableArray *arr = model.lineArray;
+            [arr removeLastObject];
+            
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
+                [self.controldelegate deleteGraphical:LINE color:model.color lineWidth:model.lineWidth array:[arr lastObject]];
+            }
+            if(arr.count==0){
+                [self.drawBoardModelArray removeLastObject];
+            }else{
+                model.lineArray = arr;
+                [self.drawBoardModelArray removeLastObject];
+                [self.drawBoardModelArray addObject:model];
+            }
+        }
+        
+    }else{
+        if(self.pointArray.count>0){
+            NSMutableArray *arr = [NSMutableArray array];
+            [arr addObject:self.pointArray.firstObject];
+            [arr addObject:self.pointArray.lastObject];
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
+                [self.controldelegate deleteGraphical:self.currentGraphical color:self.currentColor lineWidth:self.lineWidth array:arr];
+            }
+            self.pointArray = [NSMutableArray array];
+        }
+        else if(self.graphicalArray.count>0){
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
+                [self.controldelegate deleteGraphical:self.currentGraphical color:self.currentColor lineWidth:self.lineWidth array:self.graphicalArray];
+            }
+            [self.graphicalArray removeLastObject];
+        }else{
+            DrawBoardGraphicalModel *model = self.drawBoardModelGraphicalArray.lastObject;
+            NSMutableArray *arr = model.graphicalArray;
+            [arr removeLastObject];
+            
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
+                [self.controldelegate deleteGraphical:model.graphical color:nil lineWidth:0 array:arr];
+            }
+            if(arr.count==0){
+                [self.drawBoardModelGraphicalArray removeLastObject];
+            }else{
+                model.graphicalArray = arr;
+                [self.drawBoardModelGraphicalArray removeLastObject];
+                [self.drawBoardModelGraphicalArray addObject:model];
+            }
+        }
+    }
     [self setNeedsDisplay];
 }
 //设置线条颜色
@@ -667,6 +727,9 @@
     }else{
         
         [self.uploadMQTT sendEndPoint:myBeginPoint userId:self.userId color:self.currentColor roomId:self.roomId graphical:(int)self.currentGraphical lineWidth:self.lineWidth];
+    }
+    if(self.controldelegate != nil && [self.controldelegate respondsToSelector:@selector(addGraphicalFromDelegate:)]){
+        [self.controldelegate addGraphicalFromDelegate:self.currentGraphical];
     }
     self.lineNum ++;
     [self addArray];
