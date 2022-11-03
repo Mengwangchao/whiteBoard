@@ -11,6 +11,7 @@ import com.xxxx.whiteboard.mapper.UserMapper;
 import com.xxxx.whiteboard.mqttConn.MQTTCallback;
 import com.xxxx.whiteboard.mqttConn.MQTTConnect;
 import com.xxxx.whiteboard.util.RunSqlScript;
+import com.xxxx.whiteboard.validator.ValidatorUtil;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.w3c.dom.stylesheets.LinkStyle;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @SpringBootTest
@@ -84,7 +86,7 @@ class MyTests {
         String roomId = "134123454";
         String tableName = "room" + roomId;
         roomMapper.createPage("134123454", 1);
-        roomMapper.insert(new Room("134123454", 1, 1, 1, 1));
+        roomMapper.insert(new Room("134123454", 1, 1, 1, 1, 1));
     }
 
     /*
@@ -100,7 +102,7 @@ class MyTests {
     * */
     @Test
     void insertRoomTest() {
-        roomMapper.createRoom(new Room("1234", 1, 1, 1, 1));
+        roomMapper.createRoom(new Room("1234", 1, 1, 1, 1,1));
     }
 
     /*
@@ -140,5 +142,13 @@ class MyTests {
     @Test
     void deletePageOfRoomTest(){
         roomMapper.deletePageOfRoom("12345", 1);
+    }
+
+    @Test
+    void isRoomIdTest(){
+        System.out.println(ValidatorUtil.isRoomId("123456789012"));
+        Room room = new Room("1234", 1,1,1,1,1);
+        System.out.println(roomMapper.selectById("1234"));
+        System.out.println(room);
     }
 }
