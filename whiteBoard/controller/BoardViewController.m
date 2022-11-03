@@ -16,7 +16,9 @@
 @property (nonatomic,strong)UIButton *pageButton;
 @property (nonatomic)int currentPage;
 @property (nonatomic)int pageCount;
+@property (nonatomic,strong)UIButton *colorButton;
 @property (nonatomic,strong)UIButton *pancilButton;
+@property (nonatomic,strong)UIButton *addImageButton;
 @property (nonatomic,strong)UIView *buttonRootView;
 @property (nonatomic,strong)UIButton *graphicalButton;
 @property(nonatomic,strong)UIButton *eraserButton;
@@ -105,50 +107,47 @@
     UIPanGestureRecognizer *doublePanGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(doublePanGestureClick:)];
     doublePanGesture.minimumNumberOfTouches = 2;
     [self.view addGestureRecognizer:doublePanGesture];
-    self.buttonRootView = [[UIView alloc]initWithFrame:CGRectMake(10, 90, 40, 180)];
+    self.buttonRootView = [[UIView alloc]initWithFrame:CGRectMake(10, 90, 40, 210)];
     self.buttonRootView.backgroundColor = [UIColor clearColor];
     self.buttonRootView.userInteractionEnabled = YES;
     [self.view addSubview:self.buttonRootView];
+    self.pancilButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 35, 30, 30)];
+//    addImage.backgroundColor = [UIColor greenColor];
+    [self.pancilButton setBackgroundImage:[[UIImage imageNamed:@"pancil"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    self.pancilButton.tintColor = [UIColor greenColor];
+    [self.pancilButton addTarget:self action:@selector(pancilButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.buttonRootView addSubview:self.pancilButton];
     
     UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(gestureHandler:)];
     [panGesture setDelegate:self];
     [self.buttonRootView addGestureRecognizer:panGesture];
-    UIButton *addImage = [[UIButton alloc]initWithFrame:CGRectMake(5, 0, 30, 30)];
+    self.addImageButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 0, 30, 30)];
 //    addImage.backgroundColor = [UIColor greenColor];
-    [addImage setBackgroundImage:[[UIImage imageNamed:@"addImage"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    addImage.tintColor = [UIColor blackColor];
-    [addImage addTarget:self action:@selector(addImageButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [self.buttonRootView addSubview:addImage];
-    self.pancilButton = [[UIButton alloc]initWithFrame:CGRectMake(5,35, 30, 30)];
-    UIImage * pancilImage =[UIImage imageNamed:@"pancil"];
-    
-    pancilImage = [pancilImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    
-    self.pancilButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
-    self.pancilButton.tintColor = [UIColor blackColor];
-    [self.pancilButton setBackgroundImage:pancilImage forState:UIControlStateNormal];
-    [self.pancilButton addTarget:self action:@selector(pancilButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.buttonRootView addSubview:self.pancilButton];
+    [self.addImageButton setBackgroundImage:[[UIImage imageNamed:@"addImage"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    self.addImageButton.tintColor = [UIColor blackColor];
+    [self.addImageButton addTarget:self action:@selector(addImageButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.buttonRootView addSubview:self.addImageButton];
+
     
     self.eraserButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 70, 30, 30)];
     self.eraserButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
     self.eraserButton.tintColor = [UIColor blackColor];
     [self.eraserButton setBackgroundImage:[[UIImage imageNamed:@"eraser"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    [self.eraserButton addTarget:self action:@selector(eraserButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.eraserButton addTarget:self action:@selector(eraserButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.buttonRootView addSubview:self.eraserButton];
     
     self.graphicalButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 105, 30, 30)];
     self.graphicalButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
     self.graphicalButton.tintColor = [UIColor blackColor];
     [self.graphicalButton setBackgroundImage:[[UIImage imageNamed:@"2"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    [self.graphicalButton addTarget:self action:@selector(graphicalButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.graphicalButton addTarget:self action:@selector(graphicalButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.buttonRootView addSubview:self.graphicalButton];
     
     self.lineWidthButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 140, 30, 30)];
     self.lineWidthButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
     self.lineWidthButton.tintColor = [UIColor blackColor];
     [self.lineWidthButton setBackgroundImage:[[UIImage imageNamed:@"lineWidth"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    [self.lineWidthButton addTarget:self action:@selector(lineWidthButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.lineWidthButton addTarget:self action:@selector(lineWidthButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.buttonRootView addSubview:self.lineWidthButton];
     self.lineWidthSlider = [[UISlider alloc]initWithFrame:CGRectMake(30, MAIN_SCREEN_HEIGHT-120, MAIN_SCREEN_WIDTH-60, 30)];
     self.lineWidthSlider.maximumValue = 50.0;
@@ -156,6 +155,18 @@
     self.lineWidthSlider.hidden = YES;
     [self.lineWidthSlider addTarget:self action:@selector(lineWidthSliderChange) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:self.lineWidthSlider];
+    self.colorButton = [[UIButton alloc]initWithFrame:CGRectMake(5,175, 30, 30)];
+//    UIImage * pancilImage =[UIImage imageNamed:@"pancil"];
+    
+//    pancilImage = [pancilImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    self.colorButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+//    self.colorButton.tintColor = [UIColor blackColor];
+    self.colorButton.backgroundColor = [UIColor blackColor];
+    self.colorButton.layer.cornerRadius = 15;
+//    [self.colorButton setBackgroundImage:pancilImage forState:UIControlStateNormal];
+    [self.colorButton addTarget:self action:@selector(colorButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.buttonRootView addSubview:self.colorButton];
     //保证最后创建
     [self addGraphicalView];
     [self addColorView];
@@ -298,27 +309,48 @@
         [self selectPage:YES];
     }
 }
+-(void)lightButton:(UIButton *)sender{
+    self.addImageButton.tintColor = [UIColor blackColor];
+    self.pancilButton.tintColor = [UIColor blackColor];
+    self.eraserButton.tintColor = [UIColor blackColor];
+    self.graphicalButton.tintColor = [UIColor blackColor];
+    self.lineWidthButton.tintColor = [UIColor blackColor];
+    sender.tintColor = [UIColor greenColor];
+}
 #pragma mark - 按钮点击事件
--(void)graphicalButtonClick{
+-(void)pancilButtonClick:(UIButton *)sender{
+    
     if (self.authority == NO && self.isCreater == NO) {
         return;
     }
+    [self lightButton:sender];
+    self.rootDrawView.isEraser = NO;
+    self.eraserButton.tintColor = [UIColor blackColor];
+    [self.rootDrawView addGraphical:LINE];
+}
+-(void)graphicalButtonClick:(UIButton *)sender{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
+    [self lightButton:sender];
     self.rootDrawView.isEraser = NO;
     self.eraserButton.tintColor = [UIColor blackColor];
     [UIView animateWithDuration:0.3 animations:^{
         self.graphicalView.frame = CGRectMake(0, 50, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
     }];
 }
--(void)addImageButtonClick{
+-(void)addImageButtonClick:(UIButton *)sender{
     if (self.authority == NO && self.isCreater == NO) {
         return;
     }
+//    [self lightButton:sender];
     [self.rootDrawView addImageView:[UIImage imageNamed:@"LOGO"] imageId:1];
 }
--(void)pancilButtonClick:(UIButton *)sender{
+-(void)colorButtonClick:(UIButton *)sender{
     if (self.authority == NO && self.isCreater == NO) {
         return;
     }
+    
 //    self.pancilButton.tintColor = [UIColor greenColor];
     self.rootDrawView.isEraser = NO;
     self.eraserButton.tintColor = [UIColor blackColor];
@@ -327,29 +359,26 @@
     }];
     
 }
--(void)eraserButtonClick{
+-(void)eraserButtonClick:(UIButton *)sender{
     if (self.authority == NO && self.isCreater == NO) {
         return;
     }
     if (self.rootDrawView.isEraser == NO) {
-        self.eraserButton.tintColor = [UIColor greenColor];
         self.rootDrawView.isEraser = YES;
-    }else{
-        self.rootDrawView.isEraser = NO;
-        self.eraserButton.tintColor = [UIColor blackColor];
+        [self lightButton:sender];
     }
 }
 -(void)viewTapGesClick:(UITapGestureRecognizer *)tap{
-    self.pancilButton.tintColor = tap.view.backgroundColor;
+    self.colorButton.backgroundColor = tap.view.backgroundColor;
     [self.rootDrawView setLineColor:tap.view.backgroundColor];
-    self.graphicalButton.tintColor = tap.view.backgroundColor;
+//    self.graphicalButton.tintColor = tap.view.backgroundColor;
     [UIView animateWithDuration:0.3 animations:^{
         self.colorRootView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
     }];
 }
 -(void)graphicalViewTapGesClick:(UITapGestureRecognizer *)tap{
     [self.graphicalButton setBackgroundImage:[[UIImage imageNamed:[NSString stringWithFormat:@"%ld",tap.view.tag]]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    [self.rootDrawView setLineColor:self.pancilButton.tintColor];
+    [self.rootDrawView setLineColor:self.colorButton.backgroundColor];
     [self.rootDrawView addGraphical:(GraphicalState)tap.view.tag];
     [UIView animateWithDuration:0.3 animations:^{
         self.graphicalView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
@@ -361,17 +390,17 @@
 }
 -(void)colorRootViewButtonClick:(UIButton *)sender{
     if(sender.tag == 10){
-        self.pancilButton.tintColor = self.colorChangeView.backgroundColor;
+        self.colorButton.backgroundColor = self.colorChangeView.backgroundColor;
         [self.rootDrawView setLineColor:self.colorChangeView.backgroundColor];
-        self.graphicalButton.tintColor = self.colorChangeView.backgroundColor;
-       
+        //        self.graphicalButton.tintColor = self.colorChangeView.backgroundColor;
+        
         [UIView animateWithDuration:0.3 animations:^{
-                    self.colorRootView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
-                }];
+            self.colorRootView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
+        }];
     }else if (sender.tag ==11){
         [UIView animateWithDuration:0.3 animations:^{
-                    self.colorRootView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
-                }];
+            self.colorRootView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
+        }];
     }
 }
 -(void)doublePanGestureClick:(UIPanGestureRecognizer *)sender{
@@ -414,7 +443,7 @@
         [self.view sendSubviewToBack:self.rootDrawView];
     }];
     
-    self.pancilButton.tintColor = [self.rootDrawView getLineColor];
+    self.colorButton.tintColor = [self.rootDrawView getLineColor];
     [self setPageButtonText:self.currentPage pageCount:self.pageCount];
 }
 -(void)nextButtonClick{
@@ -454,7 +483,7 @@
     }
     self.rootDrawView = self.rootDrawViewArray[self.currentPage-1];
     [self setPageButtonText:self.currentPage pageCount:self.pageCount];
-    self.pancilButton.tintColor = [self.rootDrawView getLineColor];
+    self.colorButton.tintColor = [self.rootDrawView getLineColor];
     [self.rootDrawView setDrawHidden: NO];
 }
 -(void)deletePageButtonClick{
@@ -487,7 +516,7 @@
         }
         self.rootDrawView = self.rootDrawViewArray[self.currentPage-1];
         [self setPageButtonText:self.currentPage pageCount:self.pageCount];
-        self.pancilButton.tintColor = [self.rootDrawView getLineColor];
+        self.colorButton.tintColor = [self.rootDrawView getLineColor];
         [self.rootDrawView setDrawHidden:NO];
     }
 }
@@ -506,10 +535,11 @@
         return  YES;
     }
 }
--(void)lineWidthButtonClick{
+-(void)lineWidthButtonClick:(UIButton *)sender{
     if (self.authority == NO && self.isCreater == NO) {
         return;
     }
+    [self lightButton:sender];
     if(self.lineWidthSlider.isHidden == YES){
         self.lineWidthSlider.hidden = NO;
     }
