@@ -13,6 +13,9 @@
 @property (nonatomic , strong)ImageViewOfDrawView *downImageView;
 @property (nonatomic , strong)NSMutableArray<NSDictionary*> * imageViewArray;
 @property (nonatomic , strong)NSMutableArray<NSDictionary*> * deleteArray;
+@property (nonatomic , strong)NSMutableArray<NSDictionary*> * deleteNetworkArray;
+@property (nonatomic) int  deleteNetworkNum;
+@property (nonatomic , strong) NSMutableArray<NSString *>*  deleteNetworkNumArray;
 @property (nonatomic) int  deleteNum;
 @property (nonatomic , strong)NSMutableArray * addArray;
 @property (nonatomic, strong) NSString *userId;
@@ -35,6 +38,9 @@
         mqtt.controldelegate = self;
         self.roomId = roomId;
         self.currentPage = 1;
+        self.deleteNetworkNum = 0;
+        self.deleteNetworkArray = [NSMutableArray array];
+        self.deleteNetworkNumArray = [NSMutableArray array];
         self.imageNum =0;
         self.deleteNum = 0;
         self.deleteArray = [NSMutableArray array];
@@ -54,10 +60,10 @@
 -(void)redoClick{
 //    for (int i = (int)self.deleteArray.count-1; i>=0; i--) {
     if(self.deleteNum>0){
-        
         self.deleteNum--;
             NSDictionary *dic = self.deleteArray[self.deleteNum];
             int gra = [dic[@"graphical"] intValue];
+        [self.uploadMQTT sendRedo:self.roomId userId:self.userId graphical:gra];
             if(gra ==(int)LINE){
                 UIColor *color = dic[@"color"];
                 float width = [dic[@"lineWidth"] floatValue];
@@ -385,6 +391,77 @@
     }
     self.deleteNum ++;
 }
+-(void)deleteGraphicalNetwork:(GraphicalState)graphical color:(UIColor *)color lineWidth:(float)lineWidth array:(NSArray *)array userId:(NSString *)userId{
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    [dic setValue:color forKey:@"color"];
+    [dic setValue:[NSString stringWithFormat:@"%f",lineWidth] forKey:@"lineWidth"];
+    [dic setValue:[NSString stringWithFormat:@"%d",(int)graphical] forKey:@"graphical"];
+    [dic setValue:array forKey:@"array"];
+    [dic setValue:userId forKey:@"userId"];
+//    if(self.deleteNetworkNum>=self.deleteNetworkArray.count){
+        
+        [self.deleteNetworkArray addObject:dic];
+//    }else{
+//
+//        self.deleteNetworkArray[self.deleteNetworkNum] = dic;
+//    }
+//    [self.deleteNetworkNumArray addObject:[NSString stringWithFormat:@"%d",self.deleteNetworkNum]];
+    self.deleteNetworkNum ++;
+}
+-(void)redoWithRoomId:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical currentPage:(int)currentPage{
+    
+    if(self.deleteNetworkNum>0){
+        
+        self.deleteNetworkNum --;
+            NSDictionary *dic = self.deleteNetworkArray[self.deleteNetworkNum];
+        
+        NSString *userIdDic = dic[@"userId"];
+        if(![userId isEqual:userIdDic]){
+            for (int i = self.deleteNetworkNum; i>=0; i--) {
+                NSDictionary *dicFor = self.deleteNetworkArray[i];
+                NSString *userIdDic = dicFor[@"userId"];
+                if([userId isEqual:userIdDic]){
+                    dic = dicFor;
+                    
+                    break;
+                }
+                if(i ==0){
+                    return;
+                }
+            }
+        }
+            int gra = [dic[@"graphical"] intValue];
+            if(gra ==(int)LINE){
+                UIColor *color = dic[@"color"];
+                float width = [dic[@"lineWidth"] floatValue];
+                NSArray *arr = dic[@"array"];
+                [self.rootDrawView redoNetwork:LINE color:color width:width array:arr userId:userId];
+            }
+            else if(gra == -1){
+                ImageViewOfDrawView *image = dic[@"imageView"];
+                [self addSubview:image];
+                image.okButton.hidden = NO;
+                image.userInteractionEnabled = YES;
+                NSMutableDictionary *dicView = [NSMutableDictionary dictionary];
+                [dicView setValue:dic[@"userId"] forKey:@"userId"];
+                [dicView setValue:image forKey:@"imageView"];
+                [self.imageViewArray addObject:dicView];
+                
+            }else{
+                
+                UIColor *color = dic[@"color"];
+                float width = [dic[@"lineWidth"] floatValue];
+                NSArray *arr = dic[@"array"];
+                NSString *userId = dic[@"userId"];
+                [self.rootDrawView redoNetwork:(GraphicalState)gra color:color width:width array:arr userId:userId];
+            }
+        
+        [self.deleteNetworkArray removeObject:dic];
+//        [self.addArray addObject:[NSString stringWithFormat:@"%d",gra]];
+//        [self.deleteArray removeLastObject];
+    }
+//    }
+}
 -(void)undoWithRoomId:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical currentPage:(int)currentPage{
     if ([userId isEqual:self.userId]){
         return;
@@ -401,8 +478,11 @@
             NSString *insideUserId = dic[@"userId"];
             if([userId isEqual:insideUserId]){
                 ImageViewOfDrawView *image = dic[@"imageView"];
+                [dic setValue:@"-1" forKey:@"graphical"];
                 [image removeFromSuperview];
                 [self.imageViewArray removeObject:dic];
+                [self.deleteNetworkArray addObject:dic];
+                self.deleteNetworkNum++;
                 break;
                 
             }

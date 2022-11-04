@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol controlMQTTDelegate <NSObject>
 
 -(void)undoWithRoomId :(NSString *)roomId userId:(NSString *)userId graphical : (int)graphical currentPage :(int)currentPage;
+-(void)redoWithRoomId :(NSString *)roomId userId:(NSString *)userId graphical : (int)graphical currentPage :(int)currentPage;
 
 //-(void)getJoinRoomReturn:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
 
@@ -88,6 +89,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)sendRotateImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId rotate:(float)rotate imageNum:(int)imageNum;
 -(void)sendZoomImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId size:(CGSize)size imageNum:(int)imageNum;
 -(void)sendUndo:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical;
+-(void)sendRedo:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical;
 -(void)closeMQTTClient;
 -(void)connectMQTT;
 -(void)disConnectServer;

@@ -37,6 +37,7 @@
         [self.topics addObject:@"rotateImage"];
         [self.topics addObject:@"zoomImage"];
         [self.topics addObject:@"undo"];
+        [self.topics addObject:@"redo"];
         self.currentPage = 1;
         self.pageCount = 1;
 //        [self connectMQTT];
@@ -220,6 +221,13 @@
             if (weakSelf.controldelegate!=nil && [weakSelf.controldelegate respondsToSelector:@selector(undoWithRoomId:userId:graphical:currentPage:)]){
                
                 [weakSelf.controldelegate undoWithRoomId:dic[@"roomId"] userId:dic[@"userId"] graphical:[dic[@"graphical"] intValue] currentPage:[dic[@"currentPage"] intValue]];
+            }
+        }
+        else if ([topic isEqual:@"redo"]){
+            
+            if (weakSelf.controldelegate!=nil && [weakSelf.controldelegate respondsToSelector:@selector(redoWithRoomId:userId:graphical:currentPage:)]){
+               
+                [weakSelf.controldelegate redoWithRoomId:dic[@"roomId"] userId:dic[@"userId"] graphical:[dic[@"graphical"] intValue] currentPage:[dic[@"currentPage"] intValue]];
             }
         }
         else{
@@ -661,6 +669,30 @@
   
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"undo" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+
+-(void)sendRedo:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("redo", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
+        [dic setValue:[NSString stringWithFormat:@"%d",graphical] forKey:@"graphical"];
+        
+  
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"redo" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
                     NSLog(@"发送失败 - %@",error);
                 }else{

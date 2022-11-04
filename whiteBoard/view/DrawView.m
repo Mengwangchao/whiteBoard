@@ -149,30 +149,7 @@
     }
     self.downPointArray = [NSMutableArray array];
     if (![userId isEqual: self.downUserId] ||![color isEqual: self.downPointColor] || lineWidth != self.downLineWidth ||(self.downGraphical != (GraphicalState)graphical)) {
-
-        if(self.downArrayLine.count>0){
-            self.downBoardModel.lineWidth = self.downLineWidth;
-            self.downBoardModel.userId = self.downUserId;
-            self.downBoardModel.color = self.downPointColor;
-            self.downBoardModel.lineArray = self.downArrayLine;
-            if(self.downBoardModel.userId ==nil){
-                self.downBoardModel.userId = self.userId;
-            }
-            [self.downPointArrayArray addObject:self.downBoardModel];
-            self.downBoardModel = [[DrawBoardModel alloc]init];
-            self.downArrayLine = [NSMutableArray array];
-        }
-        if(self.downGraphicalArray.count>0){
-            
-            self.downDrawBoardModelGraphical.graphicalArray = self.downGraphicalArray;
-            self.downDrawBoardModelGraphical.graphical = self.downGraphical;
-            self.downDrawBoardModelGraphical.userId = self.downUserId;
-            [self.downDrawBoardModelGraphicalArray addObject:self.downDrawBoardModelGraphical];
-            self.downDrawBoardModelGraphical = [[DrawBoardGraphicalModel alloc]init];
-            self.downGraphicalArray = [NSMutableArray array];
-        }
-        
-        
+        [self saveDownModel];
     }else{
         
     }
@@ -189,6 +166,30 @@
     });
 
   
+}
+-(void)saveDownModel{
+    [self saveDownGrraphical:self.downGraphical];
+    if(self.downArrayLine.count>0){
+        self.downBoardModel.lineWidth = self.downLineWidth;
+        self.downBoardModel.userId = self.downUserId;
+        self.downBoardModel.color = self.downPointColor;
+        self.downBoardModel.lineArray = self.downArrayLine;
+        if(self.downBoardModel.userId ==nil){
+            self.downBoardModel.userId = self.userId;
+        }
+        [self.downPointArrayArray addObject:self.downBoardModel];
+        self.downBoardModel = [[DrawBoardModel alloc]init];
+        self.downArrayLine = [NSMutableArray array];
+    }
+    if(self.downGraphicalArray.count>0){
+        
+        self.downDrawBoardModelGraphical.graphicalArray = self.downGraphicalArray;
+        self.downDrawBoardModelGraphical.graphical = self.downGraphical;
+        self.downDrawBoardModelGraphical.userId = self.downUserId;
+        [self.downDrawBoardModelGraphicalArray addObject:self.downDrawBoardModelGraphical];
+        self.downDrawBoardModelGraphical = [[DrawBoardGraphicalModel alloc]init];
+        self.downGraphicalArray = [NSMutableArray array];
+    }
 }
 -(void)getEndMassagePoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color currentPage:(int)currentPage graphical:(int)graphical lineWidth:(float)lineWidth{
     if ([userId isEqual:self.userId]){
@@ -278,7 +279,27 @@
     
  
 }
-
+-(void)redoNetwork:(GraphicalState)graphical color:(UIColor*)color width:(float)width array:(NSArray *)array userId:(NSString *)userId{
+    [self saveDownModel];
+    if(graphical == LINE){
+        DrawBoardModel *draw = [[DrawBoardModel alloc]init];
+        draw.color = color;
+        draw.lineWidth = width;
+        NSMutableArray *ar = [NSMutableArray array];
+        [ar addObject:array];
+        draw.lineArray = ar;
+        draw.userId = userId;
+        [self.downPointArrayArray addObject:draw];
+    }
+    else{
+        DrawBoardGraphicalModel *draw = [[DrawBoardGraphicalModel alloc]init];
+        draw.graphical = graphical;
+        draw.graphicalArray = array;
+        draw.userId = userId;
+        [self.downDrawBoardModelGraphicalArray addObject:draw];
+    }
+    [self setNeedsDisplay];
+}
 -(void)redoClick:(GraphicalState)graphical color:(UIColor*)color width:(float)width array:(NSArray *)array userId:(NSString *)userId{
     [self saveArray];
     if(graphical == LINE){
@@ -301,11 +322,14 @@
     [self setNeedsDisplay];
 }
 -(void)undoNetwork:(BOOL)isLine userId:(NSString *)userId{
+    [self saveDownModel];
     if (isLine) {
         if(self.downArrayLine.count>0){
             self.downPointArray = [NSMutableArray array];
             [self.downArrayLine removeLastObject];
         }else{
+            self.downPointArray = [NSMutableArray array];
+            
            DrawBoardModel *model = [self.downPointArrayArray lastObject];
             
             NSMutableArray *arr = model.lineArray;
@@ -327,6 +351,9 @@
                     num--;
                 }
             }
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphicalNetwork:color:lineWidth:array:userId:)]){
+                [self.controldelegate deleteGraphicalNetwork:LINE color:model.color lineWidth:model.lineWidth array:arr.lastObject userId:model.userId];
+            }
             [arr removeLastObject];
             
             if(arr.count==0){
@@ -339,15 +366,11 @@
         }
         
     }else{
-        if(self.downPointArray.count>0){
-            NSMutableArray *arr = [NSMutableArray array];
-            [arr addObject:self.downPointArray.firstObject];
-            [arr addObject:self.downPointArray.lastObject];
+        if(self.downGraphicalArray.count>0){
             self.downPointArray = [NSMutableArray array];
-        }
-        else if(self.downGraphicalArray.count>0){
             [self.downGraphicalArray removeLastObject];
         }else{
+            self.downPointArray = [NSMutableArray array];
             DrawBoardGraphicalModel *model = self.downDrawBoardModelGraphicalArray.lastObject;
             NSMutableArray *arr = model.graphicalArray;
             unsigned long num = self.downDrawBoardModelGraphicalArray.count-1;
@@ -367,6 +390,11 @@
                     }
                     num--;
                 }
+            }
+            NSMutableArray *delArr = [NSMutableArray array];
+            [delArr addObject:arr.lastObject];
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphicalNetwork:color:lineWidth:array:userId:)]){
+                [self.controldelegate deleteGraphicalNetwork:model.graphical color:nil lineWidth:0 array:delArr userId:model.userId];
             }
             [arr removeLastObject];
             if(arr.count==0){
@@ -981,6 +1009,9 @@
     }
 }
 -(void)saveDownGrraphical:(GraphicalState)graphical{
+    if(self.downPointArray.count<=0){
+        return;
+    }
     CGPoint startPoint = CGPointFromString(self.downPointArray.firstObject);
     CGPoint endPoint = CGPointFromString(self.downPointArray.lastObject);
     float width = fabs(startPoint.x-endPoint.x);
