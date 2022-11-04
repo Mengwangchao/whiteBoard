@@ -429,8 +429,9 @@
     }
     [self.rootDrawView.uploadMQTT sendAddPageMessage:self.roomId userId:self.userId];
     [self addPage];
-    
-    [self.rootDrawView setLineWith:self.lineWidthSlider.value];
+    if (self.lineWidthSlider.value != 0) {
+        [self.rootDrawView setLineWith:self.lineWidthSlider.value];
+    }
 }
 -(void)addPage{
     

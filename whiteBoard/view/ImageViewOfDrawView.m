@@ -37,7 +37,9 @@
         self.okButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
         self.okButton.layer.cornerRadius = 15;
         [self.okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-        self.okButton.backgroundColor = [UIColor greenColor];
+        [self.okButton setImage:[[UIImage imageNamed:@"ok"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        self.okButton.tintColor = [UIColor greenColor];
+        self.okButton.backgroundColor = [UIColor clearColor];
         [self addSubview:self.okButton];
     }
     return self;
