@@ -12,7 +12,8 @@
 @property (nonatomic , strong)ImageViewOfDrawView *imageView;
 @property (nonatomic , strong)ImageViewOfDrawView *downImageView;
 @property (nonatomic , strong)NSMutableArray<NSDictionary*> * imageViewArray;
-@property (nonatomic , strong)NSMutableArray * deleteArray;
+@property (nonatomic , strong)NSMutableArray<NSDictionary*> * deleteArray;
+@property (nonatomic) int  deleteNum;
 @property (nonatomic , strong)NSMutableArray * addArray;
 @property (nonatomic, strong) NSString *userId;
 @property (nonatomic, strong) NSString *roomId;
@@ -35,6 +36,7 @@
         self.roomId = roomId;
         self.currentPage = 1;
         self.imageNum =0;
+        self.deleteNum = 0;
         self.deleteArray = [NSMutableArray array];
         self.addArray = [NSMutableArray array];
         self.imageScrolling = NO;
@@ -49,6 +51,44 @@
 
 
 #pragma mark - 对外接口
+-(void)redoClick{
+//    for (int i = (int)self.deleteArray.count-1; i>=0; i--) {
+    if(self.deleteNum>0){
+        
+        self.deleteNum--;
+            NSDictionary *dic = self.deleteArray[self.deleteNum];
+            int gra = [dic[@"graphical"] intValue];
+            if(gra ==(int)LINE){
+                UIColor *color = dic[@"color"];
+                float width = [dic[@"lineWidth"] floatValue];
+                NSArray *arr = dic[@"array"];
+                NSString *userId = dic[@"userId"];
+                [self.rootDrawView redoClick:LINE color:color width:width array:arr userId:userId];
+            }
+            else if(gra == -1){
+                ImageViewOfDrawView *image = dic[@"imageView"];
+                [self addSubview:image];
+                image.okButton.hidden = NO;
+                image.userInteractionEnabled = YES;
+                NSMutableDictionary *dicView = [NSMutableDictionary dictionary];
+                [dicView setValue:dic[@"userId"] forKey:@"userId"];
+                [dicView setValue:image forKey:@"imageView"];
+                [self.imageViewArray addObject:dicView];
+                
+            }else{
+                
+                UIColor *color = dic[@"color"];
+                float width = [dic[@"lineWidth"] floatValue];
+                NSArray *arr = dic[@"array"];
+                NSString *userId = dic[@"userId"];
+                [self.rootDrawView redoClick:(GraphicalState)gra color:color width:width array:arr userId:userId];
+            }
+        [self.addArray addObject:[NSString stringWithFormat:@"%d",gra]];
+//        [self.deleteArray removeLastObject];
+    }
+//    }
+}
+
 -(void)undoClick:(BOOL)isLine{
     if(self.addArray.count>0){
         int undoId = [[self.addArray lastObject] intValue];
@@ -73,6 +113,19 @@
                     [image removeFromSuperview];
                     [self.imageViewArray removeObject:dic];
                     [self.addArray removeLastObject];
+                    
+                    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+                    [dic setValue:@"-1" forKey:@"graphical"];
+                    [dic setValue:self.userId forKey:@"userId"];
+                    [dic setValue:image forKey:@"imageView"];
+                    if(self.deleteNum>=self.deleteArray.count){
+                        
+                        [self.deleteArray addObject:dic];
+                    }else{
+                        
+                        self.deleteArray[self.deleteNum] = dic;
+                    }
+                    self.deleteNum ++;
                     break;
                     
                 }
@@ -316,8 +369,21 @@
 -(void)addGraphicalFromDelegate:(GraphicalState)graphical{
     [self.addArray addObject:[NSString stringWithFormat:@"%d",(int)graphical]];
 }
--(void)deleteGraphical:(GraphicalState)graphical color:(UIColor *)color lineWidth:(float)lineWidth array:(NSArray *)array{
-    NSLog(@"delete %d",(int)graphical);
+-(void)deleteGraphical:(GraphicalState)graphical color:(UIColor *)color lineWidth:(float)lineWidth array:(NSArray *)array userId:(nonnull NSString *)userId{
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    [dic setValue:color forKey:@"color"];
+    [dic setValue:[NSString stringWithFormat:@"%f",lineWidth] forKey:@"lineWidth"];
+    [dic setValue:[NSString stringWithFormat:@"%d",(int)graphical] forKey:@"graphical"];
+    [dic setValue:array forKey:@"array"];
+    [dic setValue:userId forKey:@"userId"];
+    if(self.deleteNum>=self.deleteArray.count){
+        
+        [self.deleteArray addObject:dic];
+    }else{
+        
+        self.deleteArray[self.deleteNum] = dic;
+    }
+    self.deleteNum ++;
 }
 -(void)undoWithRoomId:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical currentPage:(int)currentPage{
     if ([userId isEqual:self.userId]){

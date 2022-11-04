@@ -279,6 +279,27 @@
  
 }
 
+-(void)redoClick:(GraphicalState)graphical color:(UIColor*)color width:(float)width array:(NSArray *)array userId:(NSString *)userId{
+    [self saveArray];
+    if(graphical == LINE){
+        DrawBoardModel *draw = [[DrawBoardModel alloc]init];
+        draw.color = color;
+        draw.lineWidth = width;
+        NSMutableArray *ar = [NSMutableArray array];
+        [ar addObject:array];
+        draw.lineArray = ar;
+        draw.userId = userId;
+        [self.drawBoardModelArray addObject:draw];
+    }
+    else{
+        DrawBoardGraphicalModel *draw = [[DrawBoardGraphicalModel alloc]init];
+        draw.graphical = graphical;
+        draw.graphicalArray = array;
+        draw.userId = userId;
+        [self.drawBoardModelGraphicalArray addObject:draw];
+    }
+    [self setNeedsDisplay];
+}
 -(void)undoNetwork:(BOOL)isLine userId:(NSString *)userId{
     if (isLine) {
         if(self.downArrayLine.count>0){
@@ -362,16 +383,17 @@
 //回滚
 - (void)undoClick:(BOOL)isLine
 {
+    [self saveArray];
     if(isLine){
         if(self.pointArray.count>0){
-            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
-                [self.controldelegate deleteGraphical:LINE color:self.currentColor lineWidth:self.lineWidth array:self.pointArray];
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:userId:)]){
+                [self.controldelegate deleteGraphical:LINE color:self.currentColor lineWidth:self.lineWidth array:self.pointArray userId:self.userId];
             }
             self.pointArray = [NSMutableArray array];
         }
         else if(self.arrayLine.count>0){
-            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
-                [self.controldelegate deleteGraphical:LINE color:self.currentColor lineWidth:self.lineWidth array:self.arrayLine];
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:userId:)]){
+                [self.controldelegate deleteGraphical:LINE color:self.currentColor lineWidth:self.lineWidth array:self.arrayLine.lastObject userId:self.userId];
             }
             [self.arrayLine removeLastObject];
         }else{
@@ -385,11 +407,11 @@
                     return;
                 }
             }
-            [arr removeLastObject];
             
-            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
-                [self.controldelegate deleteGraphical:LINE color:model.color lineWidth:model.lineWidth array:[arr lastObject]];
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:userId:)]){
+                [self.controldelegate deleteGraphical:LINE color:model.color lineWidth:model.lineWidth array:[arr lastObject] userId:self.userId];
             }
+            [arr removeLastObject];
             if(arr.count==0){
                 [self.drawBoardModelArray removeLastObject];
             }else{
@@ -404,23 +426,25 @@
             NSMutableArray *arr = [NSMutableArray array];
             [arr addObject:self.pointArray.firstObject];
             [arr addObject:self.pointArray.lastObject];
-            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
-                [self.controldelegate deleteGraphical:self.currentGraphical color:self.currentColor lineWidth:self.lineWidth array:arr];
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:userId:)]){
+                [self.controldelegate deleteGraphical:self.currentGraphical color:self.currentColor lineWidth:self.lineWidth array:arr  userId:self.userId];
             }
             self.pointArray = [NSMutableArray array];
         }
         else if(self.graphicalArray.count>0){
-            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
-                [self.controldelegate deleteGraphical:self.currentGraphical color:self.currentColor lineWidth:self.lineWidth array:self.graphicalArray];
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:userId:)]){
+                [self.controldelegate deleteGraphical:self.currentGraphical color:self.currentColor lineWidth:self.lineWidth array:self.graphicalArray.lastObject  userId:self.userId];
             }
             [self.graphicalArray removeLastObject];
         }else{
             DrawBoardGraphicalModel *model = self.drawBoardModelGraphicalArray.lastObject;
             NSMutableArray *arr = model.graphicalArray;
+            NSMutableArray *delArr = [NSMutableArray array];
+            [delArr addObject:arr.lastObject];
             [arr removeLastObject];
             
-            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){
-                [self.controldelegate deleteGraphical:model.graphical color:nil lineWidth:0 array:arr];
+            if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array: userId:)]){
+                [self.controldelegate deleteGraphical:model.graphical color:nil lineWidth:0 array:delArr userId:self.userId];
             }
             if(arr.count==0){
                 [self.drawBoardModelGraphicalArray removeLastObject];

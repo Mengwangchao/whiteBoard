@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol controlDelegate <NSObject>
 -(void)addGraphicalFromDelegate:(GraphicalState)graphical;
--(void)deleteGraphical:(GraphicalState)graphical color:(UIColor *)color lineWidth:(float)lineWidth array:(NSArray *)array;
+-(void)deleteGraphical:(GraphicalState)graphical color:(UIColor *)color lineWidth:(float)lineWidth array:(NSArray *)array userId:(NSString *)userId;
 
 @end
 @interface DrawView : UIView
@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIColor*)getLineColor;
 -(void)deleteView;
 -(void)undoClick:(BOOL)isLine;
+-(void)redoClick:(GraphicalState)graphicalState color:(UIColor*)color width:(float)width array:(NSArray *)array userId:(NSString *)userId;
 -(void)undoNetwork:(BOOL)isLine userId:(NSString *)userId;
 @end
 

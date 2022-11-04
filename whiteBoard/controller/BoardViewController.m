@@ -181,6 +181,13 @@
     undoButton.tintColor = [UIColor blackColor];
     [undoButton addTarget:self action:@selector(undoButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [self.rightButtonRootView addSubview:undoButton];
+    
+    UIButton *redoButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 35, 30, 30)];
+    redoButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    [redoButton setImage:[[UIImage imageNamed:@"redo"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    redoButton.tintColor = [UIColor blackColor];
+    [redoButton addTarget:self action:@selector(redoButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.rightButtonRootView addSubview:redoButton];
     //保证最后创建
     [self addGraphicalView];
     [self addColorView];
@@ -568,7 +575,16 @@
 }
 
 -(void)undoButtonClick{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
     [self.rootDrawView undoClick:YES];
+}
+-(void)redoButtonClick{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
+    [self.rootDrawView redoClick];
 }
 /*
 #pragma mark - Navigation
