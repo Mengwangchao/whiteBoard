@@ -57,6 +57,32 @@
 
 
 #pragma mark - 对外接口
+-(void)clearAll{
+    [self.uploadMQTT sendClearAll:self.roomId userId:self.userId];
+    [self clear];
+
+}
+-(void)clear{
+    self.backgroundColor = [UIColor clearColor];
+    self.userInteractionEnabled = YES;
+    self.uploadMQTT.imageMQTTdelegate = self;
+    self.uploadMQTT.controldelegate = self;
+    self.currentPage = 1;
+    self.deleteNetworkNum = 0;
+    self.deleteNetworkArray = [NSMutableArray array];
+    self.deleteNetworkNumArray = [NSMutableArray array];
+    self.imageNum =0;
+    self.deleteNum = 0;
+    self.deleteArray = [NSMutableArray array];
+    self.addArray = [NSMutableArray array];
+    self.imageScrolling = NO;
+    self.imageViewArray = [NSMutableArray array];
+    [self.rootDrawView deleteView];
+    self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height) userId:self.userId roomId:self.roomId MQTT:self.uploadMQTT];
+    self.rootDrawView.controldelegate = self;
+    [self addSubview:self.rootDrawView];
+    
+}
 -(void)redoClick{
 //    for (int i = (int)self.deleteArray.count-1; i>=0; i--) {
     if(self.deleteNum>0){
@@ -492,6 +518,15 @@
         [self.rootDrawView undoNetwork:NO userId:userId];
     }
     
+}
+-(void)clearAll:(NSString *)roomId userId:(NSString *)userId currentPage:(int)currentPage{
+    if ([userId isEqual:self.userId]){
+        return;
+    }
+    if (self.rootDrawView.currentPage != currentPage) {
+        return;
+    }
+    [self clear];
 }
 /*
  // Only override drawRect: if you perform custom drawing.

@@ -170,7 +170,7 @@
     [self.leftButtonRootView addSubview:self.colorButton];
     
     
-    self.rightButtonRootView = [[UIView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH-50,90, 40, 210)];
+    self.rightButtonRootView = [[UIView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH-50,90, 40, 150)];
     self.rightButtonRootView.backgroundColor = [UIColor clearColor];
     self.rightButtonRootView.userInteractionEnabled = YES;
     [self.view addSubview:self.rightButtonRootView];
@@ -188,6 +188,13 @@
     redoButton.tintColor = [UIColor blackColor];
     [redoButton addTarget:self action:@selector(redoButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [self.rightButtonRootView addSubview:redoButton];
+    
+    UIButton *clearAllButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 70, 30, 30)];
+    clearAllButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    [clearAllButton setImage:[[UIImage imageNamed:@"clear"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    clearAllButton.tintColor = [UIColor blackColor];
+    [clearAllButton addTarget:self action:@selector(clearAllButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.rightButtonRootView addSubview:clearAllButton];
     //保证最后创建
     [self addGraphicalView];
     [self addColorView];
@@ -585,6 +592,20 @@
         return;
     }
     [self.rootDrawView redoClick];
+}
+-(void)clearAllButtonClick{
+    if (self.authority == NO && self.isCreater == NO) {
+        return;
+    }
+    UIAlertController *alert =[UIAlertController alertControllerWithTitle:@"删除所有数据？" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        [self.rootDrawView clearAll];
+    }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+    [alert addAction:confirmAction];
+    [alert addAction:cancel];
+    [self presentViewController:alert animated:NO completion:nil];
 }
 /*
 #pragma mark - Navigation

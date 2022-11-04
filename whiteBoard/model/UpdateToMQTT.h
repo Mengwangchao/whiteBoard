@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)undoWithRoomId :(NSString *)roomId userId:(NSString *)userId graphical : (int)graphical currentPage :(int)currentPage;
 -(void)redoWithRoomId :(NSString *)roomId userId:(NSString *)userId graphical : (int)graphical currentPage :(int)currentPage;
 
+-(void)clearAll :(NSString *)roomId userId:(NSString *)userId currentPage :(int)currentPage;
 //-(void)getJoinRoomReturn:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
 
 @end
@@ -90,6 +91,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)sendZoomImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId size:(CGSize)size imageNum:(int)imageNum;
 -(void)sendUndo:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical;
 -(void)sendRedo:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical;
+-(void)sendClearAll:(NSString *)roomId userId:(NSString *)userId;
 -(void)closeMQTTClient;
 -(void)connectMQTT;
 -(void)disConnectServer;

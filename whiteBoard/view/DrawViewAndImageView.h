@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)setLineWith:(float)lineWith;
 -(void)deleteView;
 -(void)redoClick;
+-(void)clearAll;
 -(void)undoClick:(BOOL)isLine;
 @end
 

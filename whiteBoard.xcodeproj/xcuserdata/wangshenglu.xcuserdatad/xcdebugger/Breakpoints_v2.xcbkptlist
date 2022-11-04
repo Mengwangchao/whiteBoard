@@ -46,8 +46,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
             landmarkName = "-connectMQTT"
             landmarkType = "7">
          </BreakpointContent>
@@ -56,54 +56,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "9763568B-F386-412A-ADE4-152ECA019171"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "whiteBoard/model/UpdateToMQTT.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
-            landmarkName = "-handleEvent:event:error:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "61D2DD8A-C885-4270-96C8-534323B4225D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "whiteBoard/model/UpdateToMQTT.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
-            landmarkName = "-initWithTopic:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "AD6CDF86-E095-4533-81E3-C8943792BD90"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "whiteBoard/model/UpdateToMQTT.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
-            landmarkName = "-connectMQTT"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "026D7739-B5B0-418A-8E07-58C8A75B525E"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -119,7 +71,71 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "61D2DD8A-C885-4270-96C8-534323B4225D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "whiteBoard/model/UpdateToMQTT.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "-initWithTopic:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AD6CDF86-E095-4533-81E3-C8943792BD90"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "whiteBoard/model/UpdateToMQTT.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
+            landmarkName = "-connectMQTT"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "026D7739-B5B0-418A-8E07-58C8A75B525E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "whiteBoard/model/UpdateToMQTT.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "-handleEvent:event:error:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "A22EE3F1-F8CA-4AB3-94B8-FB4E0748C216"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "whiteBoard/model/UpdateToMQTT.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
+            landmarkName = "-handleEvent:event:error:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AFE60B27-1B7E-4963-85E0-1B07773ACD53"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -135,22 +151,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "AFE60B27-1B7E-4963-85E0-1B07773ACD53"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "whiteBoard/model/UpdateToMQTT.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "70"
-            endingLineNumber = "70"
-            landmarkName = "-handleEvent:event:error:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "6068DA46-2835-472E-9B33-42075E719BAA"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -158,8 +158,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
             landmarkName = "-handleEvent:event:error:"
             landmarkType = "7">
          </BreakpointContent>
@@ -174,8 +174,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "268"
-            endingLineNumber = "268"
+            startingLineNumber = "276"
+            endingLineNumber = "276"
             landmarkName = "UpdateToMQTT"
             landmarkType = "3">
          </BreakpointContent>
@@ -190,8 +190,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "267"
-            endingLineNumber = "267"
+            startingLineNumber = "275"
+            endingLineNumber = "275"
             landmarkName = "-closeMQTTClient"
             landmarkType = "7">
          </BreakpointContent>
@@ -286,8 +286,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "390"
-            endingLineNumber = "390"
+            startingLineNumber = "398"
+            endingLineNumber = "398"
             landmarkName = "-sendDeleteRoom:userId:"
             landmarkType = "7">
          </BreakpointContent>
@@ -302,8 +302,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "382"
-            endingLineNumber = "382"
+            startingLineNumber = "390"
+            endingLineNumber = "390"
             landmarkName = "-sendCreateRoom:userId:authority:"
             landmarkType = "7">
          </BreakpointContent>
@@ -318,8 +318,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "131"
-            endingLineNumber = "131"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
             landmarkName = "-observeValueForKeyPath:ofObject:change:context:"
             landmarkType = "7">
          </BreakpointContent>
@@ -328,22 +328,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E7E26BB6-5849-4A1D-9B96-DF9BF1049107"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "whiteBoard/model/UpdateToMQTT.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "138"
-            endingLineNumber = "138"
-            landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F89B0A58-831C-4D01-8103-36D478BFFEF1"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -359,6 +343,22 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "F89B0A58-831C-4D01-8103-36D478BFFEF1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "whiteBoard/model/UpdateToMQTT.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
+            landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "AD137FD4-B9F4-4B4E-8A73-E31721242001"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -366,8 +366,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "142"
-            endingLineNumber = "142"
+            startingLineNumber = "143"
+            endingLineNumber = "143"
             landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
             landmarkType = "7">
             <Locations>
@@ -414,8 +414,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "167"
-            endingLineNumber = "167"
+            startingLineNumber = "168"
+            endingLineNumber = "168"
             landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
             landmarkType = "7">
          </BreakpointContent>
@@ -430,8 +430,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "168"
-            endingLineNumber = "168"
+            startingLineNumber = "169"
+            endingLineNumber = "169"
             landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
             landmarkType = "7">
          </BreakpointContent>
@@ -446,8 +446,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
+            startingLineNumber = "172"
+            endingLineNumber = "172"
             landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
             landmarkType = "7">
          </BreakpointContent>
@@ -510,8 +510,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "140"
-            endingLineNumber = "140"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
             landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
             landmarkType = "7">
          </BreakpointContent>
@@ -814,8 +814,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "147"
-            endingLineNumber = "147"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
             landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
             landmarkType = "7">
          </BreakpointContent>
@@ -830,8 +830,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "154"
-            endingLineNumber = "154"
+            startingLineNumber = "155"
+            endingLineNumber = "155"
             landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
             landmarkType = "7">
          </BreakpointContent>
@@ -910,8 +910,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "197"
-            endingLineNumber = "197"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
             landmarkName = "-buClick"
             landmarkType = "7">
          </BreakpointContent>
@@ -990,8 +990,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "600"
-            endingLineNumber = "600"
+            startingLineNumber = "608"
+            endingLineNumber = "608"
             landmarkName = "-sendTranslationImage:userId:imageId:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1006,8 +1006,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "602"
-            endingLineNumber = "602"
+            startingLineNumber = "610"
+            endingLineNumber = "610"
             landmarkName = "-sendTranslationImage:userId:imageId:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1022,8 +1022,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "586"
-            endingLineNumber = "586"
+            startingLineNumber = "594"
+            endingLineNumber = "594"
             landmarkName = "-sendTranslationImage:userId:imageId:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1038,8 +1038,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "588"
-            endingLineNumber = "588"
+            startingLineNumber = "596"
+            endingLineNumber = "596"
             landmarkName = "-sendTranslationImage:userId:imageId:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1054,8 +1054,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "584"
-            endingLineNumber = "584"
+            startingLineNumber = "592"
+            endingLineNumber = "592"
             landmarkName = "-sendTranslationImage:userId:imageId:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1070,9 +1070,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "147"
-            endingLineNumber = "147"
-            landmarkName = "-addImageView:imageId:"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
+            landmarkName = "-addDownImageView:imageId:userId:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1102,9 +1102,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "292"
-            endingLineNumber = "292"
-            landmarkName = "-getTranslationImage:userId:imageId:point:currentPage:imageNum:"
+            startingLineNumber = "318"
+            endingLineNumber = "318"
+            landmarkName = "-getZoomImage:userId:imageId:size:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1118,8 +1118,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
+            startingLineNumber = "154"
+            endingLineNumber = "154"
             landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1128,22 +1128,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "CA4E5AEC-2974-48CB-94F8-18BD4A1BC096"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "whiteBoard/model/UpdateToMQTT.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
-            landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B3E31B53-091C-4868-9E35-EDC93F131B40"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1159,6 +1143,22 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "B3E31B53-091C-4868-9E35-EDC93F131B40"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "whiteBoard/model/UpdateToMQTT.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
+            landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "DD0C8C0F-7946-4CFD-AE6F-C8AF00D694EF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1166,9 +1166,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "287"
-            endingLineNumber = "287"
-            landmarkName = "-getTranslationImage:userId:imageId:point:currentPage:imageNum:"
+            startingLineNumber = "313"
+            endingLineNumber = "313"
+            landmarkName = "-getZoomImage:userId:imageId:size:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1182,9 +1182,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "283"
-            endingLineNumber = "283"
-            landmarkName = "-getTranslationImage:userId:imageId:point:currentPage:imageNum:"
+            startingLineNumber = "309"
+            endingLineNumber = "309"
+            landmarkName = "-getZoomImage:userId:imageId:size:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1198,9 +1198,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "322"
-            endingLineNumber = "322"
-            landmarkName = "-getRotateImage:userId:imageId:rotate:currentPage:imageNum:"
+            startingLineNumber = "348"
+            endingLineNumber = "348"
+            landmarkName = "-getAddImageEnd:userId:imageId:currentPage:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1214,9 +1214,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "332"
-            endingLineNumber = "332"
-            landmarkName = "-gestureHandler:imageId:imageNum:"
+            startingLineNumber = "358"
+            endingLineNumber = "358"
+            landmarkName = "-getAddImageStart:userId:imageId:currentPage:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1230,9 +1230,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
-            landmarkName = "-touchesBegan:withEvent:"
+            startingLineNumber = "248"
+            endingLineNumber = "248"
+            landmarkName = "-touchesEnded:withEvent:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1262,8 +1262,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "554"
-            endingLineNumber = "554"
+            startingLineNumber = "561"
+            endingLineNumber = "561"
             landmarkName = "-gestureRecognizer:shouldReceiveTouch:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1310,9 +1310,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "176"
-            endingLineNumber = "176"
-            landmarkName = "-addGraphical:"
+            startingLineNumber = "202"
+            endingLineNumber = "202"
+            landmarkName = "-setLineColor:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1422,8 +1422,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "403"
-            endingLineNumber = "403"
+            startingLineNumber = "410"
+            endingLineNumber = "410"
             landmarkName = "-graphicalViewTapGesClick:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1502,9 +1502,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "320"
-            endingLineNumber = "320"
-            landmarkName = "-getRotateImage:userId:imageId:rotate:currentPage:imageNum:"
+            startingLineNumber = "346"
+            endingLineNumber = "346"
+            landmarkName = "-getAddImageEnd:userId:imageId:currentPage:point:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1678,9 +1678,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "376"
-            endingLineNumber = "376"
-            landmarkName = "-addGraphicalFromDelegate:"
+            startingLineNumber = "402"
+            endingLineNumber = "402"
+            landmarkName = "-deleteGraphical:color:lineWidth:array:userId:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1710,8 +1710,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
             landmarkName = "-undoClick:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1726,8 +1726,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "466"
-            endingLineNumber = "466"
+            startingLineNumber = "492"
+            endingLineNumber = "492"
             landmarkName = "-undoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1736,38 +1736,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "7AA3A55C-9203-4077-BF07-49F39F9D872F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "whiteBoard/model/UpdateToMQTT.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "144"
-            endingLineNumber = "144"
-            landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "3D9F9C79-D2A9-4DF9-836C-B0CC8250B32F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "whiteBoard/model/UpdateToMQTT.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "221"
-            endingLineNumber = "221"
-            landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "5B659AB5-D900-46FF-9691-EDF1784EA998"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1783,6 +1751,38 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "3D9F9C79-D2A9-4DF9-836C-B0CC8250B32F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "whiteBoard/model/UpdateToMQTT.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "222"
+            endingLineNumber = "222"
+            landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5B659AB5-D900-46FF-9691-EDF1784EA998"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "whiteBoard/model/UpdateToMQTT.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "146"
+            endingLineNumber = "146"
+            landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "B51E9F91-52F4-470B-9892-8730123EB418"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1790,8 +1790,8 @@
             filePath = "whiteBoard/model/UpdateToMQTT.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
+            startingLineNumber = "149"
+            endingLineNumber = "149"
             landmarkName = "-newMessage:data:onTopic:qos:retained:mid:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1806,8 +1806,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "474"
-            endingLineNumber = "474"
+            startingLineNumber = "500"
+            endingLineNumber = "500"
             landmarkName = "-undoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1934,9 +1934,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "289"
-            endingLineNumber = "289"
-            landmarkName = "-getTranslationImage:userId:imageId:point:currentPage:imageNum:"
+            startingLineNumber = "315"
+            endingLineNumber = "315"
+            landmarkName = "-getZoomImage:userId:imageId:size:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1950,9 +1950,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "353"
-            endingLineNumber = "353"
-            landmarkName = "-getAddImageStart:userId:imageId:currentPage:point:imageNum:"
+            startingLineNumber = "379"
+            endingLineNumber = "379"
+            landmarkName = "-getLockImage:userId:imageId:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1966,9 +1966,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "355"
-            endingLineNumber = "355"
-            landmarkName = "-getAddImageStart:userId:imageId:currentPage:point:imageNum:"
+            startingLineNumber = "381"
+            endingLineNumber = "381"
+            landmarkName = "-getLockImage:userId:imageId:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1982,9 +1982,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "354"
-            endingLineNumber = "354"
-            landmarkName = "-getAddImageStart:userId:imageId:currentPage:point:imageNum:"
+            startingLineNumber = "380"
+            endingLineNumber = "380"
+            landmarkName = "-getLockImage:userId:imageId:currentPage:imageNum:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1998,8 +1998,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "457"
-            endingLineNumber = "457"
+            startingLineNumber = "464"
+            endingLineNumber = "464"
             landmarkName = "-addPage"
             landmarkType = "7">
          </BreakpointContent>
@@ -2014,8 +2014,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "455"
-            endingLineNumber = "455"
+            startingLineNumber = "462"
+            endingLineNumber = "462"
             landmarkName = "-addPage"
             landmarkType = "7">
          </BreakpointContent>
@@ -2286,8 +2286,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "588"
-            endingLineNumber = "588"
+            startingLineNumber = "595"
+            endingLineNumber = "595"
             landmarkName = "-redoButtonClick"
             landmarkType = "7">
          </BreakpointContent>
@@ -2302,8 +2302,8 @@
             filePath = "whiteBoard/controller/BoardViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "587"
-            endingLineNumber = "587"
+            startingLineNumber = "594"
+            endingLineNumber = "594"
             landmarkName = "-redoButtonClick"
             landmarkType = "7">
          </BreakpointContent>
@@ -2318,8 +2318,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "61"
-            endingLineNumber = "61"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
             landmarkName = "-redoClick"
             landmarkType = "7">
          </BreakpointContent>
@@ -2478,8 +2478,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
             landmarkName = "-redoClick"
             landmarkType = "7">
          </BreakpointContent>
@@ -2494,8 +2494,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
             landmarkName = "-redoClick"
             landmarkType = "7">
          </BreakpointContent>
@@ -2542,9 +2542,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
-            landmarkName = "-redoClick"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "-undoClick:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2558,9 +2558,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
-            landmarkName = "-redoClick"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
+            landmarkName = "-undoClick:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2622,9 +2622,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "385"
-            endingLineNumber = "385"
-            landmarkName = "-deleteGraphical:color:lineWidth:array:userId:"
+            startingLineNumber = "411"
+            endingLineNumber = "411"
+            landmarkName = "-deleteGraphicalNetwork:color:lineWidth:array:userId:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2638,8 +2638,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "419"
-            endingLineNumber = "419"
+            startingLineNumber = "445"
+            endingLineNumber = "445"
             landmarkName = "-redoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2750,8 +2750,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "413"
-            endingLineNumber = "413"
+            startingLineNumber = "439"
+            endingLineNumber = "439"
             landmarkName = "-redoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2766,8 +2766,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "420"
-            endingLineNumber = "420"
+            startingLineNumber = "446"
+            endingLineNumber = "446"
             landmarkName = "-redoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2782,9 +2782,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "409"
-            endingLineNumber = "409"
-            landmarkName = "-deleteGraphicalNetwork:color:lineWidth:array:userId:"
+            startingLineNumber = "435"
+            endingLineNumber = "435"
+            landmarkName = "-redoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2798,8 +2798,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "418"
-            endingLineNumber = "418"
+            startingLineNumber = "444"
+            endingLineNumber = "444"
             landmarkName = "-redoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2958,8 +2958,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "441"
-            endingLineNumber = "441"
+            startingLineNumber = "467"
+            endingLineNumber = "467"
             landmarkName = "-redoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2974,8 +2974,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "433"
-            endingLineNumber = "433"
+            startingLineNumber = "459"
+            endingLineNumber = "459"
             landmarkName = "-redoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2990,8 +2990,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "434"
-            endingLineNumber = "434"
+            startingLineNumber = "460"
+            endingLineNumber = "460"
             landmarkName = "-redoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3006,9 +3006,9 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "484"
-            endingLineNumber = "484"
-            landmarkName = "-undoWithRoomId:userId:graphical:currentPage:"
+            startingLineNumber = "510"
+            endingLineNumber = "510"
+            landmarkName = "-clearAll:userId:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3022,8 +3022,8 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "442"
-            endingLineNumber = "442"
+            startingLineNumber = "468"
+            endingLineNumber = "468"
             landmarkName = "-redoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3038,10 +3038,26 @@
             filePath = "whiteBoard/view/DrawViewAndImageView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "448"
-            endingLineNumber = "448"
-            landmarkName = "-redoWithRoomId:userId:graphical:currentPage:"
+            startingLineNumber = "474"
+            endingLineNumber = "474"
+            landmarkName = "-undoWithRoomId:userId:graphical:currentPage:"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1592577A-1A2F-49FF-B86B-966F3452EC2D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "whiteBoard/view/DrawViewAndImageView.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "523"
+            endingLineNumber = "523"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

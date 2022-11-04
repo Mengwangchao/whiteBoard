@@ -38,6 +38,7 @@
         [self.topics addObject:@"zoomImage"];
         [self.topics addObject:@"undo"];
         [self.topics addObject:@"redo"];
+        [self.topics addObject:@"clearAll"];
         self.currentPage = 1;
         self.pageCount = 1;
 //        [self connectMQTT];
@@ -228,6 +229,13 @@
             if (weakSelf.controldelegate!=nil && [weakSelf.controldelegate respondsToSelector:@selector(redoWithRoomId:userId:graphical:currentPage:)]){
                
                 [weakSelf.controldelegate redoWithRoomId:dic[@"roomId"] userId:dic[@"userId"] graphical:[dic[@"graphical"] intValue] currentPage:[dic[@"currentPage"] intValue]];
+            }
+        }
+        else if ([topic isEqual:@"clearAll"]){
+            
+            if (weakSelf.controldelegate!=nil && [weakSelf.controldelegate respondsToSelector:@selector(clearAll:userId:currentPage:)]){
+               
+                [weakSelf.controldelegate clearAll:dic[@"roomId"] userId:dic[@"userId"] currentPage:[dic[@"currentPage"] intValue]];
             }
         }
         else{
@@ -693,6 +701,29 @@
   
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"redo" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+
+-(void)sendClearAll:(NSString *)roomId userId:(NSString *)userId{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("clearAll", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
+        
+  
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"clearAll" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
                     NSLog(@"发送失败 - %@",error);
                 }else{
