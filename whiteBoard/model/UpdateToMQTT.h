@@ -19,6 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@protocol controlMQTTDelegate <NSObject>
+
+-(void)undoWithRoomId :(NSString *)roomId userId:(NSString *)userId graphical : (int)graphical currentPage :(int)currentPage;
+
+//-(void)getJoinRoomReturn:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color;
+
+@end
+
 @protocol PageMQTTDelegate <NSObject>
 
 -(void)addPage:(NSString *)roomId userId:(NSString *)userId;
@@ -55,6 +63,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 @property (nonatomic,weak) id<UpdateToMQTTDelegate> updateToMQTTdelegate;
 @property (nonatomic,weak) id<ImageMQTTDelegate> imageMQTTdelegate;
 @property (nonatomic,weak) id<PageMQTTDelegate> pageMQTTdelegate;
+@property (nonatomic,weak) id<controlMQTTDelegate> controldelegate;
 
 -(instancetype)init NS_UNAVAILABLE;
 -(instancetype)initWithTopic:(NSString *)topic;
@@ -78,7 +87,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)sendTranslationImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId point:(CGPoint)point imageNum:(int)imageNum;
 -(void)sendRotateImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId rotate:(float)rotate imageNum:(int)imageNum;
 -(void)sendZoomImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId size:(CGSize)size imageNum:(int)imageNum;
-
+-(void)sendUndo:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical;
 -(void)closeMQTTClient;
 -(void)connectMQTT;
 -(void)disConnectServer;

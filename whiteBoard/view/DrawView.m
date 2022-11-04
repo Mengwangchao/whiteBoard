@@ -59,6 +59,7 @@
 
 
 @property (nonatomic, strong) NSString *userId;
+@property (nonatomic, strong) NSString *downUserId;
 @property (nonatomic, strong) NSString *roomId;
 @property (nonatomic) BOOL isEraserFlag;
 @end
@@ -147,12 +148,16 @@
         [self saveDownGrraphical:self.downGraphical];
     }
     self.downPointArray = [NSMutableArray array];
-    if (![color isEqual: self.downPointColor] ||lineWidth != self.downLineWidth ||(self.downGraphical != (GraphicalState)graphical)) {
+    if (![userId isEqual: self.downUserId] ||![color isEqual: self.downPointColor] || lineWidth != self.downLineWidth ||(self.downGraphical != (GraphicalState)graphical)) {
 
         if(self.downArrayLine.count>0){
             self.downBoardModel.lineWidth = self.downLineWidth;
+            self.downBoardModel.userId = self.downUserId;
             self.downBoardModel.color = self.downPointColor;
             self.downBoardModel.lineArray = self.downArrayLine;
+            if(self.downBoardModel.userId ==nil){
+                self.downBoardModel.userId = self.userId;
+            }
             [self.downPointArrayArray addObject:self.downBoardModel];
             self.downBoardModel = [[DrawBoardModel alloc]init];
             self.downArrayLine = [NSMutableArray array];
@@ -161,6 +166,7 @@
             
             self.downDrawBoardModelGraphical.graphicalArray = self.downGraphicalArray;
             self.downDrawBoardModelGraphical.graphical = self.downGraphical;
+            self.downDrawBoardModelGraphical.userId = self.downUserId;
             [self.downDrawBoardModelGraphicalArray addObject:self.downDrawBoardModelGraphical];
             self.downDrawBoardModelGraphical = [[DrawBoardGraphicalModel alloc]init];
             self.downGraphicalArray = [NSMutableArray array];
@@ -175,6 +181,9 @@
     [self.downPointArray addObject:strPoint];
     self.downPointColor = color;
     self.downLineWidth = lineWidth;
+    if(userId !=nil){
+        self.downUserId = userId;
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         [self setNeedsDisplay];
     });
@@ -269,6 +278,87 @@
     
  
 }
+
+-(void)undoNetwork:(BOOL)isLine userId:(NSString *)userId{
+    if (isLine) {
+        if(self.downArrayLine.count>0){
+            self.downPointArray = [NSMutableArray array];
+            [self.downArrayLine removeLastObject];
+        }else{
+           DrawBoardModel *model = [self.downPointArrayArray lastObject];
+            
+            NSMutableArray *arr = model.lineArray;
+            unsigned long num = self.downPointArrayArray.count-1;
+            while (model.lineArray.count<=0||![model.userId isEqual:userId]) {
+                if(num<0){
+                    return;
+                }
+                if(![model.userId isEqual:userId]){
+                    num --;
+                    model = self.downPointArrayArray[num];
+                }else{
+                    [self.downPointArrayArray removeObject:model];
+                    model = self.downPointArrayArray[num];
+                    arr = model.lineArray;
+                    if(self.downPointArrayArray.count<=0){
+                        return;
+                    }
+                    num--;
+                }
+            }
+            [arr removeLastObject];
+            
+            if(arr.count==0){
+                [self.downPointArrayArray removeLastObject];
+            }else{
+                model.lineArray = arr;
+                [self.downPointArrayArray removeLastObject];
+                [self.downPointArrayArray addObject:model];
+            }
+        }
+        
+    }else{
+        if(self.downPointArray.count>0){
+            NSMutableArray *arr = [NSMutableArray array];
+            [arr addObject:self.downPointArray.firstObject];
+            [arr addObject:self.downPointArray.lastObject];
+            self.downPointArray = [NSMutableArray array];
+        }
+        else if(self.downGraphicalArray.count>0){
+            [self.downGraphicalArray removeLastObject];
+        }else{
+            DrawBoardGraphicalModel *model = self.downDrawBoardModelGraphicalArray.lastObject;
+            NSMutableArray *arr = model.graphicalArray;
+            unsigned long num = self.downDrawBoardModelGraphicalArray.count-1;
+            while (model.graphicalArray.count<=0||![model.userId isEqual:userId]) {
+                if(num<0){
+                    return;
+                }
+                if(![model.userId isEqual:userId]){
+                    num --;
+                    model = self.downDrawBoardModelGraphicalArray[num];
+                }else{
+                    [self.downDrawBoardModelGraphicalArray removeObject:model];
+                    model = self.downDrawBoardModelGraphicalArray[num];
+                    arr = model.graphicalArray;
+                    if(self.downDrawBoardModelGraphicalArray.count<=0){
+                        return;
+                    }
+                    num--;
+                }
+            }
+            [arr removeLastObject];
+            if(arr.count==0){
+                [self.downDrawBoardModelGraphicalArray removeLastObject];
+            }else{
+                model.graphicalArray = arr;
+                [self.downDrawBoardModelGraphicalArray removeLastObject];
+                [self.downDrawBoardModelGraphicalArray addObject:model];
+            }
+        }
+    }
+    [self setNeedsDisplay];
+}
 //回滚
 - (void)undoClick:(BOOL)isLine
 {
@@ -287,6 +377,14 @@
         }else{
            DrawBoardModel *model = [self.drawBoardModelArray lastObject];
             NSMutableArray *arr = model.lineArray;
+            while (model.lineArray.count<=0) {
+                [self.drawBoardModelArray removeLastObject];
+                model = [self.drawBoardModelArray lastObject];
+                arr = model.lineArray;
+                if(self.drawBoardModelArray.count<=0){
+                    return;
+                }
+            }
             [arr removeLastObject];
             
             if(self.controldelegate !=nil && [self.controldelegate respondsToSelector:@selector(deleteGraphical:color:lineWidth:array:)]){

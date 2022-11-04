@@ -19,6 +19,7 @@ typedef NS_ENUM(NSInteger, GraphicalState){
 @interface DrawBoardGraphicalModel : NSObject
 @property (nonatomic,strong) NSMutableArray *graphicalArray;
 @property (nonatomic) GraphicalState graphical;
+@property (nonatomic,strong) NSString * userId;
 
 @end
 @interface CircularModel : NSObject

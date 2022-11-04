@@ -36,6 +36,7 @@
         [self.topics addObject:@"translationImage"];
         [self.topics addObject:@"rotateImage"];
         [self.topics addObject:@"zoomImage"];
+        [self.topics addObject:@"undo"];
         self.currentPage = 1;
         self.pageCount = 1;
 //        [self connectMQTT];
@@ -212,6 +213,13 @@
                 NSDictionary *dicSize = dic[@"scale"];
                 CGSize size = CGSizeMake([dicSize[@"width"] floatValue], [dicSize[@"height"] floatValue]);
                 [weakSelf.imageMQTTdelegate getZoomImage:dic[@"roomId"] userId:dic[@"userId"] imageId:[dic[@"imageId"] intValue] size:size currentPage:[dic[@"currentPage"] intValue] imageNum:[dic[@"imageNum"] intValue]];
+            }
+        }
+        else if ([topic isEqual:@"undo"]){
+            
+            if (weakSelf.controldelegate!=nil && [weakSelf.controldelegate respondsToSelector:@selector(undoWithRoomId:userId:graphical:currentPage:)]){
+               
+                [weakSelf.controldelegate undoWithRoomId:dic[@"roomId"] userId:dic[@"userId"] graphical:[dic[@"graphical"] intValue] currentPage:[dic[@"currentPage"] intValue]];
             }
         }
         else{
@@ -638,7 +646,29 @@
         }];
     });
 }
-
+-(void)sendUndo:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("undo", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
+        [dic setValue:[NSString stringWithFormat:@"%d",graphical] forKey:@"graphical"];
+        
+  
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"undo" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
 //cmp 0 -> r  1 -> g  2 -> b  3 -> a
 - (void)cx_getRGBComponents:(CGFloat [4])cmp forColor:(UIColor *)color {
     unsigned long int fNum = CGColorGetNumberOfComponents(color.CGColor);

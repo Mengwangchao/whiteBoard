@@ -7,7 +7,7 @@
 
 #import "DrawViewAndImageView.h"
 #import "ImageViewOfDrawView.h"
-@interface DrawViewAndImageView()<ImageViewOfDrawViewDelegate,ImageMQTTDelegate,controlDelegate>
+@interface DrawViewAndImageView()<ImageViewOfDrawViewDelegate,ImageMQTTDelegate,controlDelegate,controlMQTTDelegate>
 @property (nonatomic , strong)DrawView *rootDrawView;
 @property (nonatomic , strong)ImageViewOfDrawView *imageView;
 @property (nonatomic , strong)ImageViewOfDrawView *downImageView;
@@ -31,6 +31,7 @@
         self.uploadMQTT = mqtt;
         self.userId = userId;
         mqtt.imageMQTTdelegate = self;
+        mqtt.controldelegate = self;
         self.roomId = roomId;
         self.currentPage = 1;
         self.imageNum =0;
@@ -38,6 +39,7 @@
         self.addArray = [NSMutableArray array];
         self.imageScrolling = NO;
         self.imageViewArray = [NSMutableArray array];
+        
         self.rootDrawView = [[DrawView alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height) userId:userId roomId:roomId MQTT:mqtt];
         self.rootDrawView.controldelegate = self;
         [self addSubview:self.rootDrawView];
@@ -63,9 +65,10 @@
             
         }else{
 //            self.deleteArray addObject:self.imag
-            for (NSDictionary *dic in self.imageViewArray) {
-                NSString *userId = dic[@"userId"];
-                if([self.userId isEqual:userId]){
+            for (unsigned long i = self.imageViewArray.count-1; i>=0; i--) {
+                NSDictionary *dic = self.imageViewArray[i];
+                NSString *insideUserId = dic[@"userId"];
+                if([self.userId  isEqual:insideUserId]){
                     ImageViewOfDrawView *image = dic[@"imageView"];
                     [image removeFromSuperview];
                     [self.imageViewArray removeObject:dic];
@@ -75,6 +78,7 @@
                 }
             }
         }
+        [self.uploadMQTT sendUndo:self.roomId userId:self.userId graphical:undoId];
     }
 }
 -(void)addImageView:(UIImage *)image imageId:(int)imageId{
@@ -93,7 +97,6 @@
     self.imageView = imageView;
     self.rootDrawView.imageScrolling = YES;
     [self.addArray addObject:[NSString stringWithFormat:@"-1"]];
-    
 }
 -(void)addDownImageView:(UIImage *)image imageId:(int)imageId userId:(NSString *)userId{
     
@@ -120,6 +123,11 @@
 }
 -(void)setDrawHidden:(BOOL)hidden{
     self.hidden = hidden;
+    if(hidden == NO){
+        
+        self.uploadMQTT.imageMQTTdelegate = self;
+        self.uploadMQTT.controldelegate = self;
+    }
     [self.rootDrawView setDrawHidden:hidden];
 }
 - (void)setLineColor:(UIColor *)color{
@@ -220,7 +228,7 @@
         return;
     }
     if (![self.downImageView isEqual:self.imageViewArray[imageNum-1]]) {
-        self.downImageView = self.imageViewArray[imageNum-1];
+        self.downImageView = self.imageViewArray[imageNum-1][@"imageView"];
     }
     self.downImageView.center = point;
 }
@@ -234,7 +242,7 @@
         return;
     }
     if (![self.downImageView isEqual:self.imageViewArray[imageNum-1]]) {
-        self.downImageView = self.imageViewArray[imageNum-1];
+        self.downImageView = self.imageViewArray[imageNum-1][@"imageView"];
     }
     CGPoint center = self.downImageView.center;
     self.downImageView.frame = CGRectMake(self.downImageView.frame.origin.x, self.downImageView.frame.origin.y, size.width, size.height);
@@ -250,7 +258,7 @@
         return;
     }
     if (self.downImageView.imageNum != imageNum) {
-        self.downImageView = self.imageViewArray[imageNum-1];
+        self.downImageView = self.imageViewArray[imageNum-1][@"imageView"];
     }
     CGAffineTransform transform = CGAffineTransformIdentity;
     self.downImageView.transform = CGAffineTransformRotate(transform, rotate/180.0*M_PI);
@@ -299,7 +307,7 @@
    self.downImageView.frame = [self getImageFrame:point strartPoint:self.downImageStartPoint view:self.downImageView];
 }
 -(void)getLockImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId currentPage:(int)currentPage imageNum:(int)imageNum{
-    self.downImageView = self.imageViewArray[imageNum-1];
+    self.downImageView = self.imageViewArray[imageNum-1][@"imageView"];
     self.downImageView.userInteractionEnabled = NO;
     self.downImageView.okButton.hidden = YES;
     [self sendSubviewToBack:self.downImageView];
@@ -310,6 +318,34 @@
 }
 -(void)deleteGraphical:(GraphicalState)graphical color:(UIColor *)color lineWidth:(float)lineWidth array:(NSArray *)array{
     NSLog(@"delete %d",(int)graphical);
+}
+-(void)undoWithRoomId:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical currentPage:(int)currentPage{
+    if ([userId isEqual:self.userId]){
+        return;
+    }
+    if (self.rootDrawView.currentPage != currentPage) {
+        return;
+    }
+    if(graphical == 1){
+        
+        [self.rootDrawView undoNetwork:YES userId:userId];
+    }else if (graphical == -1){
+        for (unsigned long i = self.imageViewArray.count-1; i>=0; i--) {
+            NSDictionary *dic = self.imageViewArray[i];
+            NSString *insideUserId = dic[@"userId"];
+            if([userId isEqual:insideUserId]){
+                ImageViewOfDrawView *image = dic[@"imageView"];
+                [image removeFromSuperview];
+                [self.imageViewArray removeObject:dic];
+                break;
+                
+            }
+        }
+    }else{
+        
+        [self.rootDrawView undoNetwork:NO userId:userId];
+    }
+    
 }
 /*
  // Only override drawRect: if you perform custom drawing.

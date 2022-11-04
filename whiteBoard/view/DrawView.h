@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIColor*)getLineColor;
 -(void)deleteView;
 -(void)undoClick:(BOOL)isLine;
+-(void)undoNetwork:(BOOL)isLine userId:(NSString *)userId;
 @end
 
 NS_ASSUME_NONNULL_END

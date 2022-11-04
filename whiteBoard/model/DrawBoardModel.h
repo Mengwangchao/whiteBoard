@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong) NSMutableArray *lineArray;
 @property (nonatomic,strong) UIColor *color;
 @property (nonatomic) float lineWidth;
+@property (nonatomic,strong) NSString * userId;
 @end
 
 NS_ASSUME_NONNULL_END

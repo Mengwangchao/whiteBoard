@@ -49,7 +49,7 @@
     self.pageCount = 1;
     self.view.backgroundColor = [UIColor whiteColor];
     self.rootDrawViewArray = [NSMutableArray array];
-    UILabel *roomIdLabel = [[UILabel alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-120, 60, 240, 40)];
+    UILabel *roomIdLabel = [[UILabel alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-120, 80, 240, 40)];
     roomIdLabel.backgroundColor = [UIColor clearColor];
     roomIdLabel.text = [NSString stringWithFormat:@"房间名：%@",self.roomId];
     roomIdLabel.textColor = [UIColor blackColor];
@@ -177,7 +177,7 @@
     [self.rightButtonRootView addGestureRecognizer:panGesture];
     UIButton *undoButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
     undoButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
-    [undoButton setImage:[[UIImage imageNamed:@"2"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [undoButton setImage:[[UIImage imageNamed:@"undo"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     undoButton.tintColor = [UIColor blackColor];
     [undoButton addTarget:self action:@selector(undoButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [self.rightButtonRootView addSubview:undoButton];
@@ -444,9 +444,9 @@
     self.rootDrawView = [[DrawViewAndImageView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH, 0, 2*MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
     
     [self.rootDrawViewArray addObject:self.rootDrawView];
-    if(!self.isCreater){
+    if(self.authority == NO && self.isCreater == NO){
         
-//        self.rootDrawView.userInteractionEnabled = NO;  //开启后就是只读模式
+        self.rootDrawView.userInteractionEnabled = NO;  //开启后就是只读模式
     }
     self.rootDrawView.currentPage = self.currentPage;
     [self.view addSubview:self.rootDrawView];
