@@ -1,6 +1,9 @@
 package com.example.writeboard.view;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,8 +15,11 @@ import android.graphics.Xfermode;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+
+import com.example.writeboard.utils.MqttClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +33,17 @@ public class PaletteView extends View {
     private Path mPath;
     private float mLastX;
     private float mLastY;
+    private float mx;
+    private float my;
     private Bitmap mBufferBitmap;
     private Canvas mBufferCanvas;
+    private MqttClient mqttClient;
+
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
 
     private static final int MAX_CACHE_STEP = 20;
-
     private List<DrawingInfo> mDrawingList;
     private List<DrawingInfo> mRemovedList;
 
@@ -52,6 +64,10 @@ public class PaletteView extends View {
 
     public PaletteView(Context context) {
         this(context, null);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("xiaohao");//名字
+        context.registerReceiver(broadcastReceiver, intentFilter);
+
     }
 
     public PaletteView(Context context, AttributeSet attrs) {
@@ -134,6 +150,14 @@ public class PaletteView extends View {
         mPaint.setColor(color);
     }
 
+    public boolean canRedo() {
+        return mRemovedList != null && mRemovedList.size() > 0;
+    }
+
+    public boolean canUndo() {
+        return mDrawingList != null && mDrawingList.size() > 0;
+    }
+
     public void setPenAlpha(int alpha) {
         mPaint.setAlpha(alpha);
     }
@@ -146,14 +170,6 @@ public class PaletteView extends View {
             }
             invalidate();
         }
-    }
-
-    public boolean canRedo() {
-        return mRemovedList != null && mRemovedList.size() > 0;
-    }
-
-    public boolean canUndo() {
-        return mDrawingList != null && mDrawingList.size() > 0;
     }
 
     public void redo() {
@@ -249,11 +265,18 @@ public class PaletteView extends View {
                     mPath = new Path();
                 }
                 mPath.moveTo(x, y);
+                mqttClient.subscribe("a/b");
+                mqttClient.publish("a/b", "{\n" +
+                        "\"mode\":\"" + 1 + "\",\n" +
+                        "\"a\":\"" + x + "\",\n" +
+                        "\"b\":\"" + y + "\",\n" +
+                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
+                        "}", false);
                 break;
             case MotionEvent.ACTION_MOVE:
 //                (x + mLastX) / 2 (y + mLastY) / 2
                 //这里终点设为两点的中心点的目的在于使绘制的曲线更平滑，如果终点直接设置为x,y，效果和lineto是一样的,实际是折线效果
-                mPath.quadTo(mLastX, mLastY, (x + mLastX)/2, (y + mLastY) / 2);
+                mPath.quadTo(mLastX, mLastY, (x + mLastX) / 2, (y + mLastY) / 2);
                 if (mBufferBitmap == null) {
                     initBuffer();
                 }
@@ -264,14 +287,76 @@ public class PaletteView extends View {
                 invalidate();
                 mLastX = x;
                 mLastY = y;
+                mqttClient.subscribe("a/b");
+                mqttClient.publish("a/b", "{\n" +
+                        "\"mode\":\"" + 2 + "\",\n" +
+                        "\"a\":\"" + x + "\",\n" +
+                        "\"b\":\"" + y + "\",\n" +
+                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
+                        "}", false);
                 break;
             case MotionEvent.ACTION_UP:
                 if (mMode == Mode.DRAW || mCanEraser) {
                     saveDrawingPath();
+                    mqttClient.subscribe("a/b");
+                    mqttClient.publish("a/b", "{\n" +
+                            "\"mode\":\"" + 3 + "\",\n" +
+                            "\"a\":\"" + x + "\",\n" +
+                            "\"b\":\"" + y + "\",\n" +
+                            "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
+                            "}", false);
                 }
                 mPath.reset();
                 break;
         }
         return true;
     }
+
+    public void draw1(float x, float y) {
+        mLastX = x;
+        mLastY = y;
+        if (mPath == null) {
+            mPath = new Path();
+        }
+        mPath.moveTo(x, y);
+    }
+
+    public void draw2(float x, float y) {
+        mPath.quadTo(mLastX, mLastY, (x + mLastX) / 2, (y + mLastY) / 2);
+        if (mBufferBitmap == null) {
+            initBuffer();
+        }
+        mBufferCanvas.drawPath(mPath, mPaint);
+        invalidate();
+        mLastX = x;
+        mLastY = y;
+    }
+
+    public void draw3(float x, float y) {
+        saveDrawingPath();
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("xiaohao")) {
+
+                Toast.makeText(context, "接收到消息了\n x值：" + intent.getFloatExtra("x", 0.0f) + "\n y值：" + intent.getFloatExtra("y", 0.0f) + "\n id值："
+                        + intent.getStringExtra("id") + "\n mode:" + intent.getIntExtra("mode", 0), Toast.LENGTH_SHORT).show();
+
+                int mode = intent.getIntExtra("mode", 0);
+                if (mode == 1) {
+                    draw1(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("x", 0.0f));
+                } else if (mode == 2) {
+
+                    draw2(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("x", 0.0f));
+                } else if (mode == 3) {
+                    draw3(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("x", 0.0f));
+
+                }
+            }
+
+
+        }
+    };
 }

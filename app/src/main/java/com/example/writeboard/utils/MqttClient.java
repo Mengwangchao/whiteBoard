@@ -1,8 +1,16 @@
 package com.example.writeboard.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
+import android.util.JsonReader;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -11,25 +19,49 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-public class MqttClient {
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    private static MqttAndroidClient mqttAndroidClient;
+public class MqttClient {
     private static String TAG = "AndroidMqttClient";
-    private String serverURI;
+    private MqttAndroidClient mqttAndroidClient;
+    private String userId;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    private static String serverURI="ws://broker.emqx.io:8083/mqtt";
     private String username;
     private String password;
+    private int qos = 2;
     private MqttMessage message;
-    private int gos = 0;
     private MqttConnectOptions mqttConnectOptions;
     private Context mcontext;
+    public void setQos(int gos) {
+        this.qos = gos;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setMessage(MqttMessage message) {
+        this.message = message;
+    }
 
     public void connect(Context context) {
 
         this.mcontext = context;
-        serverURI = "ws://broker.emqx.io:8083/mqtt";
-        username = "xiao";
-        password = "xiao";
-        mqttAndroidClient = new MqttAndroidClient(mcontext, serverURI, "java_client3");
+        mqttAndroidClient = new MqttAndroidClient(mcontext, serverURI, userId);
         mqttAndroidClient.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
@@ -40,6 +72,22 @@ public class MqttClient {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 Log.d(TAG, "收到的消息：" + message.toString() + "--from topic:" + topic);
                 Log.i("AndroidMqttClient", "获得的消息是" + message.toString());
+                String msg = new String(message.getPayload());
+                JsonParser jp = new JsonParser();
+                JsonObject jo = jp.parse(msg).getAsJsonObject();
+                int mode=jo.get("mode").getAsInt();
+                Float a = jo.get("a").getAsFloat();
+                Float b = jo.get("b").getAsFloat();
+                String c = jo.get("id").getAsString();
+if(!userId.equals(c)){
+                Toast.makeText(mcontext, "x坐标" + a + "\ny坐标" + b + "\n id:"+c +"\n mode:"+mode, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setAction("xiaohao");//要通知的广播XXXXX名称
+                intent.putExtra("x",a);
+                intent.putExtra("y",b);
+                intent.putExtra("mode",mode);
+                intent.putExtra("id",c+"");
+                context.sendBroadcast(intent);}
             }
 
             @Override
@@ -48,34 +96,30 @@ public class MqttClient {
             }
         });
         mqttConnectOptions = new MqttConnectOptions();
-        mqttConnectOptions.setUserName(username);
-        mqttConnectOptions.setPassword(password.toCharArray());
+        mqttConnectOptions.setUserName("xiaohao");
+        mqttConnectOptions.setPassword("xiaohao".toCharArray());
         try {
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
+                    Toast.makeText(mcontext,"远程连接成功",Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "连接成功");
                 }
-
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Toast.makeText(mcontext,"远程连接失败",Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "连接失败" + exception);
                 }
             });
         } catch (MqttException e) {
             e.printStackTrace();
         }
-
-    }
-
-    public void setGos(int gos) {
-        this.gos = gos;
     }
 
     public void subscribe(String topic) {
 
         try {
-            mqttAndroidClient.subscribe(topic, gos, mcontext, new IMqttActionListener() {
+            mqttAndroidClient.subscribe(topic, qos, mcontext, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d(TAG, "订阅：" + topic + "成功");
@@ -92,23 +136,20 @@ public class MqttClient {
     }
 
     public void publish(String topic, String msg, boolean retained) {
-
         message = new MqttMessage();
         message.setPayload(msg.getBytes());
-        message.setQos(gos);
+        message.setQos(qos);
         message.setRetained(retained);
         try {
             mqttAndroidClient.publish(topic, message, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d(TAG, "发送" + message + "to" + topic + "成功");
-
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.d(TAG, "发送" + message + "to" + topic + "失败");
-
 
                 }
             });

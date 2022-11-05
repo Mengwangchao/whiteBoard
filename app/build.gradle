@@ -40,4 +40,6 @@ dependencies {
 //    MQTT依赖
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.4'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+//    goson
+    implementation 'com.google.code.gson:gson:2.8.9'
 }

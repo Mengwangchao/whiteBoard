@@ -2,12 +2,15 @@ package com.example.writeboard;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.writeboard.activity.BoardActivity;
 import com.example.writeboard.utils.MqttClient;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)   {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
@@ -30,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                  mqttClient=new MqttClient();
                 mqttClient.connect(MainActivity.this);
-                mqttClient.setGos(1);
-
+                mqttClient.setQos(1);
             }
         });
         button2.setOnClickListener(new View.OnClickListener() {
@@ -46,8 +48,18 @@ mqttClient.diconnect();
             @Override
             public void onClick(View v) {
                 mqttClient.subscribe("a/b");
-                mqttClient.publish("a/b","{\n" +
-                        "  \"msg\": \"小浩\"\n" +
+//                Intent intent=new Intent();
+//                intent.putExtra("a/b", (Parcelable) mqttClient);
+//                intent.setClass(MainActivity.this, BoardActivity.class);
+
+//                mqttClient.publish("a/b","{\n" +
+//                        "  \"msg\": \"小浩\"\n" +
+//                        "}",false);
+                mqttClient.publish("a/b","{\n"+
+                        "\"a\":\"1.000000\",\n" +
+                        "\"b\":\"128.000000\",\n"+
+                        "\"g\":\"0.000000\",\n"+
+                        "\"r\":\"0.000000\"\n"+
                         "}",false);
             }
         });
