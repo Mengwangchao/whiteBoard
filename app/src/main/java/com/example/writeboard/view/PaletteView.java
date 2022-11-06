@@ -7,12 +7,14 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Xfermode;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -24,9 +26,6 @@ import com.example.writeboard.utils.MqttClient;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by wensefu on 17-3-21.
- */
 public class PaletteView extends View {
 
     private Paint mPaint;
@@ -65,6 +64,8 @@ public class PaletteView extends View {
     public PaletteView(Context context) {
         this(context, null);
         IntentFilter intentFilter = new IntentFilter();
+
+//        设立BroadCastReiver
         intentFilter.addAction("xiaohao");//名字
         context.registerReceiver(broadcastReceiver, intentFilter);
 
@@ -86,6 +87,7 @@ public class PaletteView extends View {
 
     private void init() {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+//       描边
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setFilterBitmap(true);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
@@ -93,7 +95,7 @@ public class PaletteView extends View {
         mDrawSize = 10;
         mEraserSize = 10;
         mPaint.setStrokeWidth(mDrawSize);
-        mPaint.setColor(0XFF000000);
+        mPaint.setARGB(255, 0, 0, 0);
 
         mClearMode = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
     }
@@ -259,11 +261,14 @@ public class PaletteView extends View {
         final float y = event.getY();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                Log.i("Hve","本地开始划线");
+
                 mLastX = x;
                 mLastY = y;
                 if (mPath == null) {
                     mPath = new Path();
                 }
+//                设置初始点(线段的落笔点）
                 mPath.moveTo(x, y);
                 mqttClient.subscribe("a/b");
                 mqttClient.publish("a/b", "{\n" +
@@ -274,9 +279,12 @@ public class PaletteView extends View {
                         "}", false);
                 break;
             case MotionEvent.ACTION_MOVE:
+                Log.i("Hve","本地划线中");
+
 //                (x + mLastX) / 2 (y + mLastY) / 2
                 //这里终点设为两点的中心点的目的在于使绘制的曲线更平滑，如果终点直接设置为x,y，效果和lineto是一样的,实际是折线效果
                 mPath.quadTo(mLastX, mLastY, (x + mLastX) / 2, (y + mLastY) / 2);
+//                mPath.lineTo(x,y);
                 if (mBufferBitmap == null) {
                     initBuffer();
                 }
@@ -296,6 +304,8 @@ public class PaletteView extends View {
                         "}", false);
                 break;
             case MotionEvent.ACTION_UP:
+                Log.i("Hve","本地划线结束");
+
                 if (mMode == Mode.DRAW || mCanEraser) {
                     saveDrawingPath();
                     mqttClient.subscribe("a/b");
@@ -334,6 +344,8 @@ public class PaletteView extends View {
 
     public void draw3(float x, float y) {
         saveDrawingPath();
+        mPath.reset();
+
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -346,11 +358,17 @@ public class PaletteView extends View {
 
                 int mode = intent.getIntExtra("mode", 0);
                 if (mode == 1) {
+                    Log.i("move", "开始划线");
+
                     draw1(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("x", 0.0f));
                 } else if (mode == 2) {
+                    Log.i("move", "划线中");
+
 
                     draw2(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("x", 0.0f));
-                } else if (mode == 3) {
+                } else if (mode ==3) {
+                    Log.i("move", "划线结束");
+
                     draw3(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("x", 0.0f));
 
                 }

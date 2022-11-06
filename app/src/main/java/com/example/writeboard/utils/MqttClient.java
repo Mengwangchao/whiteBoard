@@ -35,7 +35,9 @@ public class MqttClient {
         this.userId = userId;
     }
 
-    private static String serverURI="ws://broker.emqx.io:8083/mqtt";
+//    private static String serverURI="ws://broker.emqx.io:8083/mqtt";
+    private static String serverURI="ws://39.105.149.69:8083";
+
     private String username;
     private String password;
     private int qos = 2;
@@ -96,8 +98,8 @@ if(!userId.equals(c)){
             }
         });
         mqttConnectOptions = new MqttConnectOptions();
-        mqttConnectOptions.setUserName("xiaohao");
-        mqttConnectOptions.setPassword("xiaohao".toCharArray());
+        mqttConnectOptions.setUserName("emqx_user");
+        mqttConnectOptions.setPassword("emqx_password".toCharArray());
         try {
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
                 @Override
