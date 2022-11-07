@@ -33,6 +33,7 @@
 @property (nonatomic,strong)UISlider *colorGreenColor;
 @property (nonatomic,strong)UISlider *colorBlueColor;
 @property (nonatomic,strong)ImageViewOfDrawView *image;
+@property (nonatomic,strong)UIView* imageRootView;
 @property (nonatomic,strong)UIView* graphicalView;
 @property (nonatomic,strong)UIButton *lineWidthButton;
 @property (nonatomic,strong)UISlider *lineWidthSlider;
@@ -251,6 +252,7 @@
     self.timeLabel.font = [UIFont systemFontOfSize:40];
     [self.timeView addSubview:self.timeLabel];
     //保证最后创建
+    [self addImageRootView];
     [self addGraphicalView];
     [self addColorView];
     // Do any additional setup after loading the view.
@@ -258,6 +260,27 @@
 -(void)buClick{
     self.image.userInteractionEnabled = NO;
     [self.view sendSubviewToBack:self.image];
+}
+-(void)addImageRootView{
+    self.imageRootView = [[UIView alloc]initWithFrame:CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50)];
+    self.imageRootView.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    [self.view addSubview:self.imageRootView];
+    int flag = 1;
+    for(int i = 0; i<1;i++){
+        for(int j = 0; j<7;j++){
+            UIImageView *view = [[UIImageView alloc]initWithFrame:CGRectMake(30+j * 50,50+ i* 50, 40, 40)];
+            view.tintColor = [UIColor blackColor];
+            view.backgroundColor = [UIColor clearColor];
+            view.userInteractionEnabled = YES;
+            [view setImage:[UIImage imageNamed:[NSString stringWithFormat:@"imageId%d",flag]]];
+            [self.imageRootView addSubview:view];
+            view.tag = flag;
+            UITapGestureRecognizer *tages = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(imageRootViewTapGesClick:)];
+            [view addGestureRecognizer:tages];
+            flag ++;
+            
+        }
+    }
 }
 -(void)addGraphicalView{
     self.graphicalView = [[UIView alloc]initWithFrame:CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50)];
@@ -502,7 +525,10 @@
         return;
     }
 //    [self lightButton:sender];
-    [self.rootDrawView addImageView:[UIImage imageNamed:@"LOGO"] imageId:1];
+//    [self.rootDrawView addImageView:[UIImage imageNamed:@"LOGO"] imageId:1];
+    [UIView animateWithDuration:0.3 animations:^{
+        self.imageRootView.frame = CGRectMake(0, 50, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
+    }];
 }
 -(void)colorButtonClick:(UIButton *)sender{
     if (self.authority == NO && self.isCreater == NO) {
@@ -540,6 +566,12 @@
     [self.rootDrawView addGraphical:(GraphicalState)tap.view.tag];
     [UIView animateWithDuration:0.3 animations:^{
         self.graphicalView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
+    }];
+}
+-(void)imageRootViewTapGesClick:(UITapGestureRecognizer *)tap{
+    [self.rootDrawView addImageView:[UIImage imageNamed:[NSString stringWithFormat:@"imageId%d",(int)tap.view.tag]] imageId:(int)tap.view.tag];
+    [UIView animateWithDuration:0.3 animations:^{
+        self.imageRootView.frame = CGRectMake(0, MAIN_SCREEN_HEIGHT, MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT-50);
     }];
 }
 -(void)sliderClick{
