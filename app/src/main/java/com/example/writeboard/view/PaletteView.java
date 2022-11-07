@@ -360,16 +360,16 @@ public class PaletteView extends View {
                 if (mode == 1) {
                     Log.i("move", "开始划线");
 
-                    draw1(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("x", 0.0f));
+                    draw1(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
                 } else if (mode == 2) {
                     Log.i("move", "划线中");
 
 
-                    draw2(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("x", 0.0f));
+                    draw2(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
                 } else if (mode ==3) {
                     Log.i("move", "划线结束");
 
-                    draw3(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("x", 0.0f));
+                    draw3(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
 
                 }
             }

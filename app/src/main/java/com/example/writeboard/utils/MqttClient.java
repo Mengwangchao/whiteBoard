@@ -35,8 +35,8 @@ public class MqttClient {
         this.userId = userId;
     }
 
-//    private static String serverURI="ws://broker.emqx.io:8083/mqtt";
-    private static String serverURI="ws://39.105.149.69:8083";
+    //    private static String serverURI="ws://broker.emqx.io:8083/mqtt";
+    private static String serverURI = "ws://39.105.149.69:8083";
 
     private String username;
     private String password;
@@ -44,6 +44,7 @@ public class MqttClient {
     private MqttMessage message;
     private MqttConnectOptions mqttConnectOptions;
     private Context mcontext;
+
     public void setQos(int gos) {
         this.qos = gos;
     }
@@ -77,19 +78,20 @@ public class MqttClient {
                 String msg = new String(message.getPayload());
                 JsonParser jp = new JsonParser();
                 JsonObject jo = jp.parse(msg).getAsJsonObject();
-                int mode=jo.get("mode").getAsInt();
+                int mode = jo.get("mode").getAsInt();
                 Float a = jo.get("a").getAsFloat();
                 Float b = jo.get("b").getAsFloat();
                 String c = jo.get("id").getAsString();
-if(!userId.equals(c)){
-                Toast.makeText(mcontext, "x坐标" + a + "\ny坐标" + b + "\n id:"+c +"\n mode:"+mode, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.setAction("xiaohao");//要通知的广播XXXXX名称
-                intent.putExtra("x",a);
-                intent.putExtra("y",b);
-                intent.putExtra("mode",mode);
-                intent.putExtra("id",c+"");
-                context.sendBroadcast(intent);}
+                if (!userId.equals(c)) {
+                    Toast.makeText(mcontext, "x坐标" + a + "\ny坐标" + b + "\n id:" + c + "\n mode:" + mode, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.setAction("xiaohao");//要通知的广播XXXXX名称
+                    intent.putExtra("x", a);
+                    intent.putExtra("y", b);
+                    intent.putExtra("mode", mode);
+                    intent.putExtra("id", c + "");
+                    context.sendBroadcast(intent);
+                }
             }
 
             @Override
@@ -104,12 +106,13 @@ if(!userId.equals(c)){
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    Toast.makeText(mcontext,"远程连接成功",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mcontext, "远程连接成功", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "连接成功");
                 }
+
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Toast.makeText(mcontext,"远程连接失败",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mcontext, "远程连接失败", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "连接失败" + exception);
                 }
             });
