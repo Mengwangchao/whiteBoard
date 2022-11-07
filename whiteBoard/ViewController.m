@@ -32,6 +32,13 @@
     [joinButton setTitle:@"匿名加入" forState:UIControlStateNormal];
     joinButton.titleLabel.font = FONT_MEDIUM(14);
     [self.view addSubview:joinButton];
+    UIButton *userNameButton = [[UIButton alloc] initWithFrame:CGRectMake(70, MAIN_SCREEN_HEIGHT/2+100, MAIN_SCREEN_WIDTH - 140, 34)];
+    userNameButton.backgroundColor = BUTTON_BACKGROUNDCOLOR;
+    userNameButton.layer.cornerRadius = 3;
+    [userNameButton addTarget:self action:@selector(userNameButtonAction:) forControlEvents:UIControlEventTouchDown];
+    [userNameButton setTitle:@"实名加入" forState:UIControlStateNormal];
+    userNameButton.titleLabel.font = FONT_MEDIUM(14);
+    [self.view addSubview:userNameButton];
 //    UIButton *sendButton = [[UIButton alloc] initWithFrame:CGRectMake(70, MAIN_SCREEN_HEIGHT/2+100, MAIN_SCREEN_WIDTH - 140, 34)];
 //    sendButton.backgroundColor = BUTTON_BACKGROUNDCOLOR;
 //    sendButton.layer.cornerRadius = 3;
@@ -57,12 +64,74 @@
 //}
 - (void)createBoardAction:(UIButton *)button {
     BoardViewController *boardViewController = [[BoardViewController alloc] init];
-    boardViewController.isCreater = YES;
-    boardViewController.userId = [self getUserId];
-    boardViewController.roomId = [self getRoomId];
-    [self.navigationController pushViewController:boardViewController animated:YES];
+    UIAlertController *alertControl = [UIAlertController alertControllerWithTitle:@"匿名创建" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *actionDefaut = [UIAlertAction actionWithTitle:@"实名" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UITextField *textField = alertControl.textFields[0];
+        if([textField.text isEqual:@""]){
+            
+            boardViewController.isCreater = YES;
+            boardViewController.userId = [self getUserId];
+            boardViewController.roomId = [self getRoomId];
+            [self.navigationController pushViewController:boardViewController animated:YES];
+        }else{
+            
+            boardViewController.isCreater = YES;
+            boardViewController.userId = textField.text;
+            boardViewController.roomId = [self getRoomId];
+            [self.navigationController pushViewController:boardViewController animated:YES];
+        }
+    }];
+    UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"匿名" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+        boardViewController.isCreater = YES;
+        boardViewController.userId = [self getUserId];
+        boardViewController.roomId = [self getRoomId];
+        [self.navigationController pushViewController:boardViewController animated:YES];
+    }];
+    [alertControl addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        
+        textField.placeholder = @"请输入用户名";
+            
+    }];
+    [alertControl addAction:actionDefaut];
+    [alertControl addAction:actionCancel];
+    [self presentViewController:alertControl animated:NO completion:nil];
 }
-
+-(void)userNameButtonAction:(UIButton *)button{
+    BoardViewController *joinViewController = [[BoardViewController alloc] init];
+    UIAlertController *alertControl = [UIAlertController alertControllerWithTitle:@"请输入房间名" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *actionDefaut = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UITextField *textField = alertControl.textFields[0];
+        UITextField *userNameField = alertControl.textFields[1];
+        if([textField.text isEqual:@""]){
+            
+        }
+        else if ([userNameField.text isEqual:@""]){
+            
+        }
+        else{
+            joinViewController.roomId = textField.text;
+            joinViewController.userId = userNameField.text;
+            joinViewController.isCreater = NO;
+            joinViewController.authority = NO;
+            [self.navigationController pushViewController:joinViewController animated:YES];
+        }
+    }];
+    UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    [alertControl addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.keyboardType = UIKeyboardTypeNumberPad;
+            
+    }];
+    [alertControl addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.placeholder = @"请输入用户名";
+            
+    }];
+    [alertControl addAction:actionDefaut];
+    [alertControl addAction:actionCancel];
+    [self presentViewController:alertControl animated:NO completion:nil];
+}
 - (void)enterBoardAction:(UIButton *)button {
     BoardViewController *joinViewController = [[BoardViewController alloc] init];
     UIAlertController *alertControl = [UIAlertController alertControllerWithTitle:@"请输入房间名" message:nil preferredStyle:UIAlertControllerStyleAlert];

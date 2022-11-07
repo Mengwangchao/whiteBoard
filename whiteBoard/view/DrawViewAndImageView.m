@@ -376,7 +376,7 @@
     if (self.currentPage != currentPage) {
         return;
     }
-    [self addDownImageView:[UIImage imageNamed:@"LOGO"] imageId:imageId userId:userId];
+    [self addDownImageView:[UIImage imageNamed:[NSString stringWithFormat:@"imageId%d",imageId]] imageId:imageId userId:userId];
     self.downImageStartPoint = point;
     self.downImageView.imageNum = imageNum;
     self.downImageView.frame = CGRectMake(point.x, point.y, 0, 0);
