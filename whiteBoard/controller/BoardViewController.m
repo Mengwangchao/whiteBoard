@@ -41,6 +41,9 @@
 @property (nonatomic,strong)UserNameView *userNameRootView;
 @property (nonatomic,strong)UIButton *timeButton;
 @property (nonatomic,strong)UIView *timeView;
+@property (nonatomic,strong)UILabel *timeLabel;
+@property (nonatomic,strong)NSTimer *timer;
+@property (nonatomic)int timeNum;
 
 @end
 
@@ -55,6 +58,7 @@
     [super viewDidLoad];
     self.currentPage = 1;
     self.pageCount = 1;
+    self.timeNum = 0;
     self.view.backgroundColor = [UIColor whiteColor];
     self.rootDrawViewArray = [NSMutableArray array];
     UILabel *roomIdLabel = [[UILabel alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-120, 80, 240, 40)];
@@ -226,6 +230,26 @@
     }
     self.userNameRootView.userNameViewDelegatedelegate = self;
     [self.view addSubview:self.userNameRootView];
+    
+    self.timeButton = [[UIButton alloc]initWithFrame:CGRectMake(60, MAIN_SCREEN_HEIGHT-70, 30, 30)];
+    self.timeButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    [self.timeButton setImage:[[UIImage imageNamed:@"time"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    self.timeButton.tintColor = [UIColor blackColor];
+    [self.timeButton addTarget:self action:@selector(timeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.timeButton];
+    
+    
+    self.timeView = [[UIView alloc]initWithFrame:CGRectMake(100, 100, 120, 70)];
+    self.timeView.backgroundColor = [UIColor whiteColor];
+    self.timeView.userInteractionEnabled = YES;
+    self.timeView.hidden = YES;
+    [self.timeView addGestureRecognizer:panGesture];
+    [self.view addSubview:_timeView];
+    self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.timeView.frame.size.width, self.timeView.frame.size.height)];
+    self.timeLabel.text = @"00:00";
+    self.timeLabel.textColor = [UIColor blackColor];
+    self.timeLabel.font = [UIFont systemFontOfSize:40];
+    [self.timeView addSubview:self.timeLabel];
     //保证最后创建
     [self addGraphicalView];
     [self addColorView];
@@ -423,7 +447,9 @@
     }
 }
 -(void)selectTableCellWithRoomId:(NSString *)roomId userId:(NSString *)userId{
-    
+    if(self.isCreater == NO){
+        return;
+    }
     UIAlertController *alert =[UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"设置权限"] message:userId preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"协作" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -736,6 +762,38 @@
                 
             self.userNameRootView.frame = CGRectMake(-300, MAIN_SCREEN_HEIGHT-320, 120, 200);
         }];
+    }
+}
+-(void)timeButtonClick:(UIButton *)sender{
+    if(sender.isSelected == YES){
+        sender.tintColor = [UIColor blackColor];
+        sender.selected = NO;
+        
+        self.timeView.hidden = YES;
+        [self.timer invalidate];
+        self.timer = nil;
+        self.timeNum = 0;
+        self.timeLabel.text = @"00:00";
+        
+    }else{
+        sender.tintColor = [UIColor greenColor];
+        sender.selected = YES;
+        self.timeView.hidden = NO;
+        if(self.timer == nil){
+            
+        }else{
+            [self.timer invalidate];
+            self.timer = nil;
+            self.timeNum = 0;
+            self.timeLabel.text = @"00:00";
+        }
+        __weak typeof(self) weakSelf = self;
+        
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:1 repeats:YES block:^(NSTimer * _Nonnull timer) {
+            weakSelf.timeNum++;
+            weakSelf.timeLabel.text = [NSString stringWithFormat:@"%02d:%02d",weakSelf.timeNum/60,weakSelf.timeNum%60];
+        }];
+        
     }
 }
 /*
