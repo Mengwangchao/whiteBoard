@@ -23,6 +23,7 @@
         [self.topics addObject:@"touchEnd"];
         [self.topics addObject:@"joinRoom"];
         [self.topics addObject:@"joinRoomReturn"];
+        [self.topics addObject:@"readWriteAuthority"];
         [self.topics addObject:@"createRoom"];
         [self.topics addObject:@"deleteRoom"];
         [self.topics addObject:@"deletePage"];
@@ -236,6 +237,18 @@
             if (weakSelf.controldelegate!=nil && [weakSelf.controldelegate respondsToSelector:@selector(clearAll:userId:currentPage:)]){
                
                 [weakSelf.controldelegate clearAll:dic[@"roomId"] userId:dic[@"userId"] currentPage:[dic[@"currentPage"] intValue]];
+            }
+        }
+        else if ([topic isEqual:@"readWriteAuthority"]){
+            
+            if (weakSelf.authorityStatelegate!=nil && [weakSelf.authorityStatelegate respondsToSelector:@selector(getAuthorityState:roomId:userId:isCreater:)]){
+                BOOL creater;
+                if([dic[@"isCreater"]intValue] == 0){
+                    creater = NO;
+                }else{
+                    creater = YES;
+                }
+                [weakSelf.authorityStatelegate getAuthorityState:[dic[@"authority"]intValue] roomId:dic[@"roomId"] userId:dic[@"userId"] isCreater:creater];
             }
         }
         else{
@@ -724,6 +737,33 @@
   
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"clearAll" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+
+
+-(void)sendAuthority:(NSString *)roomId userId:(NSString *)userId Authorith:(AuthorityState)authorith  isCreater:(BOOL)isCreater{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("readWrite", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",(int)authorith] forKey:@"authority"];
+        if(isCreater == YES){
+            [dic setValue:[NSString stringWithFormat:@"1"] forKey:@"isCreater"];
+        }else{
+            [dic setValue:[NSString stringWithFormat:@"0"] forKey:@"isCreater"];
+        }
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"readWriteAuthority" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
                     NSLog(@"发送失败 - %@",error);
                 }else{

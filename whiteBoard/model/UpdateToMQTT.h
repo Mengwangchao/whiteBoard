@@ -9,6 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <MQTTClient/MQTTClient.h>
 NS_ASSUME_NONNULL_BEGIN
+@protocol AuthorityStateMQTTDelegate <NSObject>
+
+-(void)getAuthorityState:(int)authority roomId:(NSString *)roomId userId:(NSString *)userId isCreater:(BOOL)isCteater;
+
+@end
+
 @protocol UpdateToMQTTDelegate <NSObject>
 
 -(void)getMassagePoint:(CGPoint)point userId:(NSString *)userId color : (UIColor *)color currentPage:(int)currentPage graphical:(int)graphical lineWidth:(float)lineWidth;
@@ -66,6 +72,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 @property (nonatomic,weak) id<ImageMQTTDelegate> imageMQTTdelegate;
 @property (nonatomic,weak) id<PageMQTTDelegate> pageMQTTdelegate;
 @property (nonatomic,weak) id<controlMQTTDelegate> controldelegate;
+@property (nonatomic,weak) id<AuthorityStateMQTTDelegate> authorityStatelegate;
 
 -(instancetype)init NS_UNAVAILABLE;
 -(instancetype)initWithTopic:(NSString *)topic;
@@ -92,6 +99,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)sendUndo:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical;
 -(void)sendRedo:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical;
 -(void)sendClearAll:(NSString *)roomId userId:(NSString *)userId;
+-(void)sendAuthority:(NSString *)roomId userId:(NSString *)userId Authorith:(AuthorityState)authorith isCreater:(BOOL)isCreater;
 -(void)closeMQTTClient;
 -(void)connectMQTT;
 -(void)disConnectServer;

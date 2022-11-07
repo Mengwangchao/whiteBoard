@@ -9,7 +9,7 @@
 #import "DrawViewAndImageView.h"
 #import "UpdateToMQTT.h"
 #import "ImageViewOfDrawView.h"
-@interface BoardViewController ()<PageMQTTDelegate,UIGestureRecognizerDelegate>
+@interface BoardViewController ()<PageMQTTDelegate,UIGestureRecognizerDelegate,AuthorityStateMQTTDelegate>
 @property (nonatomic,strong)DrawViewAndImageView *rootDrawView;
 @property (nonatomic,strong)UpdateToMQTT *mMQTT;
 @property (nonatomic,strong)NSMutableArray<DrawViewAndImageView*> *rootDrawViewArray;
@@ -35,6 +35,8 @@
 @property (nonatomic,strong)UIView* graphicalView;
 @property (nonatomic,strong)UIButton *lineWidthButton;
 @property (nonatomic,strong)UISlider *lineWidthSlider;
+@property (nonatomic,strong)UIButton *authorityButton;
+
 @end
 
 @implementation BoardViewController
@@ -58,6 +60,7 @@
     
     self.mMQTT = [[UpdateToMQTT alloc]initWithTopic:self.roomId];
     self.mMQTT.pageMQTTdelegate = self;
+    self.mMQTT.authorityStatelegate = self;
     [self.mMQTT connectMQTT];
     self.rootDrawView = [[DrawViewAndImageView alloc]initWithFrame:CGRectMake(0, 0, 1000, 1000) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
     [self.rootDrawViewArray addObject:self.rootDrawView];
@@ -195,6 +198,13 @@
     clearAllButton.tintColor = [UIColor blackColor];
     [clearAllButton addTarget:self action:@selector(clearAllButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [self.rightButtonRootView addSubview:clearAllButton];
+    
+    self.authorityButton = [[UIButton alloc]initWithFrame:CGRectMake(20, MAIN_SCREEN_HEIGHT-70, 30, 30)];
+    self.authorityButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    [self.authorityButton setImage:[[UIImage imageNamed:@"auth"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    self.authorityButton.tintColor = [UIColor blackColor];
+    [self.authorityButton addTarget:self action:@selector(authorityButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.authorityButton];
     //保证最后创建
     [self addGraphicalView];
     [self addColorView];
@@ -316,6 +326,14 @@
 -(void)setPageButtonText:(int)currentPage pageCount:(int)pageCount{
     [self.pageButton setTitle:[NSString stringWithFormat:@"%d/%d",currentPage,pageCount] forState:UIControlStateNormal];
 }
+-(void)lightButton:(UIButton *)sender{
+    self.addImageButton.tintColor = [UIColor blackColor];
+    self.pancilButton.tintColor = [UIColor blackColor];
+    self.eraserButton.tintColor = [UIColor blackColor];
+    self.graphicalButton.tintColor = [UIColor blackColor];
+    self.lineWidthButton.tintColor = [UIColor blackColor];
+    sender.tintColor = [UIColor greenColor];
+}
 #pragma mark - delegate
 -(void)addPage:(NSString *)roomId userId:(NSString *)userId{
     if ([roomId isEqual:self.roomId] && ![self.userId isEqual:userId]) {
@@ -337,13 +355,46 @@
         [self selectPage:YES];
     }
 }
--(void)lightButton:(UIButton *)sender{
-    self.addImageButton.tintColor = [UIColor blackColor];
-    self.pancilButton.tintColor = [UIColor blackColor];
-    self.eraserButton.tintColor = [UIColor blackColor];
-    self.graphicalButton.tintColor = [UIColor blackColor];
-    self.lineWidthButton.tintColor = [UIColor blackColor];
-    sender.tintColor = [UIColor greenColor];
+-(void)getAuthorityState:(int)authority roomId:(NSString *)roomId userId:(NSString *)userId isCreater:(BOOL)isCteater{
+    if(self.isCreater == YES && isCteater == YES){
+        return;
+    }
+    if(self.isCreater ==  NO && isCteater == NO){
+        return;
+    }
+    if ([roomId isEqual:self.roomId] && [self.userId isEqual:userId]) {
+        if(self.isCreater == NO){
+            switch (authority) {
+                case 1:
+                    self.authority = YES;
+                    self.authorityButton.tintColor = [UIColor greenColor];
+                    self.rootDrawView.userInteractionEnabled = YES;
+                    break;
+                case 2:
+                    self.authority = NO;
+                    self.authorityButton.tintColor = [UIColor blackColor];
+                    self.rootDrawView.userInteractionEnabled = NO;
+                    break;
+                default:
+                    NSLog(@"authority 错误");
+                    break;
+            }
+        }
+        
+    }
+    else if(self.isCreater == YES){
+        
+            UIAlertController *alert =[UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"是否同意申请协作权限"] message:userId preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self.mMQTT sendAuthority:self.roomId userId:userId Authorith:READ_WRITE isCreater:self.isCreater];
+        }];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"拒绝" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            [self.mMQTT sendAuthority:self.roomId userId:userId Authorith:ONLY_READ isCreater:self.isCreater];
+        }];
+        [alert addAction:confirmAction];
+            [alert addAction:cancel];
+            [self presentViewController:alert animated:NO completion:nil];
+    }
 }
 #pragma mark - 按钮点击事件
 -(void)pancilButtonClick:(UIButton *)sender{
@@ -606,6 +657,18 @@
     [alert addAction:confirmAction];
     [alert addAction:cancel];
     [self presentViewController:alert animated:NO completion:nil];
+}
+-(void)authorityButtonClick:(UIButton *)sender{
+    if (self.authority == YES || self.isCreater == YES) {
+        UIAlertController *alert =[UIAlertController alertControllerWithTitle:@"您已经是协作者了" message:nil preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
+        [alert addAction:cancel];
+        [self presentViewController:alert animated:NO completion:nil];
+        return;
+    }
+    else{
+        [self.mMQTT sendAuthority:self.roomId userId:self.userId Authorith:READ_WRITE isCreater:self.isCreater];
+    }
 }
 /*
 #pragma mark - Navigation
