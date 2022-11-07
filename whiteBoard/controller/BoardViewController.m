@@ -9,7 +9,8 @@
 #import "DrawViewAndImageView.h"
 #import "UpdateToMQTT.h"
 #import "ImageViewOfDrawView.h"
-@interface BoardViewController ()<PageMQTTDelegate,UIGestureRecognizerDelegate,AuthorityStateMQTTDelegate>
+#import "UserNameView.h"
+@interface BoardViewController ()<PageMQTTDelegate,UIGestureRecognizerDelegate,AuthorityStateMQTTDelegate,UserNameViewDelegate>
 @property (nonatomic,strong)DrawViewAndImageView *rootDrawView;
 @property (nonatomic,strong)UpdateToMQTT *mMQTT;
 @property (nonatomic,strong)NSMutableArray<DrawViewAndImageView*> *rootDrawViewArray;
@@ -36,12 +37,17 @@
 @property (nonatomic,strong)UIButton *lineWidthButton;
 @property (nonatomic,strong)UISlider *lineWidthSlider;
 @property (nonatomic,strong)UIButton *authorityButton;
+@property (nonatomic,strong)UIButton *userNameButton;
+@property (nonatomic,strong)UserNameView *userNameRootView;
+@property (nonatomic,strong)UIButton *timeButton;
+@property (nonatomic,strong)UIView *timeView;
 
 @end
 
 @implementation BoardViewController
 -(void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
+    [self.mMQTT sendLeaveRoom:self.roomId userId:self.userId];
     [self.mMQTT disConnectServer];
     self.mMQTT = nil;
 }
@@ -67,6 +73,9 @@
     if(!self.isCreater&&self.authority == NO){
         
         self.rootDrawView.userInteractionEnabled = NO;  //开启后就是只读模式
+    }
+    if(self.isCreater ==NO){
+        [self.mMQTT sendJoinRoom:self.roomId userId:self.userId];
     }
     [self.view addSubview:self.rootDrawView];
     
@@ -205,6 +214,18 @@
     self.authorityButton.tintColor = [UIColor blackColor];
     [self.authorityButton addTarget:self action:@selector(authorityButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.authorityButton];
+    self.userNameButton = [[UIButton alloc]initWithFrame:CGRectMake(20, MAIN_SCREEN_HEIGHT-110, 30, 30)];
+    self.userNameButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
+    [self.userNameButton setImage:[[UIImage imageNamed:@"userList"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    self.userNameButton.tintColor = [UIColor blackColor];
+    [self.userNameButton addTarget:self action:@selector(userNameButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.userNameButton];
+    self.userNameRootView = [[UserNameView alloc]initWithFrame:CGRectMake(-300, MAIN_SCREEN_HEIGHT-320, 120, 200) MQTT:self.mMQTT isCreater:self.isCreater roomId:self.roomId userId:self.userId];
+    if(self.isCreater){
+        self.userNameRootView.createrName = self.userId;
+    }
+    self.userNameRootView.userNameViewDelegatedelegate = self;
+    [self.view addSubview:self.userNameRootView];
     //保证最后创建
     [self addGraphicalView];
     [self addColorView];
@@ -384,17 +405,49 @@
     }
     else if(self.isCreater == YES){
         
-            UIAlertController *alert =[UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"是否同意申请协作权限"] message:userId preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [self.mMQTT sendAuthority:self.roomId userId:userId Authorith:READ_WRITE isCreater:self.isCreater];
+        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-100, 120, 200, 30)];
+        view.backgroundColor = [UIColor whiteColor];
+        [self.view addSubview:view];
+        UILabel *lab = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, view.frame.size.width, view.frame.size.height)];
+        lab.text = [NSString stringWithFormat:@"%@ 申请协作",userId];
+        lab.textColor = [UIColor redColor];
+        lab.backgroundColor = [UIColor whiteColor];
+        [view addSubview:lab];
+        [UIView animateWithDuration:0.3 delay:3 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+//            view.hidden = YES;
+            view.alpha = 0;
+        } completion:^(BOOL finished) {
+            [view removeFromSuperview];
+            
         }];
-        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"拒绝" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-            [self.mMQTT sendAuthority:self.roomId userId:userId Authorith:ONLY_READ isCreater:self.isCreater];
-        }];
-        [alert addAction:confirmAction];
-            [alert addAction:cancel];
-            [self presentViewController:alert animated:NO completion:nil];
     }
+}
+-(void)selectTableCellWithRoomId:(NSString *)roomId userId:(NSString *)userId{
+    
+    UIAlertController *alert =[UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"设置权限"] message:userId preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"协作" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.mMQTT sendAuthority:self.roomId userId:userId Authorith:READ_WRITE isCreater:self.isCreater];
+        [self.mMQTT sendUserList:self.roomId userId:userId Authorith:(int)READ_WRITE];
+        [self.userNameRootView setUserName:userId authority:(int)READ_WRITE];
+    }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"只读" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        [self.mMQTT sendAuthority:self.roomId userId:userId Authorith:ONLY_READ isCreater:self.isCreater];
+        [self.mMQTT sendUserList:self.roomId userId:userId Authorith:(int)ONLY_READ];
+        [self.userNameRootView setUserName:userId authority:(int)ONLY_READ];
+    }];
+    if(self.isCreater){
+        alert =[UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"文档创建者不可设置权限"] message:userId preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        }];
+        
+        [alert addAction:cancel];
+    }else{
+        
+        [alert addAction:confirmAction];
+        [alert addAction:cancel];
+    }
+    [self presentViewController:alert animated:NO completion:nil];
 }
 #pragma mark - 按钮点击事件
 -(void)pancilButtonClick:(UIButton *)sender{
@@ -668,6 +721,21 @@
     }
     else{
         [self.mMQTT sendAuthority:self.roomId userId:self.userId Authorith:READ_WRITE isCreater:self.isCreater];
+    }
+}
+-(void)userNameButtonClick:(UIButton *)sender{
+    if(sender.isSelected == NO){
+        sender.selected = YES;
+        [UIView animateWithDuration:0.3 animations:^{
+                
+            self.userNameRootView.frame = CGRectMake(20, MAIN_SCREEN_HEIGHT-320, 120, 200);
+        }];
+    }else{
+        sender.selected = NO;
+        [UIView animateWithDuration:0.3 animations:^{
+                
+            self.userNameRootView.frame = CGRectMake(-300, MAIN_SCREEN_HEIGHT-320, 120, 200);
+        }];
     }
 }
 /*

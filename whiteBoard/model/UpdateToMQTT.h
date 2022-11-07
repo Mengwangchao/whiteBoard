@@ -9,9 +9,20 @@
 #import <UIKit/UIKit.h>
 #import <MQTTClient/MQTTClient.h>
 NS_ASSUME_NONNULL_BEGIN
+typedef NS_ENUM(NSInteger, AuthorityState){
+    ONLY_READ = 2, //只读
+    READ_WRITE = 1 //协作
+};
 @protocol AuthorityStateMQTTDelegate <NSObject>
 
 -(void)getAuthorityState:(int)authority roomId:(NSString *)roomId userId:(NSString *)userId isCreater:(BOOL)isCteater;
+
+@end
+@protocol UserListMQTTDelegate <NSObject>
+
+-(void)getUserList:(NSString *)roomId userId:(NSString *)userId Authorith:(AuthorityState)authorith;
+-(void)getLeaveRoom:(NSString *)roomId userId:(NSString *)userId;
+-(void)getJoinRoom:(NSString *)roomId userId:(NSString *)userId;
 
 @end
 
@@ -57,10 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)getZoomImage:(NSString *)roomId userId:(NSString *)userId imageId:(int)imageId size:(CGSize)size currentPage:(int)currentPage imageNum:(int)imageNum;
 
 @end
-typedef NS_ENUM(NSInteger, AuthorityState){
-    ONLY_READ = 2, //只读
-    READ_WRITE = 1 //协作
-};
+
 
 @interface UpdateToMQTT : NSObject
 
@@ -73,6 +81,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 @property (nonatomic,weak) id<PageMQTTDelegate> pageMQTTdelegate;
 @property (nonatomic,weak) id<controlMQTTDelegate> controldelegate;
 @property (nonatomic,weak) id<AuthorityStateMQTTDelegate> authorityStatelegate;
+@property (nonatomic,weak) id<UserListMQTTDelegate> userListMQTTDelegateDelegate;
 
 -(instancetype)init NS_UNAVAILABLE;
 -(instancetype)initWithTopic:(NSString *)topic;
@@ -100,6 +109,8 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)sendRedo:(NSString *)roomId userId:(NSString *)userId graphical:(int)graphical;
 -(void)sendClearAll:(NSString *)roomId userId:(NSString *)userId;
 -(void)sendAuthority:(NSString *)roomId userId:(NSString *)userId Authorith:(AuthorityState)authorith isCreater:(BOOL)isCreater;
+-(void)sendUserList:(NSString *)roomId userId:(NSString *)userId Authorith:(AuthorityState)authorith;
+-(void)sendLeaveRoom:(NSString *)roomId userId:(NSString *)userId;
 -(void)closeMQTTClient;
 -(void)connectMQTT;
 -(void)disConnectServer;

@@ -40,6 +40,8 @@
         [self.topics addObject:@"undo"];
         [self.topics addObject:@"redo"];
         [self.topics addObject:@"clearAll"];
+        [self.topics addObject:@"userList"];
+        [self.topics addObject:@"leaveRoom"];
         self.currentPage = 1;
         self.pageCount = 1;
 //        [self connectMQTT];
@@ -249,6 +251,24 @@
                     creater = YES;
                 }
                 [weakSelf.authorityStatelegate getAuthorityState:[dic[@"authority"]intValue] roomId:dic[@"roomId"] userId:dic[@"userId"] isCreater:creater];
+            }
+        }
+        else if ([topic isEqual:@"userList"]){
+            
+            if (weakSelf.userListMQTTDelegateDelegate!=nil && [weakSelf.userListMQTTDelegateDelegate respondsToSelector:@selector(getUserList:userId:Authorith:)]){
+                [weakSelf.userListMQTTDelegateDelegate getUserList:dic[@"roomId"] userId:dic[@"userId"] Authorith:[dic[@"authority"]intValue]];
+            }
+        }
+        else if ([topic isEqual:@"leaveRoom"]){
+            
+            if (weakSelf.userListMQTTDelegateDelegate!=nil && [weakSelf.userListMQTTDelegateDelegate respondsToSelector:@selector(getLeaveRoom:userId:)]){
+                [weakSelf.userListMQTTDelegateDelegate getLeaveRoom:dic[@"roomId"] userId:dic[@"userId"]];
+            }
+        }
+        else if ([topic isEqual:@"joinRoom"]){
+            
+            if (weakSelf.userListMQTTDelegateDelegate!=nil && [weakSelf.userListMQTTDelegateDelegate respondsToSelector:@selector(getJoinRoom:userId:)]){
+                [weakSelf.userListMQTTDelegateDelegate getJoinRoom:dic[@"roomId"] userId:dic[@"userId"]];
             }
         }
         else{
@@ -764,6 +784,45 @@
         }
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"readWriteAuthority" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+-(void)sendUserList:(NSString *)roomId userId:(NSString *)userId Authorith:(AuthorityState)authorith{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("userList", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",(int)authorith] forKey:@"authority"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"userList" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
+                if (error) {
+                    NSLog(@"发送失败 - %@",error);
+                }else{
+                    NSLog(@"发送成功");
+                }
+        }];
+    });
+}
+-(void)sendLeaveRoom:(NSString *)roomId userId:(NSString *)userId{
+    __weak typeof(self) weakSelf = self;
+    
+    dispatch_queue_t que = dispatch_queue_create("leaveRoom", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(que, ^{
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        
+        [dic setValue:userId forKey:@"userId"];
+        [dic setValue:roomId forKey:@"roomId"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+        [weakSelf.mySession publishData:data onTopic:@"leaveRoom" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {
                     NSLog(@"发送失败 - %@",error);
                 }else{

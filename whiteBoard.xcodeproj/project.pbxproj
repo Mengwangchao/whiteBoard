@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		5031F306290F822600F738E3 /* DrawViewAndImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5031F305290F822500F738E3 /* DrawViewAndImageView.m */; };
 		5031F3092910F26200F738E3 /* DrawBoardGraphicalModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5031F3082910F26100F738E3 /* DrawBoardGraphicalModel.m */; };
+		5031F3262918D6FA00F738E3 /* UserNameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5031F3252918D6F800F738E3 /* UserNameView.m */; };
+		5031F3292918DB3400F738E3 /* UserNameTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5031F3282918DB3400F738E3 /* UserNameTableViewCell.m */; };
 		5076C9812908D057007763E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9802908D057007763E7 /* AppDelegate.m */; };
 		5076C9842908D057007763E7 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9832908D057007763E7 /* SceneDelegate.m */; };
 		5076C9872908D057007763E7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5076C9862908D057007763E7 /* ViewController.m */; };
@@ -66,6 +68,10 @@
 		5031F305290F822500F738E3 /* DrawViewAndImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DrawViewAndImageView.m; sourceTree = "<group>"; };
 		5031F3072910F26100F738E3 /* DrawBoardGraphicalModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawBoardGraphicalModel.h; sourceTree = "<group>"; };
 		5031F3082910F26100F738E3 /* DrawBoardGraphicalModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DrawBoardGraphicalModel.m; sourceTree = "<group>"; };
+		5031F3242918D6F800F738E3 /* UserNameView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserNameView.h; sourceTree = "<group>"; };
+		5031F3252918D6F800F738E3 /* UserNameView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserNameView.m; sourceTree = "<group>"; };
+		5031F3272918DB3400F738E3 /* UserNameTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserNameTableViewCell.h; sourceTree = "<group>"; };
+		5031F3282918DB3400F738E3 /* UserNameTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserNameTableViewCell.m; sourceTree = "<group>"; };
 		5076C97C2908D057007763E7 /* whiteBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = whiteBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5076C97F2908D057007763E7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5076C9802908D057007763E7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -195,6 +201,10 @@
 				5031F305290F822500F738E3 /* DrawViewAndImageView.m */,
 				BACA105C290D0275009B4D4C /* ImageViewOfDrawView.h */,
 				BACA105D290D0275009B4D4C /* ImageViewOfDrawView.m */,
+				5031F3242918D6F800F738E3 /* UserNameView.h */,
+				5031F3252918D6F800F738E3 /* UserNameView.m */,
+				5031F3272918DB3400F738E3 /* UserNameTableViewCell.h */,
+				5031F3282918DB3400F738E3 /* UserNameTableViewCell.m */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -363,9 +373,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				5076C9872908D057007763E7 /* ViewController.m in Sources */,
+				5031F3262918D6FA00F738E3 /* UserNameView.m in Sources */,
 				5076C9812908D057007763E7 /* AppDelegate.m in Sources */,
 				5076C9922908D060007763E7 /* main.m in Sources */,
 				5076C9BC2908E8B2007763E7 /* BoardViewController.m in Sources */,
+				5031F3292918DB3400F738E3 /* UserNameTableViewCell.m in Sources */,
 				5076C9CF2909061A007763E7 /* DrawBoardModel.m in Sources */,
 				5076C9D5290908F7007763E7 /* UpdateToMQTT.m in Sources */,
 				BACA105E290D0275009B4D4C /* ImageViewOfDrawView.m in Sources */,
