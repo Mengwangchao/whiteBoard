@@ -65,6 +65,12 @@
 -(void)clear{
     self.backgroundColor = [UIColor clearColor];
     self.userInteractionEnabled = YES;
+    for (NSDictionary *dic in self.imageViewArray) {
+        ImageViewOfDrawView *imageView= dic[@"imageView"];
+        [imageView removeFromSuperview];
+        
+    }
+    [self.imageViewArray removeAllObjects];
     self.uploadMQTT.imageMQTTdelegate = self;
     self.uploadMQTT.controldelegate = self;
     self.currentPage = 1;

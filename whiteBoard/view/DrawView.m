@@ -1030,7 +1030,7 @@
         rect.endPoint = endPoint;
         rect.startPoint = startPoint;
         rect.color = self.downPointColor;
-        rect.lineWidth = self.lineWidth;
+        rect.lineWidth = self.downLineWidth;
         [self.downGraphicalArray addObject:rect];
     }
     else if(graphical == ROUNDED_RECTANGLE){
@@ -1038,7 +1038,7 @@
         rect.endPoint = endPoint;
         rect.startPoint = startPoint;
         rect.color = self.downPointColor;
-        rect.lineWidth = self.lineWidth;
+        rect.lineWidth = self.downLineWidth;
         [self.downGraphicalArray addObject:rect];
     }
     else if(graphical == TRIANGLE){
@@ -1046,7 +1046,7 @@
         rect.endPoint = endPoint;
         rect.startPoint = startPoint;
         rect.color = self.downPointColor;
-        rect.lineWidth = self.lineWidth;
+        rect.lineWidth = self.downLineWidth;
         [self.downGraphicalArray addObject:rect];
     }
 }

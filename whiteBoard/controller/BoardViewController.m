@@ -452,7 +452,7 @@
     }
     else if(self.isCreater == YES){
         
-        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-100, 120, 200, 30)];
+        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-100, 130, 200, 30)];
         view.backgroundColor = [UIColor whiteColor];
         [self.view addSubview:view];
         UILabel *lab = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, view.frame.size.width, view.frame.size.height)];
@@ -485,7 +485,7 @@
         [self.mMQTT sendUserList:self.roomId userId:userId Authorith:(int)ONLY_READ];
         [self.userNameRootView setUserName:userId authority:(int)ONLY_READ];
     }];
-    if(self.isCreater){
+    if(self.isCreater && [self.userId isEqual:userId]){
         alert =[UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"文档创建者不可设置权限"] message:userId preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         }];
