@@ -27,7 +27,6 @@ public class PopBottomWindow {
         mContentView = LayoutInflater.from(mContext).inflate(builder.getContentViewId(), null);
         // 创建popupWindow
         mPopupWindow = new PopupWindow(mContentView, builder.getWidth(), builder.getHeight(), builder.isFouse());
-
         mPopupWindow.setOutsideTouchable(builder.isOutSideCancle());
         mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mPopupWindow.setFocusable(builder.fouse);
@@ -201,6 +200,7 @@ public class PopBottomWindow {
          *
          * @return
          */
+        @RequiresApi(api = Build.VERSION_CODES.Q)
         public PopBottomWindow build() {
             return new PopBottomWindow(this);
         }

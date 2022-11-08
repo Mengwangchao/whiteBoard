@@ -48,13 +48,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.crRoom_bt:
                 if (!userName.isEmpty() && !passWord.isEmpty()) {
-                    Log.i("xiaohao",""+userName.isEmpty());
+                    Log.i("xiaohao", "" + userName.isEmpty());
                     intent.setClass(this, BoardActivity.class);
                     intent.putExtra("User", user);
                     intent.putExtra("mode", "1");
                     startActivity(intent);
                 } else {
-                    Toast.makeText(this, "用户名\n密码不能为空！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "用户名,密码不能为空！", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.inRoom_bt:
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     intent.putExtra("mode", "2");
                     startActivity(intent);
                 } else {
-                    Toast.makeText(this, "用户名\n密码不能为空！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "用户名,密码不能为空！", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

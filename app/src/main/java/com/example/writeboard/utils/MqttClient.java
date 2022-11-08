@@ -75,23 +75,23 @@ public class MqttClient {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 Log.d(TAG, "收到的消息：" + message.toString() + "--from topic:" + topic);
                 Log.i("AndroidMqttClient", "获得的消息是" + message.toString());
-                String msg = new String(message.getPayload());
-                JsonParser jp = new JsonParser();
-                JsonObject jo = jp.parse(msg).getAsJsonObject();
-                int mode = jo.get("mode").getAsInt();
-                Float a = jo.get("a").getAsFloat();
-                Float b = jo.get("b").getAsFloat();
-                String c = jo.get("id").getAsString();
-                if (!userId.equals(c)) {
-                    Toast.makeText(mcontext, "x坐标" + a + "\ny坐标" + b + "\n id:" + c + "\n mode:" + mode, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent();
-                    intent.setAction("xiaohao");//要通知的广播XXXXX名称
-                    intent.putExtra("x", a);
-                    intent.putExtra("y", b);
-                    intent.putExtra("mode", mode);
-                    intent.putExtra("id", c + "");
-                    context.sendBroadcast(intent);
-                }
+//                String msg = new String(message.getPayload());
+//                JsonParser jp = new JsonParser();
+//                JsonObject jo = jp.parse(msg).getAsJsonObject();
+//                int mode = jo.get("mode").getAsInt();
+//                Float a = jo.get("a").getAsFloat();
+//                Float b = jo.get("b").getAsFloat();
+//                String c = jo.get("id").getAsString();
+//                if (!userId.equals(c)) {
+//                    Toast.makeText(mcontext, "x坐标" + a + "\ny坐标" + b + "\n id:" + c + "\n mode:" + mode, Toast.LENGTH_SHORT).show();
+//                    Intent intent = new Intent();
+//                    intent.setAction("xiaohao");//要通知的广播XXXXX名称
+//                    intent.putExtra("x", a);
+//                    intent.putExtra("y", b);
+//                    intent.putExtra("mode", mode);
+//                    intent.putExtra("id", c + "");
+//                    context.sendBroadcast(intent);
+//                }
             }
 
             @Override

@@ -1,11 +1,13 @@
 package com.example.writeboard.activity;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,14 +25,17 @@ import android.widget.Toast;
 import com.example.writeboard.R;
 import com.example.writeboard.adapter.BoardAdapter;
 import com.example.writeboard.been.User;
+import com.example.writeboard.utils.BoardPaint;
 import com.example.writeboard.utils.MqttClient;
 import com.example.writeboard.view.BoardViewPager;
 import com.example.writeboard.view.PaletteView;
 import com.example.writeboard.view.PopBottomWindow;
+import com.example.writeboard.view.TestButton;
 
 import java.util.ArrayList;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
+    private  static BoardPaint mBoardPaint= BoardPaint.getmBoardPaint();
     private TextView textView;
     private Button redoBt;
     private Button ondoBt;
@@ -52,25 +58,26 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private TextView allItemTv;
     private View PopupView;
     private boolean IsPopView;
-    private PopBottomWindow popupWindow;
-    private SeekBar seekBar;
-    private Button button;
     private User user;
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
         Intent intent = getIntent();
         String modeString = intent.getStringExtra("mode");
-        user=intent.getParcelableExtra("User");
+        user = intent.getParcelableExtra("User");
         PopupView = LayoutInflater.from(this).inflate(R.layout.popupview, null);
 
         initMqttClient();
         initView();
 //
         boardList = new ArrayList<>();
-        boardList.add(new PaletteView(this));
+        PaletteView paletteView=new PaletteView(this);
+        paletteView.setBoardPaint(mBoardPaint);
+
+        boardList.add(paletteView);
         boardList.get(boardList.size() - 1).setMqttClient(mqttClient);
 //
         boardAdapter = new BoardAdapter(boardList);
@@ -79,43 +86,17 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         boardPage.setIsSwipe(false);
 
 
+
         initData();
+
         if (modeString.equals("2")) {
             showExitDiaglog();
         } else {
-            textView.setText(modeString+user.getUserId()+user.getUserName()+user.getPassWord());
+            textView.setText(modeString + user.getUserId() + user.getUserName() + user.getPassWord());
         }
-        popupWindow = new PopBottomWindow.Builder()
-                .setContentViewId(R.layout.popupview)
-                .setFouse(false)
-                .setOutSideCancle(true)
-                .setContext(this)
-                .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
-                .setWidth(ViewGroup.LayoutParams.MATCH_PARENT)
-                .setAnimation(R.style.anim_menu_bottombar)
-                .build();
-        popBackView.setOnClickListener(v -> popupWindow.dismiss());
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mode) {
-                    boardList.get(boardPage.getCurrentItem()).setPenRawSize(progress);
-                } else {
-                    boardList.get(boardPage.getCurrentItem()).setEraserSize(progress);
-                }
-            }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
         redoBt.setOnClickListener(this);
         ondoBt.setOnClickListener(this);
         eraserBt.setOnClickListener(this);
@@ -126,16 +107,21 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         lastPageView.setOnClickListener(this);
         nextPageView.setOnClickListener(this);
         addPageView.setOnClickListener(this);
-        button.setOnClickListener(this);
     }
 
+//    Mqtt初始化
     private void initMqttClient() {
-mqttClient=new MqttClient();
-mqttClient.setUserId(user.getUserId());
-mqttClient.connect(BoardActivity.this);
-mqttClient.setQos(2);
-mqttClient.setUsername(user.getUserName());
-mqttClient.setPassword(user.getPassWord());
+//    实例化Mqtt对象
+        mqttClient = new MqttClient();
+//        规定的一个用户Id（user+12位随机数）
+        mqttClient.setUserId(user.getUserId());
+//        mqtt连接
+        mqttClient.connect(BoardActivity.this);
+//        设置QOS
+        mqttClient.setQos(2);
+//        加入用户名和密码
+        mqttClient.setUsername(user.getUserName());
+        mqttClient.setPassword(user.getPassWord());
 
     }
 
@@ -155,11 +141,11 @@ mqttClient.setPassword(user.getPassWord());
                 break;
             case R.id.eraser_bt:
                 if (mode) {
-                    boardList.get(boardPage.getCurrentItem()).setMode(PaletteView.Mode.ERASER);
+                    mBoardPaint.setMode(BoardPaint.Mode.ERASER);
                     mode = false;
                     eraserBt.setText("draw");
                 } else {
-                    boardList.get(boardPage.getCurrentItem()).setMode(PaletteView.Mode.DRAW);
+                    mBoardPaint.setMode(BoardPaint.Mode.DRAW);
                     mode = true;
                     eraserBt.setText("eraser");
                 }
@@ -174,14 +160,13 @@ mqttClient.setPassword(user.getPassWord());
 
                 if (!IsPopView) {
                     IsPopView = true;
-                    popupWindow.showAtLocation(findViewById(R.id.layout_board), Gravity.BOTTOM, 0, 0);
                 } else {
                     IsPopView = false;
-                    popupWindow.dismiss();
                 }
                 break;
             case R.id.color_bt:
-                boardList.get(boardPage.getCurrentItem()).setPenColor(Color.GREEN);
+                Toast.makeText(this,"画笔颜色\n:"+mBoardPaint.getPenColor(),Toast.LENGTH_SHORT).show();
+                mBoardPaint.setARGB(255,123,104,238);
                 break;
             case R.id.lastPage_bt:
                 if (0 < currentItem && currentItem < boardList.size()) {
@@ -200,7 +185,10 @@ mqttClient.setPassword(user.getPassWord());
                 break;
             case R.id.addPage:
                 Toast.makeText(this, "添加了新的一页", Toast.LENGTH_SHORT).show();
-                boardList.add(new PaletteView(this));
+                PaletteView paletteView=new PaletteView(this);
+                paletteView.setBoardPaint(mBoardPaint);
+                boardList.add(paletteView);
+                boardList.get(boardList.size() - 1).setMqttClient(mqttClient);
                 boardAdapter = new BoardAdapter(boardList);
                 boardPage.setAdapter(boardAdapter);
                 currentItem = boardList.size() - 1;
@@ -208,9 +196,6 @@ mqttClient.setPassword(user.getPassWord());
                 currentTv.setText(boardList.size() + "");
                 allItemTv.setText(boardPage.getCurrentItem() + 1 + "");
                 Toast.makeText(this, "当前的页数：" + (boardPage.getCurrentItem() + 1), Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.button:
-                popupWindow.dismiss();
                 break;
             default:
                 break;
@@ -233,8 +218,7 @@ mqttClient.setPassword(user.getPassWord());
         allItemTv = findViewById(R.id.allItem_tv);
         addPageView = findViewById(R.id.addPage);
         popBackView = PopupView.findViewById(R.id.popback_bt);
-        seekBar = PopupView.findViewById(R.id.seekBar);
-        button = PopupView.findViewById(R.id.button);
+
     }
 
     private void showExitDiaglog() {
@@ -253,12 +237,4 @@ mqttClient.setPassword(user.getPassWord());
                 .setNegativeButton("取消", null)
                 .show();
     }
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent event){
-//        if(popupWindow!=null&&popupWindow.getmPopupWindow().isShowing()){
-//            return false;
-//        }
-//        return super.dispatchTouchEvent(event);
-//    }
-
 }
