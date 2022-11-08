@@ -178,6 +178,9 @@
                 [weakSelf.pageMQTTdelegate nextPage:dic[@"roomId"] userId:dic[@"userId"]];
             }
         }
+        else if([topic isEqual:@"joinRoomReturn"]){
+        
+        }
         else if([topic isEqual:@"upPage"]){
             if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(upPage:userId:)]){
                 [weakSelf.pageMQTTdelegate upPage:dic[@"roomId"] userId:dic[@"userId"]];
@@ -354,7 +357,7 @@
         [dic setValue:userId forKey:@"userId"];
         [dic setValue:roomId forKey:@"roomId"];
         [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
-        [dic setValue:[NSString stringWithFormat:@"%d",self.pageCount] forKey:@"pageCount"];
+//        [dic setValue:[NSString stringWithFormat:@"%d",self.pageCount] forKey:@"pageCount"];
         [dic setValue:[NSString stringWithFormat:@"%d",graphical] forKey:@"graphical"];
         [dic setValue:[NSString stringWithFormat:@"%f",lineWidth] forKey:@"lineWidth"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
@@ -380,7 +383,7 @@
 -(void)sendPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor *)color roomId:(NSString *)roomId graphical:(int)graphical lineWidth:(float)lineWidth{
     [self sendPointMassage:point userId:userId color:color topic:self.topic roomId:roomId graphical:graphical lineWidth:lineWidth];
 }
--(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId{
+-(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId authority:(AuthorityState)authority{
     __weak typeof(self) weakSelf = self;
     
     dispatch_queue_t que = dispatch_queue_create("sendJoinRoom", DISPATCH_QUEUE_SERIAL);
@@ -390,6 +393,9 @@
         NSMutableDictionary *pointDic = [NSMutableDictionary dictionary];
         [dic setValue:userId forKey:@"userId"];
         [dic setValue:roomId forKey:@"roomId"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"currentPage"];
+        [dic setValue:[NSString stringWithFormat:@"%d",self.pageCount] forKey:@"pageCount"];
+        [dic setValue:[NSString stringWithFormat:@"%d",(int)authority] forKey:@"authority"];
         NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
         [weakSelf.mySession publishData:data onTopic:@"joinRoom" retain:NO qos:MQTTQosLevelExactlyOnce publishHandler:^(NSError *error) {
                 if (error) {

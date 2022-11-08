@@ -593,6 +593,11 @@
                 [self drawTriangleModel:rect];
             }
         }
+        else if (model.graphical == STRAIGHT_LINE){
+            for (StraightLineModel *rect in model.graphicalArray) {
+                [self drawStraightLineModel:rect];
+            }
+        }
     }
     
 }
@@ -618,6 +623,20 @@
             [self drawTriangleModel:rect];
         }
     }
+    else if(graphical == STRAIGHT_LINE){
+        for (StraightLineModel *rect in arr) {
+            [self drawStraightLineModel:rect];
+        }
+    }
+}
+
+-(void)drawStraightLineModel:(StraightLineModel *)straightLine{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextMoveToPoint(context, straightLine.startPoint.x, straightLine.startPoint.y);
+    CGContextAddLineToPoint(context, straightLine.endPoint.x, straightLine.endPoint.y);
+    CGContextSetLineWidth(context, straightLine.lineWidth);//线的宽度
+    CGContextSetStrokeColorWithColor(context, straightLine.color.CGColor);//线框颜色
+    CGContextDrawPath(context, kCGPathStroke); //绘制路径
 }
 -(void)drawTriangleModel:(TriangleModel *)triangleModel{
     CGPoint sPoints[3];//坐标点
@@ -758,6 +777,12 @@
         sPoints[2] =CGPointMake(endPoint.x, startPoint.y);//坐标3
         CGContextAddLines(context, sPoints, 3);
         CGContextClosePath(context);
+    }
+    
+    else if (graphical == STRAIGHT_LINE){
+        
+        CGContextMoveToPoint(context, startPoint.x, startPoint.y);
+        CGContextAddLineToPoint(context, endPoint.x, endPoint.y);
     }
 //    [color setStroke];
     CGContextSetStrokeColorWithColor(context, color.CGColor);//线框颜色
@@ -1007,6 +1032,14 @@
         rect.lineWidth = self.lineWidth;
         [self.graphicalArray addObject:rect];
     }
+    else if(graphical == STRAIGHT_LINE){
+        StraightLineModel *rect = [[StraightLineModel alloc]init];
+        rect.endPoint = endPoint;
+        rect.startPoint = startPoint;
+        rect.color = self.currentColor;
+        rect.lineWidth = self.lineWidth;
+        [self.graphicalArray addObject:rect];
+    }
 }
 -(void)saveDownGrraphical:(GraphicalState)graphical{
     if(self.downPointArray.count<=0){
@@ -1022,7 +1055,7 @@
         cir.cencerPoint = CGPointMake((startPoint.x+endPoint.x)/2, (startPoint.y+endPoint.y)/2);
         cir.radius = length/2;
         cir.color = self.downPointColor;
-        cir.lineWidth = self.lineWidth;
+        cir.lineWidth = self.downLineWidth;
         [self.downGraphicalArray addObject:cir];
     }
     else if(graphical == RECTANGLE){
@@ -1049,6 +1082,15 @@
         rect.lineWidth = self.downLineWidth;
         [self.downGraphicalArray addObject:rect];
     }
+    else if(graphical == STRAIGHT_LINE){
+        StraightLineModel *rect = [[StraightLineModel alloc]init];
+        rect.endPoint = endPoint;
+        rect.startPoint = startPoint;
+        rect.color = self.downPointColor;
+        rect.lineWidth = self.downLineWidth;
+        [self.downGraphicalArray addObject:rect];
+    }
+
 }
 -(void)dealloc{
     NSLog(@"drawView Dealloc");

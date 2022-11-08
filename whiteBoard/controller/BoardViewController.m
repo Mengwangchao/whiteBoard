@@ -67,8 +67,10 @@
     roomIdLabel.text = [NSString stringWithFormat:@"房间名：%@",self.roomId];
     roomIdLabel.textColor = [UIColor blackColor];
     roomIdLabel.font = [UIFont systemFontOfSize:18.0];
-    [self.view addSubview:roomIdLabel];
-    
+    roomIdLabel.userInteractionEnabled  = YES;
+    UITapGestureRecognizer *joinRoomTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(joinRoomTapClick)];
+    joinRoomTap.delegate = self;
+    [roomIdLabel addGestureRecognizer:joinRoomTap];
     self.mMQTT = [[UpdateToMQTT alloc]initWithTopic:self.roomId];
     self.mMQTT.pageMQTTdelegate = self;
     self.mMQTT.authorityStatelegate = self;
@@ -80,10 +82,11 @@
         self.rootDrawView.userInteractionEnabled = NO;  //开启后就是只读模式
     }
     if(self.isCreater ==NO){
-        [self.mMQTT sendJoinRoom:self.roomId userId:self.userId];
+        [self.mMQTT sendJoinRoom:self.roomId userId:self.userId authority:ONLY_READ];
     }
     [self.view addSubview:self.rootDrawView];
     
+    [self.view addSubview:roomIdLabel];
 
     
     self.rootDrawView.layer.borderWidth = 1;
@@ -191,7 +194,9 @@
     self.rightButtonRootView.backgroundColor = [UIColor clearColor];
     self.rightButtonRootView.userInteractionEnabled = YES;
     [self.view addSubview:self.rightButtonRootView];
-    [self.rightButtonRootView addGestureRecognizer:panGesture];
+    UIPanGestureRecognizer *panGestureRight = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(gestureHandler:)];
+    [panGestureRight setDelegate:self];
+    [self.rightButtonRootView addGestureRecognizer:panGestureRight];
     UIButton *undoButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
     undoButton.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
     [undoButton setImage:[[UIImage imageNamed:@"undo"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
@@ -244,7 +249,9 @@
     self.timeView.backgroundColor = [UIColor whiteColor];
     self.timeView.userInteractionEnabled = YES;
     self.timeView.hidden = YES;
-    [self.timeView addGestureRecognizer:panGesture];
+    UIPanGestureRecognizer *panGestureTime = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(gestureHandler:)];
+    [panGestureTime setDelegate:self];
+    [self.timeView addGestureRecognizer:panGestureTime];
     [self.view addSubview:_timeView];
     self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.timeView.frame.size.width, self.timeView.frame.size.height)];
     self.timeLabel.text = @"00:00";
@@ -827,6 +834,20 @@
         }];
         
     }
+}
+-(void)joinRoomTapClick{
+    UIPasteboard *pas = [UIPasteboard generalPasteboard];
+    pas.string = self.roomId;
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(MAIN_SCREEN_WIDTH/2-50, MAIN_SCREEN_HEIGHT/2, 100, 30)];
+    label.text = @"复制成功";
+    label.textColor = [UIColor blackColor];
+    label.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:label];
+    [UIView animateWithDuration:0.3 delay:2 options:UIViewAnimationOptionCurveEaseOut animations:^{
+            label.alpha = 0;
+        } completion:^(BOOL finished) {
+            [label removeFromSuperview];
+        }];
 }
 /*
 #pragma mark - Navigation

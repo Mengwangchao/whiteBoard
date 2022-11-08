@@ -19,3 +19,7 @@
 @end
 @implementation TriangleModel
 @end
+
+@implementation StraightLineModel
+@end
+

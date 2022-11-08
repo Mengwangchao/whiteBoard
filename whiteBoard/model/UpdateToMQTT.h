@@ -91,7 +91,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 
 -(void)sendStartPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId graphical:(int)graphical lineWidth:(float)lineWidth;
 -(void)sendEndPoint:(CGPoint)point userId:(NSString *)userId color:(UIColor*) color roomId:(NSString *)roomId graphical:(int)graphical lineWidth:(float)lineWidth;
--(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId;
+-(void)sendJoinRoom:(NSString *)roomId userId:(NSString *)userId authority:(AuthorityState)authority;
 -(void)sendCreateRoom:(NSString *)roomId userId:(NSString *)userId authority :(AuthorityState) authority;
 -(void)sendDeleteRoom:(NSString *)roomId userId:(NSString *)userId;
 -(void)sendAddPageMessage:(NSString *)roomId userId:(NSString *)userId;
