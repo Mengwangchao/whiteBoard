@@ -96,6 +96,10 @@ public class BoardPaint extends Paint {
         mBoardPaint.setStrokeWidth(mDrawSize);
     }
 
+    public float getPenRawSize(){
+        return mDrawSize;
+    }
+
     /**
      * @param colors Change Pen Color
      */

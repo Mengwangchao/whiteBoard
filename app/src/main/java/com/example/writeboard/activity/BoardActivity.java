@@ -7,6 +7,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -35,15 +37,16 @@ import com.example.writeboard.view.TestButton;
 import java.util.ArrayList;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
-    private  static BoardPaint mBoardPaint= BoardPaint.getmBoardPaint();
+    private static BoardPaint mBoardPaint = BoardPaint.getmBoardPaint();
+    private TextView pensizeTv;
     private TextView textView;
-    private Button redoBt;
-    private Button ondoBt;
-    private Button eraserBt;
-    private Button clearBt;
-    private Button saveBt;
-    private Button sizeBt;
-    private Button colorBt;
+    private ImageView redoBt;
+    private ImageView ondoBt;
+    private ImageView eraserBt;
+    private ImageView clearBt;
+    private ImageView saveBt;
+    private ImageView colorBt;
+    private ImageView sizeIv;
     private MqttClient mqttClient;
     private boolean mode = true;
     private BoardViewPager boardPage;
@@ -53,12 +56,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private ImageView lastPageView;
     private ImageView nextPageView;
     private ImageView addPageView;
-    private ImageView popBackView;
     private TextView currentTv;
     private TextView allItemTv;
     private View PopupView;
-    private boolean IsPopView;
     private User user;
+    private SeekBar pensizeSk;
+    private AlertDialog penSizeDialog;
+    private View penSizeView;
+
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -74,7 +79,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         initView();
 //
         boardList = new ArrayList<>();
-        PaletteView paletteView=new PaletteView(this);
+        PaletteView paletteView = new PaletteView(this);
         paletteView.setBoardPaint(mBoardPaint);
 
         boardList.add(paletteView);
@@ -86,7 +91,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         boardPage.setIsSwipe(false);
 
 
-
         initData();
 
         if (modeString.equals("2")) {
@@ -96,20 +100,19 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         }
 
 
-
         redoBt.setOnClickListener(this);
         ondoBt.setOnClickListener(this);
         eraserBt.setOnClickListener(this);
         clearBt.setOnClickListener(this);
         saveBt.setOnClickListener(this);
-        sizeBt.setOnClickListener(this);
+        sizeIv.setOnClickListener(this);
         colorBt.setOnClickListener(this);
         lastPageView.setOnClickListener(this);
         nextPageView.setOnClickListener(this);
         addPageView.setOnClickListener(this);
     }
 
-//    Mqtt初始化
+    //    Mqtt初始化
     private void initMqttClient() {
 //    实例化Mqtt对象
         mqttClient = new MqttClient();
@@ -128,6 +131,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private void initData() {
         currentTv.setText(boardPage.getCurrentItem() + 1 + "");
         allItemTv.setText(boardList.size() + "");
+        pensizeSk.setProgress(10);
+        showColorDiaglog();
+
     }
 
     @Override
@@ -143,11 +149,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 if (mode) {
                     mBoardPaint.setMode(BoardPaint.Mode.ERASER);
                     mode = false;
-                    eraserBt.setText("draw");
+                    eraserBt.setImageDrawable(getDrawable(R.drawable.ic_baseline_crop_portrait_24));
                 } else {
                     mBoardPaint.setMode(BoardPaint.Mode.DRAW);
                     mode = true;
-                    eraserBt.setText("eraser");
+                    eraserBt.setImageDrawable(getDrawable(R.drawable.ic_baseline_palette_24));
                 }
                 break;
             case R.id.clear_bt:
@@ -157,16 +163,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(this, "图片已经保存", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.size_bt:
-
-                if (!IsPopView) {
-                    IsPopView = true;
-                } else {
-                    IsPopView = false;
-                }
+                penSizeDialog.show();
                 break;
             case R.id.color_bt:
-                Toast.makeText(this,"画笔颜色\n:"+mBoardPaint.getPenColor(),Toast.LENGTH_SHORT).show();
-                mBoardPaint.setARGB(255,123,104,238);
+                Toast.makeText(this, "画笔颜色\n:" + mBoardPaint.getPenColor(), Toast.LENGTH_SHORT).show();
+                mBoardPaint.setARGB(255, 123, 104, 238);
                 break;
             case R.id.lastPage_bt:
                 if (0 < currentItem && currentItem < boardList.size()) {
@@ -185,7 +186,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.addPage:
                 Toast.makeText(this, "添加了新的一页", Toast.LENGTH_SHORT).show();
-                PaletteView paletteView=new PaletteView(this);
+                PaletteView paletteView = new PaletteView(this);
                 paletteView.setBoardPaint(mBoardPaint);
                 boardList.add(paletteView);
                 boardList.get(boardList.size() - 1).setMqttClient(mqttClient);
@@ -209,7 +210,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         eraserBt = findViewById(R.id.eraser_bt);
         clearBt = findViewById(R.id.clear_bt);
         saveBt = findViewById(R.id.save_bt);
-        sizeBt = findViewById(R.id.size_bt);
+        sizeIv = findViewById(R.id.size_bt);
         colorBt = findViewById(R.id.color_bt);
         boardPage = findViewById(R.id.boardpage);
         lastPageView = findViewById(R.id.lastPage_bt);
@@ -217,8 +218,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         currentTv = findViewById(R.id.currentItem_tv);
         allItemTv = findViewById(R.id.allItem_tv);
         addPageView = findViewById(R.id.addPage);
-        popBackView = PopupView.findViewById(R.id.popback_bt);
-
+        penSizeView = LayoutInflater.from(this).inflate(R.layout.pen_size, null);
+        pensizeSk = penSizeView.findViewById(R.id.pensizesk);
+        pensizeTv = penSizeView.findViewById(R.id.pensizetv);
     }
 
     private void showExitDiaglog() {
@@ -236,5 +238,44 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 })
                 .setNegativeButton("取消", null)
                 .show();
+    }
+
+    private void showColorDiaglog() {
+
+
+        pensizeTv.setText(String.valueOf(pensizeSk.getProgress()));
+        pensizeSk.setMax(50);
+        penSizeDialog = new AlertDialog.Builder(this)
+                .setTitle("设置画笔大小")
+                .setIcon(android.R.drawable.sym_def_app_icon)
+                .setView(penSizeView)
+                .setPositiveButton("true", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        textView.setText("已经加入房间");
+                        penSizeDialog.dismiss();
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .create();
+
+        pensizeSk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                pensizeTv.setText(String.valueOf(pensizeSk.getProgress()));
+                mBoardPaint.setPenRawSize(progress);
+                Toast.makeText(BoardActivity.this, "移动了SeekBar" + mBoardPaint.getPenRawSize(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 }
