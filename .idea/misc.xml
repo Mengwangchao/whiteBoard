@@ -21,6 +21,9 @@
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_write_board.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/pen_color.xml" value="0.625" />
+        <entry key="app/src/main/res/layout/pen_figure.xml" value="0.19537037037037036" />
+        <entry key="app/src/main/res/layout/pen_picture.xml" value="0.19537037037037036" />
         <entry key="app/src/main/res/layout/pen_size.xml" value="0.18958333333333333" />
         <entry key="app/src/main/res/layout/popupview.xml" value="0.18815331010452963" />
       </map>

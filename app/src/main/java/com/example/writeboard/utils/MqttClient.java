@@ -45,6 +45,10 @@ public class MqttClient {
     private MqttConnectOptions mqttConnectOptions;
     private Context mcontext;
 
+    public void setMcontext(Context mcontext) {
+        this.mcontext = mcontext;
+    }
+
     public void setQos(int gos) {
         this.qos = gos;
     }

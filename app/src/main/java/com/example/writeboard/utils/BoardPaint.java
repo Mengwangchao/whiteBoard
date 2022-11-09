@@ -8,22 +8,66 @@ import android.graphics.Xfermode;
 import com.example.writeboard.view.PaletteView;
 
 public class BoardPaint extends Paint {
-//    设置单例模式
+    //    设置单例模式
     private volatile static BoardPaint mBoardPaint;
 
     //  画笔属性
     private static float mDrawSize;
     private static float mEraserSize;
     private static Xfermode mClearMode;
+
+    public int[]color=new int[4];
+
     public static enum Mode {
         DRAW,
         ERASER
     }
+
     private static Mode mMode = Mode.DRAW;
+
+
+
+
+    public enum Figure {
+         FREELINE(0) ,
+        STRAIGHTLINE(1),
+        RECTANGLE(2);
+        private int value = 0;
+       private Figure(int value) {
+        }
+        public static Figure valueOf(int value) {    //    手写的从int到enum的转换函数
+            switch (value) {
+                case 0:
+                    return FREELINE;
+                case 1:
+                    return STRAIGHTLINE;
+                case 2:
+                    return RECTANGLE;
+                default:
+                    return null;
+            }
+        }
+
+        public int value() {
+            return this.value;
+        }
+
+    }
+
+    private Figure mFigure = Figure.RECTANGLE;
+
+    public Figure getmFigure() {
+        return mFigure;
+    }
+
+    public void setmFigure(Figure mFigure) {
+        this.mFigure = mFigure;
+    }
+
     private static void initPaint() {
         mDrawSize = 10;
         mEraserSize = 10;
-        mBoardPaint.setStyle(Paint.Style.STROKE);
+        mBoardPaint.setStyle(Style.STROKE);
         mBoardPaint.setFilterBitmap(true);
         mBoardPaint.setStrokeJoin(Paint.Join.ROUND);
         mBoardPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -32,11 +76,12 @@ public class BoardPaint extends Paint {
         mClearMode = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
 
     }
-    public static BoardPaint getmBoardPaint(){
-        if(mBoardPaint==null){
-            synchronized (BoardPaint.class){
-                if(mBoardPaint==null){
-                    mBoardPaint=new BoardPaint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+
+    public static BoardPaint getmBoardPaint() {
+        if (mBoardPaint == null) {
+            synchronized (BoardPaint.class) {
+                if (mBoardPaint == null) {
+                    mBoardPaint = new BoardPaint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
                     initPaint();
                 }
             }
@@ -96,15 +141,23 @@ public class BoardPaint extends Paint {
         mBoardPaint.setStrokeWidth(mDrawSize);
     }
 
-    public float getPenRawSize(){
+    public float getPenRawSize() {
         return mDrawSize;
     }
 
     /**
-     * @param colors Change Pen Color
+     *
+     * @param a aphle
+     * @param r red
+     * @param g green
+     * @param b blue
      */
-    public void setPenColor(int colors[]) {
-        mBoardPaint.setARGB(colors[0], colors[1], colors[2], colors[3]);
+    public void setPenColor(int a,int r,int g,int b) {
+        color[0]=a;
+        color[1]=r;
+        color[2]=g;
+        color[3]=b;
+        mBoardPaint.setARGB(a, r,g, b);
     }
 
     /**

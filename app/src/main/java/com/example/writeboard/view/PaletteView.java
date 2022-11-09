@@ -12,6 +12,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Xfermode;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,14 +23,17 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.writeboard.interfaces.MqttClientSend;
 import com.example.writeboard.utils.BoardPaint;
 import com.example.writeboard.utils.MqttClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaletteView extends View {
+public class PaletteView extends View implements MqttClientSend {
 
+    private String roomId;
+    private String currentPage;
     private BoardPaint mBoardPaint;
     //    画笔
 //    private Paint mPaint;
@@ -37,6 +42,9 @@ public class PaletteView extends View {
     //    上一个点的X，Y值
     private float mLastX;
     private float mLastY;
+    //    图形的初始点
+    private float mFigureLastx;
+    private float mFigureLasty;
     //     保存的的bitmap
     private Bitmap mBufferBitmap;
     //    画布
@@ -59,11 +67,7 @@ public class PaletteView extends View {
     private boolean mCanEraser;
     //    callback
     private Callback mCallback;
-    public enum Mode {
-        DRAW,
-        ERASER
-    }
-    private Mode mMode = Mode.DRAW;
+
 
     public void setmBoardPaint(BoardPaint mBoardPaint) {
         this.mBoardPaint = mBoardPaint;
@@ -83,12 +87,21 @@ public class PaletteView extends View {
 //        init();
     }
 
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
+    }
 
-//设置mqttclient，用于每个操作进行发送消息
+    public void setCurrentPage(String currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    //设置mqttclient，用于每个操作进行发送消息
     public void setMqttClient(MqttClient mqttClient) {
         this.mqttClient = mqttClient;
+
     }
-//设置画笔进行绘制
+
+    //设置画笔进行绘制
     public void setBoardPaint(BoardPaint boardPaint) {
         this.mBoardPaint = boardPaint;
     }
@@ -122,8 +135,6 @@ public class PaletteView extends View {
             canvas.drawPath(path, Paint);
         }
     }
-
-
 
 
     public boolean canRedo() {
@@ -222,11 +233,14 @@ public class PaletteView extends View {
     protected void onDraw(Canvas canvas) {
         if (mBufferBitmap != null) {
             canvas.drawBitmap(mBufferBitmap, 0, 0, null);
+
         }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        float penwidth = mBoardPaint.getStrokeWidth();
+
         final int action = event.getAction() & MotionEvent.ACTION_MASK;
         final float x = event.getX();
         final float y = event.getY();
@@ -234,111 +248,46 @@ public class PaletteView extends View {
             case MotionEvent.ACTION_DOWN:
                 Log.i("Hve", "本地开始划线");
 
+
                 mLastX = x;
                 mLastY = y;
+
+
                 if (mPath == null) {
                     mPath = new Path();
                 }
 //                设置初始点(线段的落笔点）
                 mPath.moveTo(x, y);
-                mqttClient.subscribe("touchStart");
-//                mqttClient.publish("a/b", "{\n" +
-//                        "\"mode\":\"" + 1 + "\",\n" +
-//                        "\"a\":\"" + x + "\",\n" +
-//                        "\"b\":\"" + y + "\",\n" +
-//                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
-//                        "}", false);
-                mqttClient.publish("touchStart", "{\n" +
-                        "\"color\":{\n" +
-                        "\"a\":" + "\"1.000000\"" + ",\n" +
-                        "\"b\":" + "\"128.000000\"" + ",\n" +
-                        "\"g\":" + "\"128.000000\"" + ",\n" +
-                        "\"r\":" + "\"128.000000\"" + "\n" +
-                        "},\n" +
-                        "\"point\":{\n" +
-                        "\"x\":" + "\"" + x + "\"" + ",\n" +
-                        "\"y\":" + "\"" + y + "\"" + "\n" +
-                        "},\n" +
-                        "\"lineWidth\":" + "\"1.0\"" + ",\n" +
-                        "\"userId\":" + "\"1.0\"" + ",\n" +
-                        "\"roomId\":" + "\"149459955291\"" + ",\n" +
-                        "\"currentPage\":" + "\"1.0\"" + ",\n" +
-                        "\"graphical\":" + "\"1.0\"" + "\n" +
-                        "}", false);
+                touchStart(x, y);
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.i("Hve", "本地划线中");
 
 //                (x + mLastX) / 2 (y + mLastY) / 2
+//                mPath.moveTo(x,y);
                 //这里终点设为两点的中心点的目的在于使绘制的曲线更平滑，如果终点直接设置为x,y，效果和lineto是一样的,实际是折线效果
                 mPath.quadTo(mLastX, mLastY, (x + mLastX) / 2, (y + mLastY) / 2);
 //                mPath.lineTo(x,y);
                 if (mBufferBitmap == null) {
                     initBuffer();
                 }
-                if (mMode == Mode.ERASER && !mCanEraser) {
+                if (mBoardPaint.getMode() == BoardPaint.Mode.ERASER && !mCanEraser) {
                     break;
                 }
                 mBufferCanvas.drawPath(mPath, mBoardPaint);
+
                 invalidate();
                 mLastX = x;
                 mLastY = y;
-//                mqttClient.subscribe("a/b");
-//                mqttClient.publish("a/b", "{\n" +
-//                        "\"mode\":\"" + 2 + "\",\n" +
-//                        "\"a\":\"" + x + "\",\n" +
-//                        "\"b\":\"" + y + "\",\n" +
-//                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
-//                        "}", false);
-                mqttClient.subscribe("149459955291");
-                mqttClient.publish("149459955291", "{\n" +
-                        "\"color\":{\n" +
-                        "\"a\":" + "\"1.000000\"" + ",\n" +
-                        "\"b\":" + "\"128.000000\"" + ",\n" +
-                        "\"g\":" + "\"128.000000\"" + ",\n" +
-                        "\"r\":" + "\"128.000000\"" + "\n" +
-                        "},\n" +
-                        "\"point\":{\n" +
-                        "\"x\":" + "\"" + x + "\"" + ",\n" +
-                        "\"y\":" + "\"" + y + "\"" + "\n" +
-                        "},\n" +
-                        "\"lineWidth\":" + "\"1.0\"" + ",\n" +
-                        "\"userId\":" + "\"1.0\"" + ",\n" +
-                        "\"roomId\":" + "\"149459955291\"" + ",\n" +
-                        "\"currentPage\":" + "\"1.0\"" + ",\n" +
-                        "\"graphical\":" + "\"1.0\"" + "\n" +
-                        "}", false);
+                touchMove(x, y, roomId);
                 break;
             case MotionEvent.ACTION_UP:
                 Log.i("Hve", "本地划线结束");
 
-                if (mMode == Mode.DRAW || mCanEraser) {
+                if (mBoardPaint.getMode() == BoardPaint.Mode.DRAW || mCanEraser) {
+
                     saveDrawingPath();
-//                    mqttClient.subscribe("a/b");
-//                    mqttClient.publish("a/b", "{\n" +
-//                            "\"mode\":\"" + 3 + "\",\n" +
-//                            "\"a\":\"" + x + "\",\n" +
-//                            "\"b\":\"" + y + "\",\n" +
-//                            "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
-//                            "}", false);
-                    mqttClient.subscribe("touchEnd");
-                    mqttClient.publish("touchEnd", "{\n" +
-                            "\"color\":{\n" +
-                            "\"a\":" + "\"1.000000\"" + ",\n" +
-                            "\"b\":" + "\"128.000000\"" + ",\n" +
-                            "\"g\":" + "\"128.000000\"" + ",\n" +
-                            "\"r\":" + "\"128.000000\"" + "\n" +
-                            "},\n" +
-                            "\"point\":{\n" +
-                            "\"x\":" + "\"" + x + "\"" + ",\n" +
-                            "\"y\":" + "\"" + y + "\"" + "\n" +
-                            "},\n" +
-                            "\"lineWidth\":" + "\"1.0\"" + ",\n" +
-                            "\"userId\":" + "\"1.0\"" + ",\n" +
-                            "\"roomId\":" + "\"149459955291\"" + ",\n" +
-                            "\"currentPage\":" + "\"1.0\"" + ",\n" +
-                            "\"graphical\":" + "\"1.0\"" + "\n" +
-                            "}", false);
+                    touchEnd(x, y);
                 }
                 mPath.reset();
                 break;
@@ -449,6 +398,92 @@ public class PaletteView extends View {
 //
 //        mClearMode = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
 //    }
+    
+    @Override
+    public void touchStart(float x, float y) {
+        mqttClient.subscribe("touchStart");
+//                mqttClient.publish("a/b", "{\n" +
+//                        "\"mode\":\"" + 1 + "\",\n" +
+//                        "\"a\":\"" + x + "\",\n" +
+//                        "\"b\":\"" + y + "\",\n" +
+//                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
+//                        "}", false);
+        mqttClient.publish("touchStart", "{\n" +
+                "\"color\":{\n" +
+                "\"a\":" + "\"" + mBoardPaint.color[0] + "\"" + ",\n" +
+                "\"b\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
+                "\"g\":" + "\"" + mBoardPaint.color[2] + "\"" + ",\n" +
+                "\"r\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
+                "},\n" +
+                "\"point\":{\n" +
+                "\"x\":" + "\"" + x + "\"" + ",\n" +
+                "\"y\":" + "\"" + y + "\"" + "\n" +
+                "},\n" +
+                "\"lineWidth\":" + "\"" + mBoardPaint.getStrokeWidth() + "\"" + ",\n" +
+                "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
+                "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
+                "\"currentPage\":" + "\"" + currentPage + "\"" + ",\n" +
+                "\"graphical\":" + "\"" + mBoardPaint.getmFigure().value() + "\"" + "\n" +
+                "}", false);
+    }
 
+    @Override
+    public void touchMove(float x, float y, String roomId) {
+//                mqttClient.subscribe("a/b");
+//                mqttClient.publish("a/b", "{\n" +
+//                        "\"mode\":\"" + 2 + "\",\n" +
+//                        "\"a\":\"" + x + "\",\n" +
+//                        "\"b\":\"" + y + "\",\n" +
+//                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
+//                        "}", false);
+        mqttClient.subscribe("149459955291");
+        mqttClient.publish("149459955291", "{\n" +
+                "\"color\":{\n" +
+                "\"a\":" + "\"" + mBoardPaint.color[0] + "\"" + ",\n" +
+                "\"b\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
+                "\"g\":" + "\"" + mBoardPaint.color[2] + "\"" + ",\n" +
+                "\"r\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
+                "},\n" +
+                "\"point\":{\n" +
+                "\"x\":" + "\"" + x + "\"" + ",\n" +
+                "\"y\":" + "\"" + y + "\"" + "\n" +
+                "},\n" +
+                "\"lineWidth\":" + "\"" + mBoardPaint.getStrokeWidth() + "\"" + ",\n" +
+                "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
+                "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
+                "\"currentPage\":" + "\"" + currentPage + "\"" + ",\n" +
+                "\"graphical\":" + "\"" + mBoardPaint.getmFigure().value() + "\"" + "\n" +
+                "}", false);
+    }
 
+    @Override
+    public void touchEnd(float x, float y) {
+
+        //                    mqttClient.subscribe("a/b");
+//                    mqttClient.publish("a/b", "{\n" +
+//                            "\"mode\":\"" + 3 + "\",\n" +
+//                            "\"a\":\"" + x + "\",\n" +
+//                            "\"b\":\"" + y + "\",\n" +
+//                            "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
+//                            "}", false);
+        mqttClient.subscribe("touchEnd");
+        mqttClient.publish("touchEnd", "{\n" +
+                "\"color\":{\n" +
+                "\"a\":" + "\"" + mBoardPaint.color[0] + "\"" + ",\n" +
+                "\"b\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
+                "\"g\":" + "\"" + mBoardPaint.color[2] + "\"" + ",\n" +
+                "\"r\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
+                "},\n" +
+                "\"point\":{\n" +
+                "\"x\":" + "\"" + x + "\"" + ",\n" +
+                "\"y\":" + "\"" + y + "\"" + "\n" +
+                "},\n" +
+                "\"lineWidth\":" + "\"" + mBoardPaint.getStrokeWidth() + "\"" + ",\n" +
+                "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
+                "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
+                "\"currentPage\":" + "\"" + currentPage + "\"" + ",\n" +
+                "\"graphical\":" + "\"" + mBoardPaint.getmFigure().value() + "\"" + "\n" +
+                "}", false);
+
+    }
 }

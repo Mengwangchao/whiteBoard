@@ -35,11 +35,12 @@ import com.example.writeboard.view.PopBottomWindow;
 import com.example.writeboard.view.TestButton;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
     private static BoardPaint mBoardPaint = BoardPaint.getmBoardPaint();
     private TextView pensizeTv;
-    private TextView textView;
+    private TextView roomIdTv;
     private ImageView redoBt;
     private ImageView ondoBt;
     private ImageView eraserBt;
@@ -58,11 +59,29 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private ImageView addPageView;
     private TextView currentTv;
     private TextView allItemTv;
-    private View PopupView;
     private User user;
     private SeekBar pensizeSk;
     private AlertDialog penSizeDialog;
+    private AlertDialog penColorDialog;
     private View penSizeView;
+
+
+    private View penColorView;
+    private TextView color_a;
+    private TextView color_r;
+    private TextView color_g;
+    private TextView color_b;
+    private ImageView colorView;
+    private SeekBar color_a_Sk;
+    private SeekBar color_r_Sk;
+    private SeekBar color_g_Sk;
+    private SeekBar color_b_Sk;
+
+
+    private View boardImageView;
+
+    private String rooId = "";
+    private String modeString;
 
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -71,32 +90,30 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
         Intent intent = getIntent();
-        String modeString = intent.getStringExtra("mode");
+        modeString = intent.getStringExtra("mode");
         user = intent.getParcelableExtra("User");
-        PopupView = LayoutInflater.from(this).inflate(R.layout.popupview, null);
 
         initMqttClient();
         initView();
-//
+        createRoom();
         boardList = new ArrayList<>();
         PaletteView paletteView = new PaletteView(this);
         paletteView.setBoardPaint(mBoardPaint);
+        paletteView.setRoomId(rooId);
 
         boardList.add(paletteView);
         boardList.get(boardList.size() - 1).setMqttClient(mqttClient);
-//
         boardAdapter = new BoardAdapter(boardList);
         boardPage.setAdapter(boardAdapter);
         boardPage.setCurrentItem(currentItem);
         boardPage.setIsSwipe(false);
+        paletteView.setCurrentPage(boardPage.getCurrentItem()+1+"");
 
 
         initData();
 
         if (modeString.equals("2")) {
             showExitDiaglog();
-        } else {
-            textView.setText(modeString + user.getUserId() + user.getUserName() + user.getPassWord());
         }
 
 
@@ -110,9 +127,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         lastPageView.setOnClickListener(this);
         nextPageView.setOnClickListener(this);
         addPageView.setOnClickListener(this);
+
     }
 
-    //    Mqtt初始化
+    /**
+     * initMattClient
+     */
     private void initMqttClient() {
 //    实例化Mqtt对象
         mqttClient = new MqttClient();
@@ -128,14 +148,22 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    /**
+     * init Data
+     */
     private void initData() {
         currentTv.setText(boardPage.getCurrentItem() + 1 + "");
         allItemTv.setText(boardList.size() + "");
         pensizeSk.setProgress(10);
+        showSizeDiaglog();
         showColorDiaglog();
 
     }
 
+    /**
+     * click listener
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -167,7 +195,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.color_bt:
                 Toast.makeText(this, "画笔颜色\n:" + mBoardPaint.getPenColor(), Toast.LENGTH_SHORT).show();
-                mBoardPaint.setARGB(255, 123, 104, 238);
+                penColorDialog.show();
                 break;
             case R.id.lastPage_bt:
                 if (0 < currentItem && currentItem < boardList.size()) {
@@ -203,8 +231,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    /**
+     * init View
+     */
     private void initView() {
-        textView = findViewById(R.id.moshi);
+        roomIdTv = findViewById(R.id.moshi);
         redoBt = findViewById(R.id.redo_bt);
         ondoBt = findViewById(R.id.undo_bt);
         eraserBt = findViewById(R.id.eraser_bt);
@@ -218,9 +249,23 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         currentTv = findViewById(R.id.currentItem_tv);
         allItemTv = findViewById(R.id.allItem_tv);
         addPageView = findViewById(R.id.addPage);
+
         penSizeView = LayoutInflater.from(this).inflate(R.layout.pen_size, null);
         pensizeSk = penSizeView.findViewById(R.id.pensizesk);
         pensizeTv = penSizeView.findViewById(R.id.pensizetv);
+
+        penColorView = LayoutInflater.from(this).inflate(R.layout.pen_color, null);
+        color_a = penColorView.findViewById(R.id.color_a_tv);
+        color_r = penColorView.findViewById(R.id.color_r_tv);
+        color_g = penColorView.findViewById(R.id.color_g_tv);
+        color_b = penColorView.findViewById(R.id.color_b_tv);
+        color_a_Sk = penColorView.findViewById(R.id.color_a);
+        color_r_Sk = penColorView.findViewById(R.id.color_r);
+        color_g_Sk = penColorView.findViewById(R.id.color_g);
+        color_b_Sk = penColorView.findViewById(R.id.color_b);
+        colorView = penColorView.findViewById(R.id.imageView);
+
+
     }
 
     private void showExitDiaglog() {
@@ -233,14 +278,15 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 .setPositiveButton("true", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        textView.setText("已经加入房间");
+                        Toast.makeText(BoardActivity.this, "加入了房间", Toast.LENGTH_SHORT).show();
+
                     }
                 })
                 .setNegativeButton("取消", null)
                 .show();
     }
 
-    private void showColorDiaglog() {
+    private void showSizeDiaglog() {
 
 
         pensizeTv.setText(String.valueOf(pensizeSk.getProgress()));
@@ -249,14 +295,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 .setTitle("设置画笔大小")
                 .setIcon(android.R.drawable.sym_def_app_icon)
                 .setView(penSizeView)
-                .setPositiveButton("true", new DialogInterface.OnClickListener() {
+                .setPositiveButton("commit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        textView.setText("已经加入房间");
                         penSizeDialog.dismiss();
                     }
                 })
-                .setNegativeButton("取消", null)
                 .create();
 
         pensizeSk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -277,5 +321,137 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
             }
         });
+    }
+
+    private void showColorDiaglog() {
+
+        penColorDialog = new AlertDialog.Builder(this)
+                .setTitle("设置画笔颜色")
+                .setIcon(android.R.drawable.sym_def_app_icon)
+                .setView(penColorView)
+                .setPositiveButton("commit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        penSizeDialog.dismiss();
+                    }
+                })
+                .create();
+        color_a_Sk.setProgress(255);
+        color_r_Sk.setProgress(0);
+        color_g_Sk.setProgress(0);
+        color_b_Sk.setProgress(0);
+        color_a.setText(color_a_Sk.getProgress() + "");
+        color_r.setText(color_r_Sk.getProgress() + "");
+        color_g.setText(color_g_Sk.getProgress() + "");
+        color_b.setText(color_b_Sk.getProgress() + "");
+
+        color_a_Sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                color_a.setText(progress + "");
+                int r = Integer.parseInt(color_r.getText().toString());
+                int g = Integer.parseInt(color_g.getText().toString());
+                int b = Integer.parseInt(color_b.getText().toString());
+
+                colorView.setBackgroundColor(Color.argb(progress, r, g, b));
+                mBoardPaint.setARGB(progress, r, g, b);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        color_r_Sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                color_r.setText(progress + "");
+                int a = Integer.parseInt(color_a.getText().toString());
+                int g = Integer.parseInt(color_g.getText().toString());
+                int b = Integer.parseInt(color_b.getText().toString());
+
+                colorView.setBackgroundColor(Color.argb(a, progress, g, b));
+                mBoardPaint.setPenColor(a, progress, g, b);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        color_g_Sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                color_g.setText(progress + "");
+                int r = Integer.parseInt(color_r.getText().toString());
+                int a = Integer.parseInt(color_g.getText().toString());
+                int b = Integer.parseInt(color_b.getText().toString());
+
+                colorView.setBackgroundColor(Color.argb(a, r, progress, b));
+                mBoardPaint.setPenColor(a, r, progress, b);
+
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        color_b_Sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                color_b.setText(progress + "");
+                int r = Integer.parseInt(color_r.getText().toString());
+                int g = Integer.parseInt(color_g.getText().toString());
+                int a = Integer.parseInt(color_b.getText().toString());
+
+                colorView.setBackgroundColor(Color.argb(a, r, g, progress));
+                mBoardPaint.setPenColor(a, r, g, progress);
+
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+    }
+
+    private void createRoom() {
+        Random random = new Random();
+
+        for (int i = 0; i < 12; i++) {
+            if (i == 0) {
+                rooId += (random.nextInt(9) + 1);
+            } else {
+                rooId += (random.nextInt(10));
+            }
+        }
+        roomIdTv.setText(rooId);
     }
 }
