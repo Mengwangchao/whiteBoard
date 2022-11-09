@@ -23,4 +23,7 @@ public class User {
     /** 用户的room */
     private String roomId;
 
+    /** 用户的权限 */
+    private int authority; // 模式：1代表协作，2代表只读
+
 }

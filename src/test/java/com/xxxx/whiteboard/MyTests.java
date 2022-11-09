@@ -1,6 +1,5 @@
 package com.xxxx.whiteboard;
 
-import com.xxxx.whiteboard.file.MyFileUtil;
 import com.xxxx.whiteboard.mapper.PointMapper;
 import com.xxxx.whiteboard.mapper.RoomMapper;
 import com.xxxx.whiteboard.pojo.Color;
@@ -23,7 +22,6 @@ import java.util.List;
 @SpringBootTest
 class MyTests {
 
-
     @Autowired(required = false)
     private UserMapper userMapper;
 
@@ -38,7 +36,7 @@ class MyTests {
     */
     @Test
     void addUserTest() {
-        User user1 = new User("1314", "12121");
+        User user1 = new User("1314", "12121",1);
         userMapper.insert(user1);
     }
 
@@ -83,16 +81,9 @@ class MyTests {
         String roomId = "134123454";
         String tableName = "room" + roomId;
         roomMapper.createPage("134123454", 1);
-        roomMapper.insert(new Room("134123454", 1, 1, 1, 1, 1));
+        roomMapper.insert(new Room("134123454", 1, 1, 1, 1,1));
     }
 
-    /*
-    测试运行SQL脚本
-    * */
-    //@Test
-    //void runSqlTest(){
-    //    RunSqlScript.run("createRoom");
-    //}
 
     /*
     测试插入房间
@@ -115,15 +106,15 @@ class MyTests {
     * */
     @Test
     void savePointTest() {
-        Point point = new Point(1.0f, 2.0f, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+        Point point = new Point(1.0f, 2.0f, new Color(1.0f, 1.0f, 1.0f, 1.0f),1, 1);
         pointMapper.savePoint("1234", 1, point);
     }
 
     /*
-    * 测试获取某房间某页的所有点
-    * */
+     * 测试获取某房间某页的所有点
+     * */
     @Test
-    void getAllPointTest(){
+    void getAllPointTest() {
         List<Point> points = pointMapper.getAllPoint("1234", 1);
         System.out.println(points.toString());
     }
@@ -132,42 +123,36 @@ class MyTests {
      * 测试改变房间的room_state
      * */
     @Test
-    void setRoomState(){
+    void setRoomState() {
         roomMapper.setRoomState("1234", 10);
     }
 
     @Test
-    void deletePageOfRoomTest(){
+    void deletePageOfRoomTest() {
         roomMapper.deletePageOfRoom("12345", 1);
     }
 
     @Test
-    void isRoomIdTest(){
+    void isRoomIdTest() {
         System.out.println(ValidatorUtil.isRoomId("123456789012"));
-        Room room = new Room("1234", 1,1,1,1,1);
+        Room room = new Room("1234", 1, 1, 1, 1,1);
         System.out.println(roomMapper.selectById("1234"));
         System.out.println(room);
     }
 
-    /*
-    * 创建json文件并写入
-    * */
     @Test
-    void createJsonFileTest() throws JSONException {
-        String nowPath = "src/test/java/com/xxxx/whiteboard";
-        // String nowPath = System.getProperty("user.dir");
-        System.out.println(nowPath);
-        MyFileUtil.createJsonFile(nowPath, "aha");
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.putOpt("nihao", "nihao");
-        MyFileUtil.writeToJsonFile(nowPath, "aha", jsonObject.toString());
+    void isRoomExist(){
+        System.out.println(roomMapper.isTableExist("1234", 1));
     }
 
     @Test
-    void customConfigurationFileTest(){
-        String nowPath = System.getProperty("user.dir") + "/files"; // 获取到项目的目录
-        System.out.println(nowPath);
+    void selectPeopleNumTest(){
+        System.out.println(userMapper.selectCount("12121"));
+    }
 
+    @Test
+    void renamePageTest(){
+        roomMapper.renameTablePage("1234", 1, 2);
     }
 
 }

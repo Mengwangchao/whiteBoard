@@ -11,9 +11,15 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface RoomMapper extends BaseMapper<Room> {
 
+
     /*
-    * 建立某roomId, 某currentPage下的表：用来存储所有point
+    查询某表是否存在
     * */
+    int isTableExist(@Param("roomId") String roomId, @Param("currentPage") int currentPage);
+
+    /*
+     * 建立某roomId, 某currentPage下的表：用来存储所有point
+     * */
     void createPage(@Param("roomId") String roomId, @Param("currentPage") int currentPage);
 
     /*
@@ -30,4 +36,17 @@ public interface RoomMapper extends BaseMapper<Room> {
     /*
      * 删除掉某个room某个page
      * */
-    int deletePageOfRoom(@Param("roomId") String roomId, @Param("pageNo") int pageNo);}
+    int deletePageOfRoom(@Param("roomId") String roomId, @Param("pageNo") int pageNo);
+
+    /*
+     * 查找房间人数
+     * */
+    //int selectPeopleNum(@Param("roomId") String roomId);
+
+    /*
+    * 修改表名：因为页数改变了表名也会随之改变
+    * */
+    void renameTablePage(@Param("roomId") String roomId, @Param("oldPage") int oldPage, @Param("newPage") int newPage);
+
+
+}
