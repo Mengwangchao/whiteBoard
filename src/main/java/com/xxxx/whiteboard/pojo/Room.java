@@ -1,6 +1,5 @@
 package com.xxxx.whiteboard.pojo;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,14 +29,14 @@ public class Room {
 
     /** 房间模式 */
     @Range(min = 1, max = 2)
-    private int authority; // 模式：写作和只读
+    private int authority = 1; // 模式：1代表协作，2代表只读
 
-    /** 房间页数 */
-    private int page;
+    /** 房间总页数 */
+    private int pageCount;
 
     /** 当前页数 */
     private int currentPage;
 
-    /* 比如说页数1、3、5、6， 那就是说最大的页数就是6 */
-    private int maxPage;
+    ///* 房间总共人数 */
+    //private int peopleNum;
 }

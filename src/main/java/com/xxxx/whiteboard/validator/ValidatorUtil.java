@@ -1,7 +1,6 @@
 package com.xxxx.whiteboard.validator;
 
 import org.thymeleaf.util.StringUtils;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

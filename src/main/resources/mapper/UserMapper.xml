@@ -10,4 +10,9 @@
     <!--    SELECT * FROM user;-->
     <!--</select>-->
 
+
+    <!--int selectCount(@Param("roomId") String roomId);-->
+    <select id="selectCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM user WHERE room_id=${roomId};
+    </select>
 </mapper>

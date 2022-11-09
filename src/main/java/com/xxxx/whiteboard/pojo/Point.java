@@ -22,4 +22,10 @@ public class Point {
     /** 坐标点颜色 */
     private Color pointColor;
 
+    /* 图形id */
+    private int graphical;
+
+    /* 线条粗细 */
+    private float lineWidth;
+
 }

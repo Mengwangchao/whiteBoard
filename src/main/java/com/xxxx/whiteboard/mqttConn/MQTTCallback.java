@@ -48,6 +48,7 @@ public class MQTTCallback implements MqttCallback {
 
             if (ValidatorUtil.isRoomId(topic)){
                 // 这个是正在画点的时候
+                JsonTool.touching(jsonObject);
             }
             // 判断主题
             switch (topic){
@@ -55,6 +56,7 @@ public class MQTTCallback implements MqttCallback {
                     JsonTool.touchStart(jsonObject); // 我认为这个touchStart对后端来说就是
                     break;
                 case "touchEnd": // 手指结束滑动，实时同步所有短当前手指即将离开屏幕，可以释放和保存资源
+                    JsonTool.touchEnd(jsonObject);
                     break;
                 case "joinRoom":
                     JsonTool.joinRoom(jsonObject);
@@ -62,25 +64,24 @@ public class MQTTCallback implements MqttCallback {
                 case "createRoom":
                     JsonTool.createRoom(jsonObject);
                     break;
-                case "joinRoomReturn":
-                    break;
-                case "deleteRoom":
-                    JsonTool.deleteRoom(jsonObject);
-                    break;
                 case "addPage":
+                    JsonTool.addPage(jsonObject);
                     break;
                 case "deletePage":
+                    JsonTool.deletePage(jsonObject);
                     break;
-                //case "nextPage":
-                //    break;
-                //case "upPage":
-                //    break;
+                case "nextPage":
+                    JsonTool.nextPage(jsonObject);
+                    break;
+                case "upPage":
+                    JsonTool.upPage(jsonObject);
+                    break;
                 default:
+                    JsonTool.touching(jsonObject);
                     break; // 12位数字的roomId: 手指正在滑动，实时同步所有端当前手指所在坐标
             }
         } catch (Exception e){
             // 说明发过来的数据是字符串类型，不是jsonObject类型
         }
-
     }
 }

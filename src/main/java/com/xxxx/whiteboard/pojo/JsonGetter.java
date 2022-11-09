@@ -16,8 +16,13 @@ import lombok.ToString;
 public class JsonGetter {
     String userId;
     String roomId;
-    int authority; // 当前房间的模式
-    int currentPage; // 删除也用这个currentPage得了
     Color color;
     Point point;
+    int authority; // 当前房间的模式
+    int currentPage; // 删除也用这个currentPage得了
+    float lineWidth;  // 线条粗细
+    int graphical; // 图形id
+    int pageCount; // 总页数
+
+
 }

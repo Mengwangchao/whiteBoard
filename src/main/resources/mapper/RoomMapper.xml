@@ -4,6 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xxxx.whiteboard.mapper.RoomMapper">
 
+
+    <select id="isTableExist" resultType="java.lang.Integer">
+        SELECT CASE
+                   WHEN EXISTS(
+                           SELECT TABLE_NAME
+                           FROM `INFORMATION_SCHEMA`.`TABLES`
+                           WHERE `TABLE_SCHEMA` = 'white_board'
+                             AND `TABLE_NAME` = 'room${roomId}page${currentPage}'
+                       )
+                   THEN CAST(1 AS DECIMAL)
+                   ELSE CAST(0 AS DECIMAL) END
+    </select>
+
     <!-- 建立某roomId, 某currentPage下的表 -->
     <insert id="createPage">
         -- 如果这个表存在，就删掉
@@ -36,6 +49,11 @@
         DROP TABLE IF EXISTS room${roomId}page${pageNo}
     </delete>
 
+    <update id="renameTablePage">
+--         此时需要判断一下这个表是否存在
+
+        RENAME TABLE room${roomId}page${oldPage} TO room${roomId}page${newPage}
+    </update>
     <!--/*-->
     <!--* 改变roomStatus-->
     <!--* */-->

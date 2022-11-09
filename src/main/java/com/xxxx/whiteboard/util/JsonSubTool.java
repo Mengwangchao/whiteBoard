@@ -18,15 +18,18 @@ public class JsonSubTool {
      * 如果只有userId和roomId, flag = false, 否则flag = true
      * */
     public static JsonGetter initJsonObject(JSONObject jsonObject, boolean multiParams) throws JSONException {
-        JsonGetter jsonGetter = new JsonGetter();
-        if (jsonObject.has("userId")) jsonGetter.setUserId((String) jsonObject.get("userId"));
-        if (jsonObject.has("roomId")) jsonGetter.setRoomId((String) jsonObject.get("roomId"));
-        if (!multiParams) return jsonGetter; // 如果只有前两项，直接返回
-        if (jsonObject.has("authority")) jsonGetter.setAuthority((int) jsonObject.get("authority"));
-        if (jsonObject.has("currentPage")) jsonGetter.setCurrentPage((int) jsonObject.get("currentPage"));
-        if (jsonObject.has("color")) jsonGetter.setColor(JsonSubTool.getColor((JSONObject) jsonObject.get("color")));
-        if (jsonObject.has("point")) jsonGetter.setPoint(JsonSubTool.getPoint((JSONObject) jsonObject.get("point"), jsonGetter.getColor()));
-        return jsonGetter;
+        JsonGetter jg = new JsonGetter();
+        if (jsonObject.has("userId")) jg.setUserId((String) jsonObject.get("userId"));
+        if (jsonObject.has("roomId")) jg.setRoomId((String) jsonObject.get("roomId"));
+        if (!multiParams) return jg; // 如果只有前两项，直接返回
+        if (jsonObject.has("authority")) jg.setAuthority((int) jsonObject.get("authority"));
+        if (jsonObject.has("currentPage")) jg.setCurrentPage((int) jsonObject.get("currentPage"));
+        if (jsonObject.has("lineWidth")) jg.setLineWidth((float) jsonObject.get("lineWidth"));
+        if (jsonObject.has("graphical")) jg.setGraphical((int) jsonObject.get("graphical"));
+        if (jsonObject.has("color")) jg.setColor(JsonSubTool.getColor((JSONObject) jsonObject.get("color")));
+        if (jsonObject.has("pageCount")) jg.setPageCount((int) jsonObject.get("pageCount"));
+        if (jsonObject.has("point")) jg.setPoint(JsonSubTool.getPoint((JSONObject) jsonObject.get("point"), jg.getColor(), jg.getGraphical(), jg.getLineWidth()));
+        return jg;
     }
 
     /*
@@ -43,14 +46,11 @@ public class JsonSubTool {
     /*
      * 从JsonObject获取到Color，并封装
      * */
-    static Point getPoint(JSONObject pointJson, Color color) throws JSONException {
+    static Point getPoint(JSONObject pointJson, Color color, int graphical, float lineWidth) throws JSONException {
         float x = (float) pointJson.get("x");
         float y = (float) pointJson.get("y");
-        return new Point(x, y, color);
+        return new Point(x, y, color, graphical, lineWidth);
     }
-
-
-
 
 
 }
