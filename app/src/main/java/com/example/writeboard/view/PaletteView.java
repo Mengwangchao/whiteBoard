@@ -23,14 +23,14 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.example.writeboard.interfaces.MqttClientSend;
+import com.example.writeboard.interfaces.InMqttClientSend;
 import com.example.writeboard.utils.BoardPaint;
 import com.example.writeboard.utils.MqttClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaletteView extends View implements MqttClientSend {
+public class PaletteView extends View implements InMqttClientSend {
 
     private String roomId;
     private String currentPage;
@@ -398,7 +398,7 @@ public class PaletteView extends View implements MqttClientSend {
 //
 //        mClearMode = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
 //    }
-    
+
     @Override
     public void touchStart(float x, float y) {
         mqttClient.subscribe("touchStart");
@@ -409,6 +409,7 @@ public class PaletteView extends View implements MqttClientSend {
 //                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
 //                        "}", false);
         mqttClient.publish("touchStart", "{\n" +
+                "\"mode\":\"" + 1 + "\",\n" +
                 "\"color\":{\n" +
                 "\"a\":" + "\"" + mBoardPaint.color[0] + "\"" + ",\n" +
                 "\"b\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
@@ -423,7 +424,7 @@ public class PaletteView extends View implements MqttClientSend {
                 "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
                 "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
                 "\"currentPage\":" + "\"" + currentPage + "\"" + ",\n" +
-                "\"graphical\":" + "\"" + mBoardPaint.getmFigure().value() + "\"" + "\n" +
+                "\"graphical\":" + "\"" + 1 + "\"" + "\n" +
                 "}", false);
     }
 
@@ -436,8 +437,9 @@ public class PaletteView extends View implements MqttClientSend {
 //                        "\"b\":\"" + y + "\",\n" +
 //                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
 //                        "}", false);
-        mqttClient.subscribe("149459955291");
-        mqttClient.publish("149459955291", "{\n" +
+        mqttClient.subscribe(roomId);
+        mqttClient.publish(roomId, "{\n" +
+                "\"mode\":\"" + 2 + "\",\n" +
                 "\"color\":{\n" +
                 "\"a\":" + "\"" + mBoardPaint.color[0] + "\"" + ",\n" +
                 "\"b\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
@@ -452,7 +454,7 @@ public class PaletteView extends View implements MqttClientSend {
                 "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
                 "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
                 "\"currentPage\":" + "\"" + currentPage + "\"" + ",\n" +
-                "\"graphical\":" + "\"" + mBoardPaint.getmFigure().value() + "\"" + "\n" +
+                "\"graphical\":" + "\"" + 1 + "\"" + "\n" +
                 "}", false);
     }
 
@@ -468,6 +470,7 @@ public class PaletteView extends View implements MqttClientSend {
 //                            "}", false);
         mqttClient.subscribe("touchEnd");
         mqttClient.publish("touchEnd", "{\n" +
+                "\"mode\":\"" + 3 + "\",\n" +
                 "\"color\":{\n" +
                 "\"a\":" + "\"" + mBoardPaint.color[0] + "\"" + ",\n" +
                 "\"b\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
@@ -482,7 +485,7 @@ public class PaletteView extends View implements MqttClientSend {
                 "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
                 "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
                 "\"currentPage\":" + "\"" + currentPage + "\"" + ",\n" +
-                "\"graphical\":" + "\"" + mBoardPaint.getmFigure().value() + "\"" + "\n" +
+                "\"graphical\":" + "\"" + 1 + "\"" + "\n" +
                 "}", false);
 
     }

@@ -8,6 +8,7 @@ import android.util.JsonReader;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.writeboard.interfaces.InMqttClientNotify;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -22,7 +23,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MqttClient {
+public class MqttClient implements InMqttClientNotify {
     private static String TAG = "AndroidMqttClient";
     private MqttAndroidClient mqttAndroidClient;
     private String userId;
@@ -79,23 +80,7 @@ public class MqttClient {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 Log.d(TAG, "收到的消息：" + message.toString() + "--from topic:" + topic);
                 Log.i("AndroidMqttClient", "获得的消息是" + message.toString());
-//                String msg = new String(message.getPayload());
-//                JsonParser jp = new JsonParser();
-//                JsonObject jo = jp.parse(msg).getAsJsonObject();
-//                int mode = jo.get("mode").getAsInt();
-//                Float a = jo.get("a").getAsFloat();
-//                Float b = jo.get("b").getAsFloat();
-//                String c = jo.get("id").getAsString();
-//                if (!userId.equals(c)) {
-//                    Toast.makeText(mcontext, "x坐标" + a + "\ny坐标" + b + "\n id:" + c + "\n mode:" + mode, Toast.LENGTH_SHORT).show();
-//                    Intent intent = new Intent();
-//                    intent.setAction("xiaohao");//要通知的广播XXXXX名称
-//                    intent.putExtra("x", a);
-//                    intent.putExtra("y", b);
-//                    intent.putExtra("mode", mode);
-//                    intent.putExtra("id", c + "");
-//                    context.sendBroadcast(intent);
-//                }
+                notifyDrawMessage(message);
             }
 
             @Override
@@ -206,4 +191,61 @@ public class MqttClient {
         }
     }
 
+    @Override
+    public void notifyDrawMessage(MqttMessage message) {
+        String msg = new String(message.getPayload());
+        JsonParser jp = new JsonParser();
+        JsonObject jo = jp.parse(msg).getAsJsonObject();
+        int mode=jo.get("mode").getAsInt();
+        String userId_ve=jo.get("userId").getAsString();
+        JsonObject point=jo.getAsJsonObject("point");
+        Float x=point.get("x").getAsFloat();
+        Float y=point.get("y").getAsFloat();
+if(!userId.equals(userId_ve)) {
+    Intent intent = new Intent();
+    intent.setAction("xiaohao");
+    intent.putExtra("x", x);
+    intent.putExtra("y", y);
+    intent.putExtra("mode", mode);
+    mcontext.sendBroadcast(intent);
+}
+
+
+
+//        int mode = jo.get("mode").getAsInt();
+//        Float a = jo.get("a").getAsFloat();
+//        Float b = jo.get("b").getAsFloat();
+//        String c = jo.get("id").getAsString();
+//        if (!userId.equals(c)) {
+//            Toast.makeText(mcontext, "x坐标" + a + "\ny坐标" + b + "\n id:" + c + "\n mode:" + mode, Toast.LENGTH_SHORT).show();
+//            Intent intent = new Intent();
+//            intent.setAction("xiaohao");//要通知的广播XXXXX名称
+//            intent.putExtra("x", a);
+//            intent.putExtra("y", b);
+//            intent.putExtra("mode", mode);
+//            intent.putExtra("id", c + "");
+//            mcontext.sendBroadcast(intent);
+//        }
+
+    }
+
+    @Override
+    public void notifyAddPage(MqttMessage message) {
+
+    }
+
+    @Override
+    public void notifyChangeAuthority(MqttMessage message) {
+
+    }
+
+    @Override
+    public void notifyMovePage(MqttMessage message) {
+
+    }
+
+    @Override
+    public void notifyPaintSetting(MqttMessage message) {
+
+    }
 }

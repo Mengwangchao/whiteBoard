@@ -80,7 +80,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     private View boardImageView;
 
-    private String rooId = "";
+    private String roomId = "";
     private String modeString;
 
 
@@ -92,14 +92,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         Intent intent = getIntent();
         modeString = intent.getStringExtra("mode");
         user = intent.getParcelableExtra("User");
+        roomId = intent.getStringExtra("roomId");
 
         initMqttClient();
         initView();
-        createRoom();
         boardList = new ArrayList<>();
         PaletteView paletteView = new PaletteView(this);
         paletteView.setBoardPaint(mBoardPaint);
-        paletteView.setRoomId(rooId);
+        paletteView.setRoomId(roomId);
 
         boardList.add(paletteView);
         boardList.get(boardList.size() - 1).setMqttClient(mqttClient);
@@ -107,14 +107,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         boardPage.setAdapter(boardAdapter);
         boardPage.setCurrentItem(currentItem);
         boardPage.setIsSwipe(false);
-        paletteView.setCurrentPage(boardPage.getCurrentItem()+1+"");
+        paletteView.setCurrentPage(boardPage.getCurrentItem() + 1 + "");
 
 
         initData();
-
-        if (modeString.equals("2")) {
-            showExitDiaglog();
-        }
 
 
         redoBt.setOnClickListener(this);
@@ -131,37 +127,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
-     * initMattClient
-     */
-    private void initMqttClient() {
-//    实例化Mqtt对象
-        mqttClient = new MqttClient();
-//        规定的一个用户Id（user+12位随机数）
-        mqttClient.setUserId(user.getUserId());
-//        mqtt连接
-        mqttClient.connect(BoardActivity.this);
-//        设置QOS
-        mqttClient.setQos(2);
-//        加入用户名和密码
-        mqttClient.setUsername(user.getUserName());
-        mqttClient.setPassword(user.getPassWord());
-
-    }
-
-    /**
-     * init Data
-     */
-    private void initData() {
-        currentTv.setText(boardPage.getCurrentItem() + 1 + "");
-        allItemTv.setText(boardList.size() + "");
-        pensizeSk.setProgress(10);
-        showSizeDiaglog();
-        showColorDiaglog();
-
-    }
-
-    /**
      * click listener
+     *
      * @param v
      */
     @Override
@@ -195,6 +162,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.color_bt:
                 Toast.makeText(this, "画笔颜色\n:" + mBoardPaint.getPenColor(), Toast.LENGTH_SHORT).show();
+                mBoardPaint.setmFigure(BoardPaint.Figure.STRAIGHTLINE);
                 penColorDialog.show();
                 break;
             case R.id.lastPage_bt:
@@ -216,11 +184,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(this, "添加了新的一页", Toast.LENGTH_SHORT).show();
                 PaletteView paletteView = new PaletteView(this);
                 paletteView.setBoardPaint(mBoardPaint);
+                paletteView.setCurrentPage(boardPage.getCurrentItem() + 1 + "");
+                paletteView.setRoomId(roomId);
                 boardList.add(paletteView);
                 boardList.get(boardList.size() - 1).setMqttClient(mqttClient);
                 boardAdapter = new BoardAdapter(boardList);
                 boardPage.setAdapter(boardAdapter);
                 currentItem = boardList.size() - 1;
+
                 boardPage.setCurrentItem(currentItem);
                 currentTv.setText(boardList.size() + "");
                 allItemTv.setText(boardPage.getCurrentItem() + 1 + "");
@@ -229,6 +200,36 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             default:
                 break;
         }
+    }
+
+    /**
+     * initMattClient
+     */
+    private void initMqttClient() {
+//    实例化Mqtt对象
+        mqttClient = new MqttClient();
+//        规定的一个用户Id（user+12位随机数）
+        mqttClient.setUserId(user.getUserId());
+//        mqtt连接
+        mqttClient.connect(BoardActivity.this);
+//        设置QOS
+        mqttClient.setQos(2);
+//        加入用户名和密码
+        mqttClient.setUsername(user.getUserName());
+        mqttClient.setPassword(user.getPassWord());
+
+    }
+
+    /**
+     * init Data
+     */
+    private void initData() {
+        roomIdTv.setText("房间号：" + roomId);
+        currentTv.setText(boardPage.getCurrentItem() + 1 + "");
+        allItemTv.setText(boardList.size() + "");
+        pensizeSk.setProgress(10);
+        showSizeDiaglog();
+        showColorDiaglog();
     }
 
     /**
@@ -266,24 +267,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         colorView = penColorView.findViewById(R.id.imageView);
 
 
-    }
-
-    private void showExitDiaglog() {
-        final EditText editText = new EditText(this);
-        editText.setMinLines(1);
-        new AlertDialog.Builder(this)
-                .setTitle("请输入房间号")
-                .setIcon(android.R.drawable.sym_def_app_icon)
-                .setView(editText)
-                .setPositiveButton("true", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(BoardActivity.this, "加入了房间", Toast.LENGTH_SHORT).show();
-
-                    }
-                })
-                .setNegativeButton("取消", null)
-                .show();
     }
 
     private void showSizeDiaglog() {
@@ -442,16 +425,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void createRoom() {
-        Random random = new Random();
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
-        for (int i = 0; i < 12; i++) {
-            if (i == 0) {
-                rooId += (random.nextInt(9) + 1);
-            } else {
-                rooId += (random.nextInt(10));
-            }
-        }
-        roomIdTv.setText(rooId);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mqttClient.diconnect();
     }
 }

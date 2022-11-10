@@ -16,7 +16,7 @@ public class BoardPaint extends Paint {
     private static float mEraserSize;
     private static Xfermode mClearMode;
 
-    public int[]color=new int[4];
+    public int[] color = new int[]{255, 0, 0, 0};
 
     public static enum Mode {
         DRAW,
@@ -26,15 +26,15 @@ public class BoardPaint extends Paint {
     private static Mode mMode = Mode.DRAW;
 
 
-
-
     public enum Figure {
-         FREELINE(0) ,
-        STRAIGHTLINE(1),
-        RECTANGLE(2);
+        FREELINE(1),
+        STRAIGHTLINE(2),
+        RECTANGLE(3);
         private int value = 0;
-       private Figure(int value) {
+
+        private Figure(int value) {
         }
+
         public static Figure valueOf(int value) {    //    手写的从int到enum的转换函数
             switch (value) {
                 case 0:
@@ -146,18 +146,17 @@ public class BoardPaint extends Paint {
     }
 
     /**
-     *
      * @param a aphle
      * @param r red
      * @param g green
      * @param b blue
      */
-    public void setPenColor(int a,int r,int g,int b) {
-        color[0]=a;
-        color[1]=r;
-        color[2]=g;
-        color[3]=b;
-        mBoardPaint.setARGB(a, r,g, b);
+    public void setPenColor(int a, int r, int g, int b) {
+        color[0] = a;
+        color[1] = r;
+        color[2] = g;
+        color[3] = b;
+        mBoardPaint.setARGB(a, r, g, b);
     }
 
     /**

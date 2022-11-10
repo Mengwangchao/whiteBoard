@@ -7,6 +7,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.1403242147922999" />
         <entry key="../../Library/Android/sdk/platforms/android-32/data/res/drawable-watch/sym_def_app_icon.xml" value="0.169" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.118" />
         <entry key="app/src/main/res/drawable/ic_baseline_brightness_1_24.xml" value="0.1" />
