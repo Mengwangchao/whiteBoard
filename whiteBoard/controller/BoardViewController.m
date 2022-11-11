@@ -493,7 +493,7 @@
         [self.userNameRootView setUserName:userId authority:(int)ONLY_READ];
     }];
     if(self.isCreater && [self.userId isEqual:userId]){
-        alert =[UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"文档创建者不可设置权限"] message:userId preferredStyle:UIAlertControllerStyleAlert];
+        alert =[UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"文档创建者不可设置自己的权限"] message:userId preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         }];
         
