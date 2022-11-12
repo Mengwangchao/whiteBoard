@@ -5,62 +5,35 @@
 <mapper namespace="com.xxxx.whiteboard.mapper.RoomMapper">
 
 
-    <select id="isTableExist" resultType="java.lang.Integer">
-        SELECT CASE
-                   WHEN EXISTS(
-                           SELECT TABLE_NAME
-                           FROM `INFORMATION_SCHEMA`.`TABLES`
-                           WHERE `TABLE_SCHEMA` = 'white_board'
-                             AND `TABLE_NAME` = 'room${roomId}page${currentPage}'
-                       )
-                   THEN CAST(1 AS DECIMAL)
-                   ELSE CAST(0 AS DECIMAL) END
-    </select>
+    <!-- 房间里人数自动递增1 -->
+    <update id="personNumIncr">
+        UPDATE room
+        SET people_num = people_num + 1
+        WHERE room_id = ${roomId}
+    </update>
 
-    <!-- 建立某roomId, 某currentPage下的表 -->
-    <insert id="createPage">
-        -- 如果这个表存在，就删掉
-        CREATE TABLE `white_board`.`room${roomId}page${currentPage}`
-        (
-            `x` float NOT NULL,
-            `y` float NOT NULL,
-            `r` float NULL,
-            `g` float NULL,
-            `b` float NULL,
-            `a` float NULL,
---             PRIMARY KEY (`x`, `y`)
-        );
-    </insert>
-
-    <!-- 新建房间 -->
-    <insert id="createRoom" parameterType="com.xxxx.whiteboard.pojo.Room">
-        INSERT INTO `room`
-        VALUES (${room.roomId}, ${room.roomState}, ${room.authority});
-    </insert>
-
-    <update id="setRoomState">
-        UPDATE `room`
-        SET room_state = ${roomState}
+    <!-- 房间里人数自动递减1 -->
+    <update id="personNumDecr">
+        UPDATE room
+        SET people_num = people_num - 1
         WHERE room_id = ${roomId}
     </update>
 
 
-    <delete id="deletePageOfRoom">
-        DROP TABLE IF EXISTS room${roomId}page${pageNo}
-    </delete>
-
-    <update id="renameTablePage">
---         此时需要判断一下这个表是否存在
-
-        RENAME TABLE room${roomId}page${oldPage} TO room${roomId}page${newPage}
+    <!-- 在room中将总页数 ++ -->
+    <update id="roomPageIncr">
+        UPDATE room
+        SET page_count = page_count + 1
+        WHERE room_id = ${roomId}
     </update>
-    <!--/*-->
-    <!--* 改变roomStatus-->
-    <!--* */-->
-    <!--int setRoomStatus(@Param("roomId") String roomId, @Param("roomStatus") int roomStatus);-->
 
-    <!--/*-->
-    <!--* 判断房间是否活跃，返回房间人数-->
-    <!--* */-->
-    <!--int isRoomActivity(@Param("room") Room room);-->
+    <!-- 在room中将总页数自减 -->
+    <update id="roomPageDecr">
+        UPDATE room
+        SET page_count = page_count - 1
+        WHERE room_id = ${roomId}
+    </update>
+
+
+
 </mapper>

@@ -7,19 +7,16 @@ import lombok.ToString;
 
 /**
  * @Author: fan yang
- * @Description: Color类，rgba格式的颜色
+ * @Description: 颜色实体类
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Color {
-    // 参数 r
     private float r;
-    // 参数 g
     private float g;
-    // 参数 b
     private float b;
-    // 参数 a
     private float a;
+    private int colorId; // color_id
 }

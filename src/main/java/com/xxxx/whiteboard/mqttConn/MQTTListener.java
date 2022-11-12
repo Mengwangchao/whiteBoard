@@ -30,12 +30,12 @@ public class MQTTListener implements ApplicationListener<ContextRefreshedEvent> 
         try {
             server.setMqttClient("emqx_user", "emqx_password", new MQTTCallback());
             server.sub("touchStart"); // 项目启动就开始监听touchStart主题
-            server.sub("正则表达式12位数字"); // 项目启动就开始监听touching主题
             server.sub("touchEnd");
             server.sub("joinRoom");
             server.sub("createRoom");
             server.sub("deleteRoom");
             server.sub("addPage");
+            server.sub("leaveRoom");
             server.sub("deletePage");
             server.sub("nextPage");
             server.sub("upPage");

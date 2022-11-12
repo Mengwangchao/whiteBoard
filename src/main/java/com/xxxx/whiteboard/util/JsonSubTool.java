@@ -1,22 +1,17 @@
 package com.xxxx.whiteboard.util;
 
 import com.xxxx.whiteboard.pojo.Color;
-import com.xxxx.whiteboard.pojo.JsonGetter;
 import com.xxxx.whiteboard.pojo.Point;
+import com.xxxx.whiteboard.pojo.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * @Author: fan yang
- * @Description: 从Json串中解析常用类
+ * @Description:
  */
 public class JsonSubTool {
 
-
-    /*
-     * 对所有json信息的预处理
-     * 如果只有userId和roomId, flag = false, 否则flag = true
-     * */
     public static JsonGetter initJsonObject(JSONObject jsonObject, boolean multiParams) throws JSONException {
         JsonGetter jg = new JsonGetter();
         if (jsonObject.has("userId")) jg.setUserId((String) jsonObject.get("userId"));
@@ -28,7 +23,8 @@ public class JsonSubTool {
         if (jsonObject.has("graphical")) jg.setGraphical((int) jsonObject.get("graphical"));
         if (jsonObject.has("color")) jg.setColor(JsonSubTool.getColor((JSONObject) jsonObject.get("color")));
         if (jsonObject.has("pageCount")) jg.setPageCount((int) jsonObject.get("pageCount"));
-        if (jsonObject.has("point")) jg.setPoint(JsonSubTool.getPoint((JSONObject) jsonObject.get("point"), jg.getColor(), jg.getGraphical(), jg.getLineWidth()));
+        if (jsonObject.has("point"))
+            jg.setPoint(JsonSubTool.getPoint((JSONObject) jsonObject.get("point"), jg.getColor(), jg.getGraphical(), jg.getLineWidth()));
         return jg;
     }
 
@@ -40,7 +36,7 @@ public class JsonSubTool {
         float b = (float) colorJson.get("b");
         float g = (float) colorJson.get("g");
         float r = (float) colorJson.get("r");
-        return new Color(r, g, b, a);
+        return new Color(r, g, b, a, -1);
     }
 
     /*
@@ -49,7 +45,7 @@ public class JsonSubTool {
     static Point getPoint(JSONObject pointJson, Color color, int graphical, float lineWidth) throws JSONException {
         float x = (float) pointJson.get("x");
         float y = (float) pointJson.get("y");
-        return new Point(x, y, color, graphical, lineWidth);
+        return new Point(x, y, -1, -1);
     }
 
 

@@ -1,5 +1,6 @@
 package com.xxxx.whiteboard.mqttConn;
 
+import com.xxxx.whiteboard.util.JsonGetter;
 import com.xxxx.whiteboard.util.JsonTool;
 import com.xxxx.whiteboard.validator.ValidatorUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,7 @@ public class MQTTCallback implements MqttCallback {
         // 此处可以将订阅得到的消息进行业务处理、数据存储
         log.info("收到来自 " + topic + " 的消息：{}", new String(message.getPayload()));
         // 将接收到的数据转换成 json 数据
+        JsonTool jsonTool = new JsonTool();
         JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(new String(message.getPayload())); // 成功说明可以转换成json
@@ -63,6 +65,9 @@ public class MQTTCallback implements MqttCallback {
                     break;
                 case "createRoom":
                     JsonTool.createRoom(jsonObject);
+                    break;
+                case "leaveRoom":
+                    JsonTool.leaveRoom(jsonObject);
                     break;
                 case "addPage":
                     JsonTool.addPage(jsonObject);

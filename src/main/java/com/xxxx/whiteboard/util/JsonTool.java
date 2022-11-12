@@ -1,8 +1,6 @@
 package com.xxxx.whiteboard.util;
 
-import com.xxxx.whiteboard.mapper.PointMapper;
-import com.xxxx.whiteboard.mapper.RoomMapper;
-import com.xxxx.whiteboard.mapper.UserMapper;
+import com.xxxx.whiteboard.mapper.*;
 import com.xxxx.whiteboard.mqttConn.MQTTCallback;
 import com.xxxx.whiteboard.mqttConn.MQTTConnect;
 import com.xxxx.whiteboard.pojo.*;
@@ -11,12 +9,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @Author: fan yang
- * @Description: 完成不同主题接口json数据的解析处理
+ * @Description:
  */
 public class JsonTool {
 
@@ -27,154 +25,252 @@ public class JsonTool {
     static UserMapper userMapper;
 
     @Autowired(required = false)
+    static ColorMapper colorMapper;
+
+    @Autowired(required = false)
+    static OperationMapper operationMapper;
+
+    @Autowired(required = false)
     static PointMapper pointMapper;
 
-    //static String nowPath = System.getProperty("user.dir") + "/tmp_files";
 
     /*
-     * 完成接口主题touchStart的相关操作: 开始划线
-     * 创建新房间，存放所有点的（不对这个应该是新建page的时候完成的）
-     * 保存点
+     *  开始触碰: user的operation_num属性自增
+     *  1. color的存储或者color_id的获取
+     *  2. 获取到user的operationNum，得到此次的operationId（operationNum + 1）
+     *  2. 在points表中，先插入这个点
+     *  3. operation中记录此次的操作
+     *  4. 在map中保留此次的id
      * */
     public static void touchStart(JSONObject jsonObject) throws JSONException {
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
-        if (roomMapper.isTableExist(jg.getRoomId(), jg.getCurrentPage()) == 0) {
-            roomMapper.createPage(jg.getRoomId(), jg.getCurrentPage());
-        }
-        ; // 如果不存在这个页，就创建这个页指定的point表
-        pointMapper.savePoint(jg.getRoomId(), jg.getCurrentPage(), jg.getPoint()); // 我觉得保存这里应该开一个线程
-        // 我觉得保存这里应该开一个线程
-    }
+        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true); // 先获取到所有的
+        // user表的操作次数自增，并获取到这一次的id（是用户第几次操作）
+        int newUserOpId = DaoUtil.incrAndGetUserOpId(jg.getUserId());// operation表里面，记录用户的此次操作（比如第一次、第二次）
+        // Color表查询是否有此颜色，如果没有，插入到color表中
+        Color color = jg.getColor();
+        color.setColorId(DaoUtil.findOrSaveColor(color));// 这是一个完整的颜色
+        // point方面：把这个点记到表格里面
+        Point point = new Point(jg.getPoint().getX(), jg.getPoint().getY(), color.getColorId(), newUserOpId);
+        pointMapper.insertPoint(point, MajorUtil.getTableName(jg.getRoomId(), jg.getCurrentPage()));
+        // 将此次操作记录在册
+        Operation op = new Operation(jg.getUserId(), jg.getRoomId(), jg.getCurrentPage(), MajorUtil.getTableName(jg.getRoomId(), jg.getCurrentPage()),
+                jg.getGraphical(), jg.getLineWidth(), 0, color.getColorId(), newUserOpId);
+        operationMapper.insert(op);
 
-    public static void touching(JSONObject jsonObject) throws JSONException {
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
-        pointMapper.savePoint(jg.getRoomId(), jg.getCurrentPage(), jg.getPoint());
-    }
-
-    // 读取json文件存入数据库
-    public static void touchEnd(JSONObject jsonObject) throws JSONException {
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
-        pointMapper.savePoint(jg.getRoomId(), jg.getCurrentPage(), jg.getPoint());
+        MajorUtil.map.put(jg.getUserId(), newUserOpId);
     }
 
     /*
-     * 加入房间: 表示有人希望加入房间。表示想要请求本房间本页数的所有数据。
+     * 传输过程：
+     * 1. 获取到此次操作id， 的相关参数
+     * 2. 把点存在表格里
+     * */
+    public static void touching(JSONObject jsonObject) throws JSONException {
+        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
+        // 取到这次用户的操作id
+        int operationId = MajorUtil.map.get(jg.getUserId());
+        Operation op = operationMapper.selectById(operationId); // 获取到此次操作
+
+        // 把点存在表格里
+        Point point = new Point(jg.getPoint().getX(), jg.getPoint().getY(), op.getColorId(), operationId);
+        pointMapper.insertPoint(point, MajorUtil.getTableName(jg.getRoomId(), jg.getCurrentPage()));
+
+    }
+
+    /*
+     * 传输结束：
+     * 1. 获取到此次操作id， 的相关参数
+     * 2. 把点存在表格里
+     * 3. 删除此次操作保留的key
+     * */
+    public static void touchEnd(JSONObject jsonObject) throws JSONException {
+        // 最后新建operationId
+        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
+        // 取到这次用户的操作id
+        int operationId = MajorUtil.map.get(jg.getUserId());
+        // 把点存在表格里
+        Operation op = operationMapper.selectById(operationId);
+
+        Point point = new Point(jg.getPoint().getX(), jg.getPoint().getY(), op.getColorId(), operationId);
+        pointMapper.insertPoint(point, MajorUtil.getTableName(jg.getRoomId(), jg.getPageCount()));
+        // 删除此次操作的key
+        MajorUtil.map.remove(jg.getUserId()); // 移除掉此次的操作记录
+    }
+
+    /*
+     * 新用户进入房间：
+     * 1. 现在user里面添加这个用户
+     * 2. room里面总人数+1
+     * 3. 已知当前房间和当前页，把本页所有可视点返回出来
+     * 4. 发布到mqtt中
      * */
     public static void joinRoom(JSONObject jsonObject) throws JSONException, MqttException {
         JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
-        // 找到本房间本页数的所有点集，保存返回json数据
-        List<Point> points = pointMapper.getAllPoint(jg.getRoomId(), jg.getCurrentPage());
+
+        // 先把用户添加进去
+        User user = new User(jg.getUserId(), jg.getRoomId(), jg.getAuthority(), 0);
+        userMapper.insert(user);
+
+        // 房间人数加一
+        roomMapper.personNumIncr(jg.getRoomId());
+
+        // 已知当前房间和当前页：获取本页的所有可视点集，发出去
+        List<Point> points = pointMapper.selectPointsViewSightSeeing(MajorUtil.getTableName(jg.getRoomId(), jg.getCurrentPage()));
+        //= operationMapper.selectPoints(tableName);
         JSONObject jsonPointsRet = new JSONObject();
-        jsonPointsRet.putOpt("points", points); // 所有点集
+        jsonPointsRet.putOpt("points", points.toString()); // 所有点集
         jsonPointsRet.put("roomId", jg.getRoomId());
         jsonPointsRet.put("userId", jg.getUserId());
-        jsonPointsRet.put("currentPage", jg.getCurrentPage());
-        //jsonPointsRet.put("pageCount", jg.getPageCount());
-        Room room = roomMapper.selectById(jg.getRoomId());
-        jsonPointsRet.put("pageCount", room.getPageCount());
+        jsonPointsRet.putOpt("currentPage", jg.getCurrentPage() + "");
         // pageCount是从我这取的
+        Room room = roomMapper.selectById(jg.getRoomId());
+        jsonPointsRet.put("pageCount", room.getPageCount() + "");
+
         MQTTConnect mqttConnect = new MQTTConnect();
         mqttConnect.setMqttClient("emqx_user", "emqx_password", new MQTTCallback());
         mqttConnect.pub("joinRoomReturn", jsonPointsRet, 2);
-        // 这个问题存在就是能不能一次性把所有点都给查出来了
-
-        User user = new User(jg.getUserId(), jg.getRoomId(), jg.getAuthority());
-        userMapper.insert(user); // 在user表里面插入用户
-
     }
 
 
     /*
-    创建房间：初始page = 1， currentPage = 1，roomState = 1；
-    创建了第一页
+     * 新建房间：
+     * 1. 在user表中把user注册进去
+     * 2. 在room表中把这个新房间注册进去
+     * 3. 新建一个page
+     * 4. 新建此page的视图
+     * 5. 把新建房间的操作放到操作里，相当于此用户第0次操作
+     * 6. 订阅以roomId为topic的主题
      * */
-    public static void createRoom(JSONObject jsonObject) throws JSONException {
-        int roomState = 1, authority = 1, pageCount = 1, currentPage = 1, peopleNum = 1; // 房间authority默认只读
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
-        Room room = new Room(jg.getRoomId(), roomState, authority, pageCount, currentPage, peopleNum);
-        roomMapper.createRoom(room); // 在room表插入房间
-        roomMapper.createPage(jg.getRoomId(), currentPage); // 新建一页房间用来装point的
-        userMapper.insert(new User(jg.getUserId(), jg.getRoomId(), 2)); // 在user里面也添加一下
-        //创建房间的 user 是协作模式
+    public static void createRoom(JSONObject jsonObject) throws JSONException, MqttException {
+        int pageCount = 1, currentPage = 1, peopleNum = 1;
+        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
+        // 在room表中对房间记录在册
+        Room room = new Room(jg.getRoomId(), currentPage, pageCount, peopleNum);
+        roomMapper.insert(room);
+
+        // 在user表中记录在册
+        int authority = 1, operationNum = 0;
+        User user = new User(jg.getUserId(), jg.getRoomId(), authority, operationNum);
+        userMapper.insert(user);
+
+        // 新建一个第一页 & 此页的视图
+        pointMapper.createPage(MajorUtil.getTableName(jg.getRoomId(), currentPage));
+        pointMapper.createPointsViewAll(MajorUtil.getTableName(jg.getRoomId(), currentPage));
+        pointMapper.createPointViewSightSeeing(MajorUtil.getTableName(jg.getRoomId(), currentPage));
+
+        // 把这个建表操作放到记录里：因为数据库中初始化这个用户的初始信息，例如operationId从 0 开始
+        Operation op = new Operation(jg.getUserId(), jg.getRoomId(), 1,
+                MajorUtil.getTableName(jg.getRoomId(), currentPage), 0,
+                0, 0, 0, 0);
+        operationMapper.insert(op);
+        // 这个页数应该是一个视图_把所有用户画出来的东西拼在了一起，现在就是要新建一个这样的视图
+
+        // 订阅以roomId的主题
+        MQTTConnect mqttConnect = new MQTTConnect();
+        mqttConnect.setMqttClient("emqx_user", "emqx_password", new MQTTCallback());
+        mqttConnect.sub(jg.getRoomId());
     }
 
     /*
-     * 用户离开房间：room表外链user表，然后这个操作就是用户退出房间，外链表格数据更新
+     * 离开房间：
+     * 离开房间后，用户之前画的东西和点还是在的
+     * 0. 所以operation保留、points保留
+     * 1. room人数更新
+     * 2. user从user表中删除
+     * 3. user走了之后，如果房间人数变为0，删除掉此房间
      * */
     public static void leaveRoom(JSONObject jsonObject) throws JSONException {
         JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
-        userMapper.deleteById(jg.getUserId());
-        if (userMapper.selectCount(jg.getRoomId()) == 0) { // 房间人数为0，删除掉所有页数
-            int maxPage = 100;
-            for (int i = 1; i <= maxPage; i++) {
-                roomMapper.deletePageOfRoom(jg.getRoomId(), i);
-            }
-        }
-        roomMapper.deleteById(jg.getRoomId());
+        // 房间人数自动递减
+        roomMapper.personNumDecr(jg.getRoomId());
+        if (roomMapper.selectById(jg.getRoomId()).getPeopleNum() == 0) {
+            DaoUtil.deleteRoom(jg.getRoomId());
+        } // 如果房间人数变成0，删除掉此房间
+        // user从user表里删除
         userMapper.deleteById(jg.getUserId());
     }
 
-    ///*
-    //删除房间：还得删掉所有的page建立的表，删掉每个page对应的表
-    //* */
-    //public static void deleteRoom(JSONObject jsonObject) throws JSONException {
-    //    JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
-    //    int maxPage = 100; // 初定位一共有100页，之后要改成查询出来总页数
-    //    // 删除掉每一页的关联表
-    //    for (int i = 1; i <= maxPage; i++) {
-    //        roomMapper.deletePageOfRoom(jg.getRoomId(), i);
-    //    }
-    //    roomMapper.deleteById(jg.getRoomId());
-    //    userMapper.deleteById(jg.getUserId());
-    //}
-
     /*
-     * 在末尾添加一个新的白板页，总页数加一。
+     * 添加页数：
+     * 1. room表中pageCount++
+     * 2. 新建这一页的点集表存放点集
+     * 3. 创建此页的查询视图
      * */
     public static void addPage(JSONObject jsonObject) throws JSONException {
         JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
-        Room room = roomMapper.selectById(jg.getRoomId());
-        int pageCount = room.getPageCount() + 1;
-        room.setPageCount(pageCount);
-        roomMapper.updateById(room);
-        roomMapper.createPage(room.getRoomId(), pageCount);
+        // room里面ageCount + 1
+        roomMapper.roomPageIncr(jg.getRoomId());
+
+        // 获取到总页数
+        int pageCount = roomMapper.selectById(jg.getRoomId()).getPageCount();
+
+        // 新建一页存放点集
+        pointMapper.createPage(MajorUtil.getTableName(jg.getRoomId(), pageCount + 1));
+
+        // 创建此页数的查询视图
+        pointMapper.createPointsViewAll(MajorUtil.getTableName(jg.getRoomId(), pageCount + 1));
+        pointMapper.createPointViewSightSeeing(MajorUtil.getTableName(jg.getRoomId(), pageCount + 1));
     }
 
     /*
-    删除页数: 从被删除页数的后一页开始，数据库中表名进行一个迭代修改
+    删除某一页： 把currentPage以及之后的所有页数都 - 1
+    1. 不对: 先删除掉对应的点集r1234_p1
+    2. 再把operation中的所有currentPage = currentPage的operation删掉
+    3. 再把operation所有大于currentPage的currentPage - 1
+    4. 再把room中的总页数递减
     * */
     public static void deletePage(JSONObject jsonObject) throws JSONException {
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
-        Room room = roomMapper.selectById(jg.getRoomId()); // 查询到整个房间
-        int oldPageCount = room.getPageCount();
-        roomMapper.deletePageOfRoom(jg.getRoomId(), jg.getCurrentPage()); // 删除数据库中页
-        // 把此页之后的页数逐个减一
-        for (int i = jg.getCurrentPage() + 1; i >= 0; i--) {
-            // 判断这个表是否存在
-            if (roomMapper.isTableExist(jg.getRoomId(), i) == 1) {
-                roomMapper.renameTablePage(jg.getRoomId(), i, i - 1);
-            }
-        }
-        room.setPageCount(room.getPageCount() - 1);
-        roomMapper.updateById(room); // 房间页数减一
-
-        // 然后剩余的页数全都减一
+        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
+        // 删除此页点集points
+        pointMapper.dropPage(MajorUtil.getTableName(jg.getRoomId(), jg.getCurrentPage()));
+        pointMapper.dropPointsViewAll(MajorUtil.getTableName(jg.getRoomId(), jg.getCurrentPage()));
+        pointMapper.dropPointsViewSightSeeing(MajorUtil.getTableName(jg.getRoomId(), jg.getCurrentPage()));
+        // 删除掉当前页的所有operation
+        operationMapper.deleteByCurrentPage(jg.getRoomId(), jg.getCurrentPage());
+        // 把operation中所有大于currentPage的currentpage-1
+        operationMapper.biggerCurrentPageDecr(jg.getRoomId(), jg.getCurrentPage());
+        // 把room中的总页数递减
+        roomMapper.roomPageDecr(jg.getRoomId());
     }
 
     /*
-    下一页白板：如果这个没被加载过的话，前端会向我发送一个相关请求
-    * */
+     * 翻页到下一页：
+     * 其实就是currentPage改变：
+     * 获取到pageCount和currentPage，如果相等，就变成1，否则 + 1
+     * */
     public static void nextPage(JSONObject jsonObject) throws JSONException {
+        // 向下翻页
         JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
         Room room = roomMapper.selectById(jg.getRoomId());
-        room.setCurrentPage(room.getCurrentPage() - 1);
+        int currentPage = room.getCurrentPage();
+        int pageCount = room.getPageCount();
+        // 下一页白板
+        if (currentPage == pageCount || pageCount == 1) {
+            currentPage = 1; // 如果只有一页，不变；如果是最后一页，变成1
+        } else {
+            currentPage += 1;
+        }
+        room.setCurrentPage(currentPage);
         roomMapper.updateById(room);
     }
 
     public static void upPage(JSONObject jsonObject) throws JSONException {
+        // 向上翻页
         JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
         Room room = roomMapper.selectById(jg.getRoomId());
-        room.setCurrentPage(room.getCurrentPage() + 1);
+
+        int currentPage = room.getCurrentPage(); // 获取到当前页
+        int pageCount = room.getPageCount(); // 获取页数
+        // 下一页白板
+        if (pageCount == 1) {
+            currentPage = 1;
+        } else if (currentPage == 1) {
+            currentPage = pageCount;
+        }// 如果已经是最大页了
+        else {
+            currentPage -= 1;
+        }
+        room.setCurrentPage(currentPage);
         roomMapper.updateById(room);
     }
 
