@@ -4,16 +4,102 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xxxx.whiteboard.mapper.PointMapper">
 
-    <!-- 保存所有点 -->
-    <insert id="savePoint">
-        INSERT INTO
-            `room${roomId}page${currentPage}`
-        VALUES (${point.x}, ${point.y}, ${point.pointColor.r}, ${point.pointColor.g}, ${point.pointColor.b}, ${point.pointColor.a});
+    <!--// 把某表的点插入进去-->
+    <!--void insertPoint(@Param("point") Point point, @Param("tableName)") String tableName);-->
+    <!--插入到operation里面，这次操作-->
+
+    <!-- point里面本来就包含operationId -->
+    <insert id="insertPoint">
+        INSERT INTO `${tableName}`
+        VALUES (${point.operationId}, ${point.colorId}, ${point.x}, ${point.y})
     </insert>
 
-    <select id="getAllPoint" resultType="com.xxxx.whiteboard.pojo.Point">
-        SELECT * FROM `room${roomId}page${currentPage}`
+
+    <!-- 新建某一页的点集表 -->
+    <!-- 这个是某一页点集的实体表 -->
+    <insert id="createPage">
+        CREATE TABLE `white_board1`.`${tableName}`
+        (
+            `x`            float NULL,
+            `y`            float NULL,
+            `color_id`     float NULL,
+            `operation_id` int NOT NULL,
+            PRIMARY KEY (`operation_id`)
+        );
+    </insert>
+
+
+    <!-- 将点集和color创建一个视图 -->
+    <!-- 这个代表着某一页的所有点（具有point的完整属性） -->
+    <insert id="createPointsViewAll">
+        CREATE
+        OR REPLACE VIEW `${tableName}points`
+        AS
+        select `color`.`r`        AS `r`,
+               `color`.`g`        AS `g`,
+               `color`.`b`        AS `b`,
+               `color`.`a`        AS `a`,
+               `${tableName}`.`x` AS `x`,
+               `${tableName}`.`y` AS `y`
+        from (`color` join `${tableName}`)
+        where (`color`.`color_id` = `${tableName}`.`color_id`)
+    </insert>
+
+
+    <!-- 创建所有当前页可以看见的点集view -->
+    <insert id="createPointViewSightSeeing">
+        CREATE
+        OR REPLACE VIEW `white_board1`.`${tableName}points_visible`
+        AS
+        SELECT
+            color.r,
+            color.g,
+            color.b,
+            color.a,
+            r1234p_1.x,
+            r1234p_1.y
+        FROM
+            color,
+            r1234p_1,
+            operation
+        WHERE
+            r1234p_1.operation_id = operation.operation_id AND
+            operation.operation_id = 0 AND
+            color.color_id = r1234p_1.color_id
+    </insert>
+
+
+
+    <!-- 获取某一页这个的点集（具有point的完整属性）-->
+    <select id="selectPointsViewAll" resultType="com.xxxx.whiteboard.pojo.Point">
+        SELECT *
+        FROM `${tableName}points`
+--         WHERE `${tableName}points`.hidden != 0
     </select>
+
+    <!-- 获取某一页这个的点集（具有point的完整属性）-->
+    <select id="selectPointsViewSightSeeing" resultType="com.xxxx.whiteboard.pojo.Point">
+        SELECT *
+        FROM `${tableName}points_visible`
+--         WHERE `${tableName}points`.hidden != 0
+    </select>
+
+
+    <!-- 删除实体表 -->
+    <delete id="dropPage">
+        DROP TABLE IF EXISTS `${tableName}`;
+    </delete>
+
+    <!-- 删除某一页点集的视图 -->
+    <delete id="dropPointsViewAll">
+        DROP VIEW IF EXISTS `${tableName}points`
+    </delete>
+
+    <!-- 删除某一页点集的视图 -->
+    <delete id="dropPointsViewSightSeeing">
+        DROP VIEW IF EXISTS `${tableName}points_visible`
+    </delete>
+
 
 
 </mapper>

@@ -4,15 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xxxx.whiteboard.mapper.UserMapper">
 
-
-    <!--&lt;!&ndash; 查询所有用户 &ndash;&gt;-->
-    <!--<select id="findAllUsers" resultType="com.xxxx.whiteboard.pojo.User">-->
-    <!--    SELECT * FROM user;-->
-    <!--</select>-->
-
-
-    <!--int selectCount(@Param("roomId") String roomId);-->
-    <select id="selectCount" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM user WHERE room_id=${roomId};
+    <!--// 把user的操作次数加一，返回user的新操作次数-->
+    <!--int operationNumIncr(String userId);-->
+    <select id="operationNumIncr">
+        UPDATE user
+        SET operation_num = operation_num + 1
+        WHERE user_id = ${userId}
     </select>
+
 </mapper>
