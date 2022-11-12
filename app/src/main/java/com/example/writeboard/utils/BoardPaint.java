@@ -25,43 +25,16 @@ public class BoardPaint extends Paint {
 
     private static Mode mMode = Mode.DRAW;
 
+    float Figure[]=new float[]{1,2,3};
+    float figure=Figure[0];
 
-    public enum Figure {
-        FREELINE(1),
-        STRAIGHTLINE(2),
-        RECTANGLE(3);
-        private int value = 0;
 
-        private Figure(int value) {
-        }
-
-        public static Figure valueOf(int value) {    //    手写的从int到enum的转换函数
-            switch (value) {
-                case 0:
-                    return FREELINE;
-                case 1:
-                    return STRAIGHTLINE;
-                case 2:
-                    return RECTANGLE;
-                default:
-                    return null;
-            }
-        }
-
-        public int value() {
-            return this.value;
-        }
-
+    public float getFigure() {
+        return figure;
     }
 
-    private Figure mFigure = Figure.RECTANGLE;
-
-    public Figure getmFigure() {
-        return mFigure;
-    }
-
-    public void setmFigure(Figure mFigure) {
-        this.mFigure = mFigure;
+    public void setFigure(float figure) {
+        this.figure = figure;
     }
 
     private static void initPaint() {
@@ -78,6 +51,7 @@ public class BoardPaint extends Paint {
     }
 
     public static BoardPaint getmBoardPaint() {
+
         if (mBoardPaint == null) {
             synchronized (BoardPaint.class) {
                 if (mBoardPaint == null) {
@@ -165,5 +139,6 @@ public class BoardPaint extends Paint {
     public int getPenColor() {
         return mBoardPaint.getColor();
     }
+
 
 }

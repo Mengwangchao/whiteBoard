@@ -6,7 +6,7 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_LOG_LEVEL" value="verbose" />
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="error" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="AutoImportSettings">
@@ -20,12 +20,10 @@
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/activity/BoardActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/activity/BoardActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/activity/LoginActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/activity/LoginActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/interfaces/MqttClientSend.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/interfaces/InMqttClientSend.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/interfaces/InMqttClientNotify.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/interfaces/InMqttClientNotify.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/utils/BoardPaint.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/utils/BoardPaint.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/utils/MqttClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/utils/MqttClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/view/PaletteView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/view/PaletteView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_board.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_board.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,6 +77,7 @@
     <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
     <property name="android-custom-view/Users/nieqihao/Desktop/WriteBoard/app/src/main/java/com/example/writeboard/view/BoardViewPager.java_SELECTED" value="BoardViewPager" />
     <property name="android-custom-view/Users/nieqihao/Desktop/WriteBoard/app/src/main/java/com/example/writeboard/view/CircleImageView.java_SELECTED" value="CircleImageView" />
+    <property name="android-custom-view/Users/nieqihao/Desktop/WriteBoard/app/src/main/java/com/example/writeboard/view/PaletteView.java_PaletteView_DIMENSIONS" value="1080&#10;1920" />
     <property name="android-custom-view/Users/nieqihao/Desktop/WriteBoard/app/src/main/java/com/example/writeboard/view/PaletteView.java_SELECTED" value="PaletteView" />
     <property name="android-custom-view/Users/nieqihao/Desktop/WriteBoard/app/src/main/java/com/example/writeboard/view/TestButton.java_SELECTED" value="TestButton" />
     <property name="android-custom-view/Users/nieqihao/Desktop/WriteBoard/app/src/main/java/com/example/writeboard/view/WriteBoardView.java_SELECTED" value="PaletteView" />
@@ -182,16 +181,5 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/writeboard/utils/MqttClient.java</url>
-          <line>191</line>
-          <option name="timeStamp" value="28" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

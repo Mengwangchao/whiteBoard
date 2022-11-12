@@ -7,13 +7,8 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorSpace;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.Xfermode;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -328,27 +323,49 @@ public class PaletteView extends View implements InMqttClientSend {
 
                 Toast.makeText(context, "接收到消息了\n x值：" + intent.getFloatExtra("x", 0.0f) + "\n y值：" + intent.getFloatExtra("y", 0.0f) + "\n id值："
                         + intent.getStringExtra("id") + "\n mode:" + intent.getIntExtra("mode", 0), Toast.LENGTH_SHORT).show();
-
-                int mode = intent.getIntExtra("mode", 0);
-                if (mode == 1) {
+                String mode = intent.getStringExtra("mode");
+                if (mode.equals("touchStart")) {
                     Log.i("move", "开始划线");
-
+                    int a=intent.getIntExtra("a",255);
+                    int r=intent.getIntExtra("r",0);
+                    int g=intent.getIntExtra("g",0);
+                    int b=intent.getIntExtra("b",0);
+                    float linewidth=intent.getFloatExtra("linewidth",8f);
+                    float graphical=intent.getFloatExtra("graphical",1f);
                     drawStart(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
-                } else if (mode == 2) {
+                    drawSetting(a,r,g,b,linewidth,graphical);
+
+                } else if (mode.equals(roomId)) {
                     Log.i("move", "划线中");
 
-
                     drawMove(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
-                } else if (mode == 3) {
+                } else if (mode.equals("touchEnd")) {
                     Log.i("move", "划线结束");
-
                     drawEnd(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
-
                 }
             }
+//            Log.i("xxxxx", "end成功接收");
+//
+//            if (intent.getAction().equals("touchStart")) {
+////                int a = intent.getIntExtra("a", 255);
+////                int r = intent.getIntExtra("r", 0);
+////                int g = intent.getIntExtra("g", 0);
+////                int b = intent.getIntExtra("b", 0);
+////                int linewidth = intent.getIntExtra("linewidth", 10);
+////                drawSetting(a, r, g, b, linewidth);
+//                drawStart(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
+//            }
+//            if (intent.getAction().equals("touchMove")) {
+//                drawMove(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
+//
+//            }
+//            if (intent.getAction().equals("touchEnd")) {
+//
+//                drawEnd(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
+//            }
+//
         }
     };
-
 //    public Mode getMode() {
 //        return mMode;
 //    }
@@ -409,12 +426,11 @@ public class PaletteView extends View implements InMqttClientSend {
 //                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
 //                        "}", false);
         mqttClient.publish("touchStart", "{\n" +
-                "\"mode\":\"" + 1 + "\",\n" +
                 "\"color\":{\n" +
                 "\"a\":" + "\"" + mBoardPaint.color[0] + "\"" + ",\n" +
-                "\"b\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
+                "\"r\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
                 "\"g\":" + "\"" + mBoardPaint.color[2] + "\"" + ",\n" +
-                "\"r\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
+                "\"b\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
                 "},\n" +
                 "\"point\":{\n" +
                 "\"x\":" + "\"" + x + "\"" + ",\n" +
@@ -424,7 +440,7 @@ public class PaletteView extends View implements InMqttClientSend {
                 "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
                 "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
                 "\"currentPage\":" + "\"" + currentPage + "\"" + ",\n" +
-                "\"graphical\":" + "\"" + 1 + "\"" + "\n" +
+                "\"graphical\":" + "\"" + mBoardPaint.getFigure() + "\"" + "\n" +
                 "}", false);
     }
 
@@ -439,12 +455,11 @@ public class PaletteView extends View implements InMqttClientSend {
 //                        "}", false);
         mqttClient.subscribe(roomId);
         mqttClient.publish(roomId, "{\n" +
-                "\"mode\":\"" + 2 + "\",\n" +
                 "\"color\":{\n" +
                 "\"a\":" + "\"" + mBoardPaint.color[0] + "\"" + ",\n" +
-                "\"b\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
+                "\"r\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
                 "\"g\":" + "\"" + mBoardPaint.color[2] + "\"" + ",\n" +
-                "\"r\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
+                "\"b\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
                 "},\n" +
                 "\"point\":{\n" +
                 "\"x\":" + "\"" + x + "\"" + ",\n" +
@@ -454,7 +469,7 @@ public class PaletteView extends View implements InMqttClientSend {
                 "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
                 "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
                 "\"currentPage\":" + "\"" + currentPage + "\"" + ",\n" +
-                "\"graphical\":" + "\"" + 1 + "\"" + "\n" +
+                "\"graphical\":" + "\"" + mBoardPaint.getFigure() + "\"" + "\n" +
                 "}", false);
     }
 
@@ -470,12 +485,11 @@ public class PaletteView extends View implements InMqttClientSend {
 //                            "}", false);
         mqttClient.subscribe("touchEnd");
         mqttClient.publish("touchEnd", "{\n" +
-                "\"mode\":\"" + 3 + "\",\n" +
                 "\"color\":{\n" +
                 "\"a\":" + "\"" + mBoardPaint.color[0] + "\"" + ",\n" +
-                "\"b\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
+                "\"r\":" + "\"" + mBoardPaint.color[1] + "\"" + ",\n" +
                 "\"g\":" + "\"" + mBoardPaint.color[2] + "\"" + ",\n" +
-                "\"r\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
+                "\"b\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
                 "},\n" +
                 "\"point\":{\n" +
                 "\"x\":" + "\"" + x + "\"" + ",\n" +
@@ -485,8 +499,14 @@ public class PaletteView extends View implements InMqttClientSend {
                 "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
                 "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
                 "\"currentPage\":" + "\"" + currentPage + "\"" + ",\n" +
-                "\"graphical\":" + "\"" + 1 + "\"" + "\n" +
+                "\"graphical\":" + "\"" + mBoardPaint.getFigure() + "\"" + "\n" +
                 "}", false);
 
+    }
+
+    private void drawSetting(int a, int r, int g, int b, float lineWidth,float graphical) {
+        mBoardPaint.setARGB(a, r, g, b);
+        mBoardPaint.setStrokeWidth(lineWidth);
+        mBoardPaint.setFigure(graphical);
     }
 }

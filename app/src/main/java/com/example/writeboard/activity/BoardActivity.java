@@ -4,6 +4,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -162,7 +164,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.color_bt:
                 Toast.makeText(this, "画笔颜色\n:" + mBoardPaint.getPenColor(), Toast.LENGTH_SHORT).show();
-                mBoardPaint.setmFigure(BoardPaint.Figure.STRAIGHTLINE);
+                mBoardPaint.setFigure(1f);
                 penColorDialog.show();
                 break;
             case R.id.lastPage_bt:
@@ -268,6 +270,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
 
     }
+
 
     private void showSizeDiaglog() {
 

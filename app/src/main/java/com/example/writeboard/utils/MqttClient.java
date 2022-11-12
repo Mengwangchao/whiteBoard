@@ -80,7 +80,7 @@ public class MqttClient implements InMqttClientNotify {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 Log.d(TAG, "收到的消息：" + message.toString() + "--from topic:" + topic);
                 Log.i("AndroidMqttClient", "获得的消息是" + message.toString());
-                notifyDrawMessage(message);
+                notifyDrawMessage(message, topic);
             }
 
             @Override
@@ -109,6 +109,7 @@ public class MqttClient implements InMqttClientNotify {
             e.printStackTrace();
         }
     }
+
 
     public void subscribe(String topic) {
 
@@ -191,27 +192,39 @@ public class MqttClient implements InMqttClientNotify {
         }
     }
 
+
     @Override
-    public void notifyDrawMessage(MqttMessage message) {
+    public void notifyDrawMessage(MqttMessage message, String topic) {
         String msg = new String(message.getPayload());
         JsonParser jp = new JsonParser();
         JsonObject jo = jp.parse(msg).getAsJsonObject();
-        int mode=jo.get("mode").getAsInt();
-        String userId_ve=jo.get("userId").getAsString();
-        JsonObject point=jo.getAsJsonObject("point");
-        Float x=point.get("x").getAsFloat();
-        Float y=point.get("y").getAsFloat();
-if(!userId.equals(userId_ve)) {
-    Intent intent = new Intent();
-    intent.setAction("xiaohao");
-    intent.putExtra("x", x);
-    intent.putExtra("y", y);
-    intent.putExtra("mode", mode);
-    mcontext.sendBroadcast(intent);
-}
+        String userId_ve = jo.get("userId").getAsString();
+        JsonObject point = jo.getAsJsonObject("point");
+        Float x = point.get("x").getAsFloat();
+        Float y = point.get("y").getAsFloat();
+        JsonObject color = jo.getAsJsonObject("color");
+        float linewidth = jo.get("lineWidth").getAsFloat();
+        float graphical = jo.get("graphical").getAsFloat();
 
+        int color_a = color.get("a").getAsInt();
+        int color_r = color.get("r").getAsInt();
+        int color_g = color.get("g").getAsInt();
+        int color_b = color.get("b").getAsInt();
 
-
+        if (!userId.equals(userId_ve)) {
+            Intent intent = new Intent();
+            intent.setAction("xiaohao");
+            intent.putExtra("x", x);
+            intent.putExtra("y", y);
+            intent.putExtra("a", color_a);
+            intent.putExtra("r", color_r);
+            intent.putExtra("g", color_g);
+            intent.putExtra("b", color_b);
+            intent.putExtra("linewidth", linewidth);
+            intent.putExtra("graphical", graphical);
+            intent.putExtra("mode", topic);
+            mcontext.sendBroadcast(intent);
+        }
 //        int mode = jo.get("mode").getAsInt();
 //        Float a = jo.get("a").getAsFloat();
 //        Float b = jo.get("b").getAsFloat();
@@ -247,5 +260,68 @@ if(!userId.equals(userId_ve)) {
     @Override
     public void notifyPaintSetting(MqttMessage message) {
 
+
+    }
+
+    @Override
+    public void notifyDrawStart(MqttMessage message) {
+        String msg = new String(message.getPayload());
+        JsonParser jp = new JsonParser();
+        JsonObject jo = jp.parse(msg).getAsJsonObject();
+        JsonObject point = jo.getAsJsonObject("point");
+//        JsonObject color = jo.getAsJsonObject("color");
+//        int color_a = color.get("a").getAsInt();
+//        int color_r = color.get("r").getAsInt();
+//        int color_g = color.get("g").getAsInt();
+//        int color_b = color.get("b").getAsInt();
+//        int linewidth = jo.get("lineWidth").getAsInt();
+        Float x = point.get("x").getAsFloat();
+        Float y = point.get("y").getAsFloat();
+        Intent drawline = new Intent();
+        drawline.setAction("xiaohao");
+        drawline.putExtra("x", x);
+        drawline.putExtra("y", y);
+        drawline.putExtra("mode", 1);
+
+//        drawline.putExtra("a", color_a);
+//        drawline.putExtra("r", color_r);
+//        drawline.putExtra("g", color_g);
+//        drawline.putExtra("b", color_b);
+//        drawline.putExtra("linewidth", linewidth);
+        mcontext.sendBroadcast(drawline);
+    }
+
+    @Override
+    public void notifyDrawMove(MqttMessage message) {
+        String msg = new String(message.getPayload());
+        JsonParser jp = new JsonParser();
+        JsonObject jo = jp.parse(msg).getAsJsonObject();
+        JsonObject point = jo.getAsJsonObject("point");
+        Float x = point.get("x").getAsFloat();
+        Float y = point.get("y").getAsFloat();
+        Intent drawline = new Intent();
+        drawline.setAction("xiaohao");
+        drawline.putExtra("x", x);
+        drawline.putExtra("y", y);
+        drawline.putExtra("mode", 2);
+
+        mcontext.sendBroadcast(drawline);
+
+    }
+
+    @Override
+    public void notifyDrawEnd(MqttMessage message) {
+        String msg = new String(message.getPayload());
+        JsonParser jp = new JsonParser();
+        JsonObject jo = jp.parse(msg).getAsJsonObject();
+        JsonObject point = jo.getAsJsonObject("point");
+        Float x = point.get("x").getAsFloat();
+        Float y = point.get("y").getAsFloat();
+        Intent drawline = new Intent();
+        drawline.setAction("xiaohao");
+        drawline.putExtra("mode", 3);
+        drawline.putExtra("x", x);
+        drawline.putExtra("y", y);
+        mcontext.sendBroadcast(drawline);
     }
 }
