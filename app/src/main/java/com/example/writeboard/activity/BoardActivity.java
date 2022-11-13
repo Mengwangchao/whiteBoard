@@ -161,8 +161,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 mqttClient.publish("undo", "{\n" +
                         "\"roomId\":" + "\"" + roomId + "\",\n" +
                         "\"userId\":" + "\"" + mqttClient.getUserId() + "\",\n" +
-                        "\"graaphical\":" + "\"" + 1 + "\",\n" +
-                        "\"currentPage\":" + "\"" + boardPage.getCurrentItem() + "\"\n" +
+                        "\"graphical\":" + "\"" + 1 + "\",\n" +
+                        "\"currentPage\":" + "\"" + (boardPage.getCurrentItem()+1)+ "\"\n" +
                         "}", false);
                 break;
             case R.id.eraser_bt:
@@ -182,7 +182,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 mqttClient.publish("clearAll", "{\n" +
                         "\"roomId\":" + "\"" + roomId + "\",\n" +
                         "\"userId\":" + "\"" + mqttClient.getUserId() + "\",\n" +
-                        "\"currentPage\":" + "\"" + boardPage.getCurrentItem() + "\"\n" +
+                        "\"currentPage\":" + "\"" + (boardPage.getCurrentItem()+1) + "\"\n" +
                         "}", false);
                 break;
             case R.id.save_bt:
