@@ -83,7 +83,7 @@ public class MqttClient implements InMqttClientNotify {
                 JsonParser jp = new JsonParser();
                 JsonObject jo = jp.parse(msg).getAsJsonObject();
                 String userId_ve = jo.get("userId").getAsString();
-                String t=topic;
+                String t = topic;
                 if (!userId.equals(userId_ve)) {
                     if (topic.equals("addPage")) {
                         Intent addpage = new Intent();
@@ -169,7 +169,6 @@ public class MqttClient implements InMqttClientNotify {
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.d(TAG, "发送" + message + "to" + topic + "失败");
-
                 }
             });
         } catch (MqttException e) {
@@ -179,7 +178,6 @@ public class MqttClient implements InMqttClientNotify {
     }
 
     public void unsubscribe(String topic) {
-
         try {
             mqttAndroidClient.unsubscribe(topic, null, new IMqttActionListener() {
                 @Override
@@ -208,7 +206,6 @@ public class MqttClient implements InMqttClientNotify {
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.d(TAG, "取消连接失败");
-
                 }
             });
         } catch (MqttException e) {
@@ -249,25 +246,7 @@ public class MqttClient implements InMqttClientNotify {
             intent.putExtra("graphical", graphical);
             intent.putExtra("mode", topic);
             mcontext.sendBroadcast(intent);
-
         }
-
-
-//        int mode = jo.get("mode").getAsInt();
-//        Float a = jo.get("a").getAsFloat();
-//        Float b = jo.get("b").getAsFloat();
-//        String c = jo.get("id").getAsString();
-//        if (!userId.equals(c)) {
-//            Toast.makeText(mcontext, "x坐标" + a + "\ny坐标" + b + "\n id:" + c + "\n mode:" + mode, Toast.LENGTH_SHORT).show();
-//            Intent intent = new Intent();
-//            intent.setAction("xiaohao");//要通知的广播XXXXX名称
-//            intent.putExtra("x", a);
-//            intent.putExtra("y", b);
-//            intent.putExtra("mode", mode);
-//            intent.putExtra("id", c + "");
-//            mcontext.sendBroadcast(intent);
-//        }
-
     }
 
     @Override
@@ -288,7 +267,6 @@ public class MqttClient implements InMqttClientNotify {
     @Override
     public void notifyPaintSetting(MqttMessage message) {
 
-
     }
 
     @Override
@@ -297,12 +275,6 @@ public class MqttClient implements InMqttClientNotify {
         JsonParser jp = new JsonParser();
         JsonObject jo = jp.parse(msg).getAsJsonObject();
         JsonObject point = jo.getAsJsonObject("point");
-//        JsonObject color = jo.getAsJsonObject("color");
-//        int color_a = color.get("a").getAsInt();
-//        int color_r = color.get("r").getAsInt();
-//        int color_g = color.get("g").getAsInt();
-//        int color_b = color.get("b").getAsInt();
-//        int linewidth = jo.get("lineWidth").getAsInt();
         Float x = point.get("x").getAsFloat();
         Float y = point.get("y").getAsFloat();
         Intent drawline = new Intent();
@@ -310,12 +282,6 @@ public class MqttClient implements InMqttClientNotify {
         drawline.putExtra("x", x);
         drawline.putExtra("y", y);
         drawline.putExtra("mode", 1);
-
-//        drawline.putExtra("a", color_a);
-//        drawline.putExtra("r", color_r);
-//        drawline.putExtra("g", color_g);
-//        drawline.putExtra("b", color_b);
-//        drawline.putExtra("linewidth", linewidth);
         mcontext.sendBroadcast(drawline);
     }
 
@@ -332,9 +298,7 @@ public class MqttClient implements InMqttClientNotify {
         drawline.putExtra("x", x);
         drawline.putExtra("y", y);
         drawline.putExtra("mode", 2);
-
         mcontext.sendBroadcast(drawline);
-
     }
 
     @Override

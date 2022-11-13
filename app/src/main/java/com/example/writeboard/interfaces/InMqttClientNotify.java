@@ -4,7 +4,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public interface InMqttClientNotify {
 
-    public void notifyDrawMessage(MqttMessage message,String topic);
+    public void notifyDrawMessage(MqttMessage message, String topic);
 
     public void notifyAddPage(MqttMessage message);
 
@@ -14,7 +14,7 @@ public interface InMqttClientNotify {
 
     public void notifyPaintSetting(MqttMessage message);
 
-    public void notifyDrawStart(MqttMessage message) ;
+    public void notifyDrawStart(MqttMessage message);
 
     public void notifyDrawMove(MqttMessage message);
 

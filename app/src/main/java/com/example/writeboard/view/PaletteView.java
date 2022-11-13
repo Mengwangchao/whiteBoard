@@ -9,16 +9,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.Xfermode;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 
 import com.example.writeboard.interfaces.InMqttClientSend;
 import com.example.writeboard.utils.BoardPaint;

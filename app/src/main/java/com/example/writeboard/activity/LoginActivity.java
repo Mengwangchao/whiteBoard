@@ -60,15 +60,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.inRoom_bt:
                 if (!userName.isEmpty() && !passWord.isEmpty()) {
                     showExitDiaglog();
-
-
                 } else {
-
                     Toast.makeText(this, "用户名,密码不能为空！", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
-
     }
 
     private void initView() {
@@ -95,7 +91,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         intent.putExtra("mode", "2");
                         intent.putExtra("roomId", roomId);
                         startActivity(intent);
-
                     }
                 })
                 .setNegativeButton("取消", null)
@@ -106,11 +101,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Random random = new Random();
         for (int i = 0; i < 12; i++) {
             if (i == 0) {
-                roomId = (random.nextInt(9) + 1)+"";
+                roomId = (random.nextInt(9) + 1) + "";
             } else {
                 roomId += (random.nextInt(10));
             }
         }
     }
-
 }

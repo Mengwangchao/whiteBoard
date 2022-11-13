@@ -8,21 +8,15 @@ import android.graphics.Xfermode;
 import com.example.writeboard.view.PaletteView;
 
 public class BoardPaint extends Paint {
-    //    设置单例模式
     private volatile static BoardPaint mBoardPaint;
-
-    //  画笔属性
     private static float mDrawSize;
     private static float mEraserSize;
     private static Xfermode mClearMode;
-
     public int[] color = new int[]{255, 0, 0, 0};
-
     public static enum Mode {
         DRAW,
         ERASER
     }
-
     private static Mode mMode = Mode.DRAW;
 
     float Figure[]=new float[]{1,2,3};
@@ -47,7 +41,6 @@ public class BoardPaint extends Paint {
         mBoardPaint.setStrokeWidth(mDrawSize);
         mBoardPaint.setARGB(255, 0, 0, 0);
         mClearMode = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
-
     }
 
     public static BoardPaint getmBoardPaint() {
@@ -60,8 +53,6 @@ public class BoardPaint extends Paint {
                 }
             }
         }
-
-
         return mBoardPaint;
     }
 
@@ -139,6 +130,4 @@ public class BoardPaint extends Paint {
     public int getPenColor() {
         return mBoardPaint.getColor();
     }
-
-
 }

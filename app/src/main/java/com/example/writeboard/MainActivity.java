@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
     private Button button3;
     private TextView textView;
     private  MqttClient mqttClient;
-    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)   {
