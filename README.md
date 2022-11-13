@@ -15,6 +15,7 @@
 iOS ：
 
 Android ：
+https://www.bilibili.com/video/BV1Gd4y1b78V/?vd_source=1557a985d12dac6cc75a22a9ae36409c
 
 ## 功能汇总
 
@@ -79,8 +80,16 @@ Android ：
 
 ### iOS端：
 
-见“白板数据结构.pdf"或"白板数据结构.png"
+见“白板数据结构(iOS).png"
 
+### Android端：
+
+见“数据结构(安卓).png"
+
+
+### 后台：
+
+见“后端数据结构文档.pdf"
 
 
 ## 接口结构
@@ -89,7 +98,7 @@ Android ：
 
 ## 数据库结构
 
-
+见"数据库文档.pdf"
 
 ## 功能结构
 
