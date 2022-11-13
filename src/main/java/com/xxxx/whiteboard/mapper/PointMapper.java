@@ -2,7 +2,9 @@ package com.xxxx.whiteboard.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xxxx.whiteboard.pojo.Point;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -10,6 +12,7 @@ import java.util.List;
  * @Author: fan yang
  * @Description:
  */
+@Repository
 public interface PointMapper extends BaseMapper<Point> {
 
 

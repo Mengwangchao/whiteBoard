@@ -31,7 +31,7 @@ public class DaoUtil {
     /*
     * 查找这个颜色的color_id, 如果数据库里没有就设计一个color_id， 保存进去
     * */
-    static int findOrSaveColor(Color color){
+    public static int findOrSaveColor(Color color){
         int colorId = -1;
         int flag = colorMapper.getColorId(color.getR(), color.getG(), color.getB(), color.getA());
         if (flag == 0){ // 说明没有查到这个颜色
@@ -49,7 +49,7 @@ public class DaoUtil {
     /*
     * user的操作数+1，返回user的操作
     * */
-    static int incrAndGetUserOpId(String userId){
+    public static int incrAndGetUserOpId(String userId){
         userMapper.operationNumIncr(userId); // 先自增用户操作次数
         User user = userMapper.selectById(userId);
         return user.getOperationNum(); // 再新获得用户操作id

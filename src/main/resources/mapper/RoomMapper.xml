@@ -34,6 +34,9 @@
         WHERE room_id = ${roomId}
     </update>
 
-
+    <insert id="insertRoom">
+        INSERT INTO room
+        VALUES (${room.roomId}, ${room.pageCount}, ${room.currentPage}, ${room.PeopleNum});
+    </insert>
 
 </mapper>

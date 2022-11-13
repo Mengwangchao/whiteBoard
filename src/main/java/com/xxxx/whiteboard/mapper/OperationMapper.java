@@ -2,12 +2,17 @@ package com.xxxx.whiteboard.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xxxx.whiteboard.pojo.Operation;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
 
 /**
  * @Author: fan yang
  * @Description:
  */
+@Repository
 public interface OperationMapper extends BaseMapper<Operation> {
     /*
     *  删除掉operation中所有操作（可以，但没必要）
