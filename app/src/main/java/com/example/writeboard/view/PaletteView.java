@@ -35,8 +35,6 @@ public class PaletteView extends View implements InMqttClientSend {
     private String roomId;
     private String currentPage;
     private BoardPaint mBoardPaint;
-    //    画笔
-//    private Paint mPaint;
     //    路径
     private Path mPath;
     //    上一个点的X，Y值
@@ -114,12 +112,14 @@ public class PaletteView extends View implements InMqttClientSend {
         mCallback = callback;
     }
 
-public void setViewWidth(int width){
-        this.viewWidth=width;
-}
-public  void setViewHeight(int height){
-        this.viewHeight=height;
-}
+    public void setViewWidth(int width) {
+        this.viewWidth = width;
+    }
+
+    public void setViewHeight(int height) {
+        this.viewHeight = height;
+    }
+
     private void initBuffer() {
         mBufferBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         mBufferCanvas = new Canvas(mBufferBitmap);
@@ -336,106 +336,31 @@ public  void setViewHeight(int height){
                 String mode = intent.getStringExtra("mode");
                 if (mode.equals("touchStart")) {
                     Log.i("move", "开始划线");
-                    int a=intent.getIntExtra("a",255);
-                    int r=intent.getIntExtra("r",0);
-                    int g=intent.getIntExtra("g",0);
-                    int b=intent.getIntExtra("b",0);
-                    float linewidth=intent.getFloatExtra("linewidth",8f);
-                    float graphical=intent.getFloatExtra("graphical",1f);
-                    drawStart((float) (intent.getFloatExtra("x", 0.0f)/414*viewWidth), (float) (intent.getFloatExtra("y", 0.0f)/414*viewHeight));
-                    drawSetting(a,r,g,b,linewidth,graphical);
+                    int a = intent.getIntExtra("a", 255);
+                    int r = intent.getIntExtra("r", 0);
+                    int g = intent.getIntExtra("g", 0);
+                    int b = intent.getIntExtra("b", 0);
+                    float linewidth = intent.getFloatExtra("linewidth", 8f);
+                    float graphical = intent.getFloatExtra("graphical", 1f);
+                    drawStart((float) (intent.getFloatExtra("x", 0.0f) / 414 * viewWidth), (float) (intent.getFloatExtra("y", 0.0f) / 414 * viewHeight));
+                    drawSetting(a, r, g, b, linewidth, graphical);
 
                 } else if (mode.equals(roomId)) {
                     Log.i("move", "划线中");
 
-                    drawMove((float) (intent.getFloatExtra("x", 0.0f)/414*viewWidth), (float) (intent.getFloatExtra("y", 0.0f)/414*viewHeight));
+                    drawMove((float) (intent.getFloatExtra("x", 0.0f) / 414 * viewWidth), (float) (intent.getFloatExtra("y", 0.0f) / 414 * viewHeight));
                 } else if (mode.equals("touchEnd")) {
                     Log.i("move", "划线结束");
-                    drawEnd((float) (intent.getFloatExtra("x", 0.0f)/414*viewWidth), (float) (intent.getFloatExtra("y", 0.0f)/414*viewHeight));
+                    drawEnd((float) (intent.getFloatExtra("x", 0.0f) / 414 * viewWidth), (float) (intent.getFloatExtra("y", 0.0f) / 414 * viewHeight));
                 }
             }
-//            Log.i("xxxxx", "end成功接收");
-//
-//            if (intent.getAction().equals("touchStart")) {
-////                int a = intent.getIntExtra("a", 255);
-////                int r = intent.getIntExtra("r", 0);
-////                int g = intent.getIntExtra("g", 0);
-////                int b = intent.getIntExtra("b", 0);
-////                int linewidth = intent.getIntExtra("linewidth", 10);
-////                drawSetting(a, r, g, b, linewidth);
-//                drawStart(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
-//            }
-//            if (intent.getAction().equals("touchMove")) {
-//                drawMove(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
-//
-//            }
-//            if (intent.getAction().equals("touchEnd")) {
-//
-//                drawEnd(intent.getFloatExtra("x", 0.0f), intent.getFloatExtra("y", 0.0f));
-//            }
-//
         }
     };
-//    public Mode getMode() {
-//        return mMode;
-//    }
-//
-//    public void setMode(Mode mode) {
-//        if (mode != mMode) {
-//            mMode = mode;
-//            if (mMode == Mode.DRAW) {
-//                mPaint.setXfermode(null);
-//                mPaint.setStrokeWidth(mDrawSize);
-//            } else {
-//                mPaint.setXfermode(mClearMode);
-//                mPaint.setStrokeWidth(mEraserSize);
-//            }
-//        }
-//    }
-//
-//
-//
-//    public void setPenAlpha(int alpha) {
-//        mPaint.setAlpha(alpha);
-//    }
-//
-//    public void setEraserSize(float size) {
-//        mEraserSize = size;
-//        mPaint.setStrokeWidth(mEraserSize);
-//    }
-//
-//    public void setPenRawSize(float size) {
-//        mDrawSize = size;
-//        mPaint.setStrokeWidth(mDrawSize);
-//    }
-//
-//    public void setPenColor(int color) {
-//        mPaint.setColor(color);
-//    }
-//    private void init() {
-//        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
-//        mPaint.setStyle(Paint.Style.STROKE);
-//        mPaint.setFilterBitmap(true);
-//        mPaint.setStrokeJoin(Paint.Join.ROUND);
-//        mPaint.setStrokeCap(Paint.Cap.ROUND);
-//        mDrawSize = 10;
-//        mEraserSize = 10;
-//        mPaint.setStrokeWidth(mDrawSize);
-//        mPaint.setARGB(255, 0, 0, 0);
-//
-//        mClearMode = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
-//    }
 
     @Override
     public void touchStart(float x, float y) {
 
         mqttClient.subscribe("touchStart");
-//                mqttClient.publish("a/b", "{\n" +
-//                        "\"mode\":\"" + 1 + "\",\n" +
-//                        "\"a\":\"" + x + "\",\n" +
-//                        "\"b\":\"" + y + "\",\n" +
-//                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
-//                        "}", false);
         mqttClient.publish("touchStart", "{\n" +
                 "\"color\":{\n" +
                 "\"a\":" + "\"" + mBoardPaint.color[0] + "\"" + ",\n" +
@@ -444,8 +369,8 @@ public  void setViewHeight(int height){
                 "\"b\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
                 "},\n" +
                 "\"point\":{\n" +
-                "\"x\":" + "\"" +  (int) (x/viewWidth*414)  + "\"" + ",\n" +
-                "\"y\":" + "\"" +  (int) (y/viewHeight*414) + "\"" + "\n" +
+                "\"x\":" + "\"" + (int) (x / viewWidth * 414) + "\"" + ",\n" +
+                "\"y\":" + "\"" + (int) (y / viewHeight * 414) + "\"" + "\n" +
                 "},\n" +
                 "\"lineWidth\":" + "\"" + mBoardPaint.getStrokeWidth() + "\"" + ",\n" +
                 "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
@@ -457,13 +382,6 @@ public  void setViewHeight(int height){
 
     @Override
     public void touchMove(float x, float y, String roomId) {
-//                mqttClient.subscribe("a/b");
-//                mqttClient.publish("a/b", "{\n" +
-//                        "\"mode\":\"" + 2 + "\",\n" +
-//                        "\"a\":\"" + x + "\",\n" +
-//                        "\"b\":\"" + y + "\",\n" +
-//                        "\"id\":\"" + mqttClient.getUserId() + "\"\n" +
-//                        "}", false);
         mqttClient.subscribe(roomId);
         mqttClient.publish(roomId, "{\n" +
                 "\"color\":{\n" +
@@ -473,8 +391,8 @@ public  void setViewHeight(int height){
                 "\"b\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
                 "},\n" +
                 "\"point\":{\n" +
-                "\"x\":" + "\"" +  (int) (x/viewWidth*414) + "\"" + ",\n" +
-                "\"y\":" + "\"" +  (int) (y/viewHeight*414) + "\"" + "\n" +
+                "\"x\":" + "\"" + (int) (x / viewWidth * 414) + "\"" + ",\n" +
+                "\"y\":" + "\"" + (int) (y / viewHeight * 414) + "\"" + "\n" +
                 "},\n" +
                 "\"lineWidth\":" + "\"" + mBoardPaint.getStrokeWidth() + "\"" + ",\n" +
                 "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
@@ -495,8 +413,8 @@ public  void setViewHeight(int height){
                 "\"b\":" + "\"" + mBoardPaint.color[3] + "\"" + "\n" +
                 "},\n" +
                 "\"point\":{\n" +
-                "\"x\":" + "\"" +  (int) (x/viewWidth*414)  + "\"" + ",\n" +
-                "\"y\":" + "\"" +  (int) (y/viewHeight*414)+ "\"" + "\n" +
+                "\"x\":" + "\"" + (int) (x / viewWidth * 414) + "\"" + ",\n" +
+                "\"y\":" + "\"" + (int) (y / viewHeight * 414) + "\"" + "\n" +
                 "},\n" +
                 "\"lineWidth\":" + "\"" + mBoardPaint.getStrokeWidth() + "\"" + ",\n" +
                 "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
@@ -504,11 +422,10 @@ public  void setViewHeight(int height){
                 "\"currentPage\":" + "\"" + currentPage + "\"" + ",\n" +
                 "\"graphical\":" + "\"" + mBoardPaint.getFigure() + "\"" + "\n" +
                 "}", false);
-        Log.i("hahah","x");
-
+        Log.i("hahah", "x");
     }
 
-    private void drawSetting(int a, int r, int g, int b, float lineWidth,float graphical) {
+    private void drawSetting(int a, int r, int g, int b, float lineWidth, float graphical) {
         mBoardPaint.setARGB(a, r, g, b);
         mBoardPaint.setStrokeWidth(lineWidth);
         mBoardPaint.setFigure(graphical);

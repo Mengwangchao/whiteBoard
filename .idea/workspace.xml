@@ -19,9 +19,6 @@
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/activity/BoardActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/activity/BoardActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/activity/LoginActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/activity/LoginActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/utils/MqttClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/utils/MqttClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/view/PaletteView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/writeboard/view/PaletteView.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
