@@ -37,7 +37,7 @@ public class MqttClient implements InMqttClientNotify {
     }
 
     //    private static String serverURI="ws://broker.emqx.io:8083/mqtt";
-    private static String serverURI = "ws://39.105.149.69:8083";
+    private static String serverURI = "ws://101.201.78.109:8083";
 
     private String username;
     private String password;
