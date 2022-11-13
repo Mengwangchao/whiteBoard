@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)redoClick;
 -(void)clearAll;
 -(void)undoClick:(BOOL)isLine;
+-(void)joinRoomReturn;
 @end
 
 NS_ASSUME_NONNULL_END

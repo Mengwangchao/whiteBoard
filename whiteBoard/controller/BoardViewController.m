@@ -10,7 +10,7 @@
 #import "UpdateToMQTT.h"
 #import "ImageViewOfDrawView.h"
 #import "UserNameView.h"
-@interface BoardViewController ()<PageMQTTDelegate,UIGestureRecognizerDelegate,AuthorityStateMQTTDelegate,UserNameViewDelegate>
+@interface BoardViewController ()<PageMQTTDelegate,UIGestureRecognizerDelegate,AuthorityStateMQTTDelegate,UserNameViewDelegate,JoinRoomReturnMQTTDelegate>
 @property (nonatomic,strong)DrawViewAndImageView *rootDrawView;
 @property (nonatomic,strong)UpdateToMQTT *mMQTT;
 @property (nonatomic,strong)NSMutableArray<DrawViewAndImageView*> *rootDrawViewArray;
@@ -74,6 +74,7 @@
     self.mMQTT = [[UpdateToMQTT alloc]initWithTopic:self.roomId];
     self.mMQTT.pageMQTTdelegate = self;
     self.mMQTT.authorityStatelegate = self;
+    self.mMQTT.joinRoomReturnMQTTDelegate = self;
     [self.mMQTT connectMQTT];
     self.rootDrawView = [[DrawViewAndImageView alloc]initWithFrame:CGRectMake(0, 0, 1000, 1000) userId:self.userId roomId:self.roomId MQTT:self.mMQTT];
     [self.rootDrawViewArray addObject:self.rootDrawView];
@@ -83,6 +84,8 @@
     }
     if(self.isCreater ==NO){
         [self.mMQTT sendJoinRoom:self.roomId userId:self.userId authority:ONLY_READ];
+    }else{
+        [self.mMQTT sendCreateRoom:self.roomId userId:self.userId authority:READ_WRITE];
     }
     [self.view addSubview:self.rootDrawView];
     
@@ -410,6 +413,9 @@
     sender.tintColor = [UIColor greenColor];
 }
 #pragma mark - delegate
+-(void)getJoinRoomReturn:(NSString *)roomId userId:(NSString *)userId{
+    
+}
 -(void)addPage:(NSString *)roomId userId:(NSString *)userId{
     if ([roomId isEqual:self.roomId] && ![self.userId isEqual:userId]) {
         [self addPage];

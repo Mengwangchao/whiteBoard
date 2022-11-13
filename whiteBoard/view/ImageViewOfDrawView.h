@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic , strong)UIButton *okButton;
 @property (nonatomic,weak) id<ImageViewOfDrawViewDelegate> imageViewOfDrawViewDelegate;
 -(instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image imageId:(int)imageId userId:(NSString *)userId roomId:(NSString *)roomId MQTT:(UpdateToMQTT *)mqtt;
+-(void)joinRoomReturn;
 @end
 
 NS_ASSUME_NONNULL_END

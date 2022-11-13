@@ -163,6 +163,8 @@
         else if([topic isEqual:@"touchEnd"]){
             if (weakSelf.updateToMQTTdelegate!=nil && [weakSelf.updateToMQTTdelegate respondsToSelector:@selector(getEndMassagePoint:userId:color:currentPage:graphical:lineWidth:)]){
                 [weakSelf.updateToMQTTdelegate getEndMassagePoint:point userId:dic[@"userId"] color:[weakSelf stringToUIColor:colorDic] currentPage:[dic[@"currentPage"] intValue]  graphical:[dic[@"graphical"] intValue] lineWidth:[dic[@"lineWidth"] floatValue]];
+            }else{
+                NSLog(@"end");
             }
         }else if([topic isEqual:@"addPage"]){
             if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(addPage:userId:)]){
@@ -179,7 +181,9 @@
             }
         }
         else if([topic isEqual:@"joinRoomReturn"]){
-        
+            if (weakSelf.joinRoomReturnMQTTDelegate!=nil && [weakSelf.joinRoomReturnMQTTDelegate respondsToSelector:@selector(getJoinRoomReturn:userId:)]){
+                [weakSelf.joinRoomReturnMQTTDelegate getJoinRoomReturn:dic[@"roomId"] userId:dic[@"userId"]];
+            }
         }
         else if([topic isEqual:@"upPage"]){
             if (weakSelf.pageMQTTdelegate!=nil && [weakSelf.pageMQTTdelegate respondsToSelector:@selector(upPage:userId:)]){

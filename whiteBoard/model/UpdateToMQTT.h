@@ -18,6 +18,11 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 -(void)getAuthorityState:(int)authority roomId:(NSString *)roomId userId:(NSString *)userId isCreater:(BOOL)isCteater;
 
 @end
+@protocol JoinRoomReturnMQTTDelegate <NSObject>
+
+-(void)getJoinRoomReturn:(NSString *)roomId userId:(NSString *)userId;
+
+@end
 @protocol UserListMQTTDelegate <NSObject>
 
 -(void)getUserList:(NSString *)roomId userId:(NSString *)userId Authorith:(AuthorityState)authorith;
@@ -82,6 +87,7 @@ typedef NS_ENUM(NSInteger, AuthorityState){
 @property (nonatomic,weak) id<controlMQTTDelegate> controldelegate;
 @property (nonatomic,weak) id<AuthorityStateMQTTDelegate> authorityStatelegate;
 @property (nonatomic,weak) id<UserListMQTTDelegate> userListMQTTDelegateDelegate;
+@property (nonatomic,weak) id<JoinRoomReturnMQTTDelegate> joinRoomReturnMQTTDelegate;
 
 -(instancetype)init NS_UNAVAILABLE;
 -(instancetype)initWithTopic:(NSString *)topic;

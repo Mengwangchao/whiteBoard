@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)redoClick:(GraphicalState)graphicalState color:(UIColor*)color width:(float)width array:(NSArray *)array userId:(NSString *)userId;
 -(void)undoNetwork:(BOOL)isLine userId:(NSString *)userId;
 -(void)redoNetwork:(GraphicalState)graphical color:(UIColor*)color width:(float)width array:(NSArray *)array userId:(NSString *)userId;
+-(void)joinRoomReturn;
 @end
 
 NS_ASSUME_NONNULL_END
