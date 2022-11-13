@@ -1,4 +1,4 @@
-package com.xxxx.whiteboard.util;
+package com.xxxx.whiteboard.handler;
 
 import com.xxxx.whiteboard.mapper.*;
 import com.xxxx.whiteboard.mqttConn.MQTTCallback;
@@ -9,16 +9,11 @@ import com.xxxx.whiteboard.util.JsonPojo;
 import com.xxxx.whiteboard.util.JsonSubTool;
 import com.xxxx.whiteboard.util.MajorUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.attoparser.AbstractMarkupHandler;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -28,9 +23,9 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class BasicFunc{
+public class BasicHandler {
 
-    private static BasicFunc that;
+    private static BasicHandler that;
 
     @Resource
     RoomMapper roomMapper;

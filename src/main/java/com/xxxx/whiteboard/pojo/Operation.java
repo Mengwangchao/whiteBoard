@@ -16,10 +16,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Operation {
-    private String user_id; // 用户id
-    private String room_id; // 哪个房间进行的操作
+    private String userId; // 用户id
+    private String roomId; // 哪个房间进行的操作
     private int currentPage; // 每个操作在哪个页面
-    private String table_Name; // 这个是针对每一个room每一个page而言的
+    private String tableName; // 这个是针对每一个room每一个page而言的
     private int graphical; // 操作类型
     private float lineWidth; // 每一个操作的线宽是一致的
     private int hidden; // 这个操作是否被隐藏了

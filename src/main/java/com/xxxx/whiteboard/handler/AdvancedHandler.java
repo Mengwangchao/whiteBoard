@@ -1,4 +1,4 @@
-package com.xxxx.whiteboard.util;
+package com.xxxx.whiteboard.handler;
 
 import com.xxxx.whiteboard.mapper.*;
 import com.xxxx.whiteboard.pojo.Image;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Author: fan yang
  * @Description:
  */
-public class AdvancedFunc {
+public class AdvancedHandler {
     @Autowired(required = false)
     static RoomMapper roomMapper;
 

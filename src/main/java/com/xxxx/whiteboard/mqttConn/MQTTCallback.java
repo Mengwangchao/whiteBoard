@@ -1,6 +1,6 @@
 package com.xxxx.whiteboard.mqttConn;
 
-import com.xxxx.whiteboard.util.BasicFunc;
+import com.xxxx.whiteboard.handler.BasicHandler;
 import com.xxxx.whiteboard.validator.ValidatorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -45,45 +45,45 @@ public class MQTTCallback implements MqttCallback {
         log.info("收到来自 " + topic + " 的消息：{}", new String(message.getPayload()));
         // 将接收到的数据转换成 json 数据
         JSONObject jsonObject;
-        BasicFunc basicFunc = new BasicFunc();
+        BasicHandler basicHandler = new BasicHandler();
         try {
             jsonObject = new JSONObject(new String(message.getPayload())); // 成功说明可以转换成json
 
             if (ValidatorUtil.isRoomId(topic)){
                 // 这个是正在画点的时候
-                basicFunc.touching(jsonObject);
+                basicHandler.touching(jsonObject);
             }
             // 判断主题
             switch (topic){
                 case "touchStart":
-                    basicFunc.touchStart(jsonObject); // 我认为这个touchStart对后端来说就是
+                    basicHandler.touchStart(jsonObject); // 我认为这个touchStart对后端来说就是
                     break;
                 case "touchEnd": // 手指结束滑动，实时同步所有短当前手指即将离开屏幕，可以释放和保存资源
-                    basicFunc.touchEnd(jsonObject);
+                    basicHandler.touchEnd(jsonObject);
                     break;
                 case "joinRoom":
-                    basicFunc.joinRoom(jsonObject);
+                    basicHandler.joinRoom(jsonObject);
                     break;
                 case "createRoom1":
-                    basicFunc.createRoom(jsonObject);
+                    basicHandler.createRoom(jsonObject);
                     break;
                 case "leaveRoom":
-                    basicFunc.leaveRoom(jsonObject);
+                    basicHandler.leaveRoom(jsonObject);
                     break;
                 case "addPage":
-                    basicFunc.addPage(jsonObject);
+                    basicHandler.addPage(jsonObject);
                     break;
                 case "deletePage":
-                    basicFunc.deletePage(jsonObject);
+                    basicHandler.deletePage(jsonObject);
                     break;
                 case "nextPage":
-                    basicFunc.nextPage(jsonObject);
+                    basicHandler.nextPage(jsonObject);
                     break;
                 case "upPage":
-                    basicFunc.upPage(jsonObject);
+                    basicHandler.upPage(jsonObject);
                     break;
                 default:
-                    basicFunc.touching(jsonObject);
+                    basicHandler.touching(jsonObject);
                     break; // 12位数字的roomId: 手指正在滑动，实时同步所有端当前手指所在坐标
             }
         } catch (MqttException e) {

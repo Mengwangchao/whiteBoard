@@ -60,18 +60,18 @@ public class MQTTListener implements ApplicationRunner {
         MQTTConnect server = new MQTTConnect();
         server.setMqttClient("emqx_user", "emqx_password", new MQTTCallback());
         try {
-            //server.sub("com/iot/init");
-            //server.pubS("com/iot/init", "fan yang" + (int) (Math.random() * 100000000));
-            //server.sub("touchStart"); // 项目启动就开始监听touchStart主题
-            //server.sub("touchEnd");
-            //server.sub("joinRoom");
-            server.sub("createRoom1");
-            //server.sub("deleteRoom");
-            //server.sub("addPage");
-            //server.sub("leaveRoom");
-            //server.sub("deletePage");
-            //server.sub("nextPage");
-            //server.sub("upPage");
+            server.sub("com/iot/init");
+            server.pubS("com/iot/init", "fan yang" + (int) (Math.random() * 100000000));
+            server.sub("touchStart"); // 项目启动就开始监听touchStart主题
+            server.sub("touchEnd");
+            server.sub("joinRoom");
+            server.sub("createRoom");
+            server.sub("deleteRoom");
+            server.sub("addPage");
+            server.sub("leaveRoom");
+            server.sub("deletePage");
+            server.sub("nextPage");
+            server.sub("upPage");
 
         } catch (MqttException e) {
             log.error(e.getMessage(), e);

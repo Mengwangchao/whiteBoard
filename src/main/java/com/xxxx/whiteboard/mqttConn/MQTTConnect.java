@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MQTTConnect {
 
-    private final String HOST = "ws://39.105.149.69:8083"; //mqtt服务器的地址和端口号
+    private final String HOST = "ws://101.201.78.109:8083"; //mqtt服务器的地址和端口号
     private final String clientId = "DC" + (int) (Math.random() * 100000000); // 随机生成用户id
     private MqttClient mqttClient; // MqttClient
 
