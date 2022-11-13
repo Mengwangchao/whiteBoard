@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class JsonGetter {
+public class JsonPojo {
     private Color color;
     private Point point;
     private float lineWidth;

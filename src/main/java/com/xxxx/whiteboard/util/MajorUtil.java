@@ -1,5 +1,9 @@
 package com.xxxx.whiteboard.util;
 
+import com.xxxx.whiteboard.mapper.ImageMapper;
+import com.xxxx.whiteboard.pojo.Image;
+
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,10 +23,9 @@ public class MajorUtil {
     根据roomId和CurrentPage获取表名
     */
     public static String getTableName(String roomId, int currentPage) {
-        String tableName = "r" + roomId.substring(0, 4) + "p" + currentPage;
+        String tableName = "r" + roomId.substring(0, 6) + "p_" + currentPage;
         return tableName;
     }
-
 
 
 

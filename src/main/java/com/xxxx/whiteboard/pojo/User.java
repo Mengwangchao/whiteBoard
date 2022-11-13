@@ -1,5 +1,6 @@
 package com.xxxx.whiteboard.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+    @TableId
     private String userId;
     private String roomId; // count(*) where roomId = 啥
     private int authority;

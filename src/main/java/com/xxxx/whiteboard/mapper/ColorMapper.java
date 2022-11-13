@@ -2,12 +2,15 @@ package com.xxxx.whiteboard.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xxxx.whiteboard.pojo.Color;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * @Author: fan yang
  * @Description:
  */
+@Repository
 public interface ColorMapper extends BaseMapper<Color> {
 
     // 查询是否存在这个颜色, 如果存在返回colorId, 如果不存在返回0

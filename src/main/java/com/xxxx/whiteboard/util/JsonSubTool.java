@@ -1,8 +1,9 @@
 package com.xxxx.whiteboard.util;
 
 import com.xxxx.whiteboard.pojo.Color;
+import com.xxxx.whiteboard.pojo.Image;
+import com.xxxx.whiteboard.pojo.ImagePoint;
 import com.xxxx.whiteboard.pojo.Point;
-import com.xxxx.whiteboard.pojo.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,8 +13,8 @@ import org.json.JSONObject;
  */
 public class JsonSubTool {
 
-    public static JsonGetter initJsonObject(JSONObject jsonObject, boolean multiParams) throws JSONException {
-        JsonGetter jg = new JsonGetter();
+    public static JsonPojo initJsonOj(JSONObject jsonObject, boolean multiParams) throws JSONException {
+        JsonPojo jg = new JsonPojo();
         if (jsonObject.has("userId")) jg.setUserId((String) jsonObject.get("userId"));
         if (jsonObject.has("roomId")) jg.setRoomId((String) jsonObject.get("roomId"));
         if (!multiParams) return jg; // 如果只有前两项，直接返回
@@ -26,6 +27,31 @@ public class JsonSubTool {
         if (jsonObject.has("point"))
             jg.setPoint(JsonSubTool.getPoint((JSONObject) jsonObject.get("point"), jg.getColor(), jg.getGraphical(), jg.getLineWidth()));
         return jg;
+    }
+
+    /*
+    * 直接转换成image对象
+    * */
+    public static Image initJsonOjAdv(JSONObject jo, boolean isMidXY) throws JSONException {
+        Image img = new Image();
+        if (jo.has("imageNum")) img.setImageNum((int) jo.get("imageNum"));
+        if (jo.has("roomId")) img.setUserId((String) jo.get("userId"));
+        if (jo.has("userId")) img.setUserId((String) jo.get("userId"));
+        if (jo.has("imageId")) img.setImageId((int) jo.get("imageId"));
+        if (jo.has("currentPage")) img.setCurrentPage((int) jo.get("currentPage"));
+        if (jo.has("point")) {
+            ImagePoint ipoint= (ImagePoint) jo.get("point");
+            if (!isMidXY){
+                img.setX(ipoint.getX());
+                img.setY(ipoint.getY());
+            }
+            else {
+                img.setMidX(ipoint.getX());
+                img.setMidY(ipoint.getY());
+            }
+        }
+        if (jo.has("rotate")) img.setRotate((float) jo.get("rotate"));
+        return img;
     }
 
     /*
@@ -46,6 +72,12 @@ public class JsonSubTool {
         float x = (float) pointJson.get("x");
         float y = (float) pointJson.get("y");
         return new Point(x, y, -1, -1);
+    }
+
+    static ImagePoint getImagePoint(JSONObject pointJson) throws JSONException {
+        float x = (float) pointJson.get("x");
+        float y = (float) pointJson.get("y");
+        return new ImagePoint(x, y);
     }
 
 

@@ -5,8 +5,8 @@
 <mapper namespace="com.xxxx.whiteboard.mapper.ColorMapper">
 
     <select id="getColorId">
-        SELECT `color_id` from `color`
-        WHERE color.r = `${r}` AND color.g = `${g}` AND color.b = `${b}` AND color.a = `${a}`
+        SELECT color_id from `color`
+        WHERE color.r = ${r} AND color.g = ${g} AND color.b = ${b} AND color.a = ${a}
     </select>
 
 </mapper>

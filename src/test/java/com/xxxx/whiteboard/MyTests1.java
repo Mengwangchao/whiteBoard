@@ -1,9 +1,12 @@
 package com.xxxx.whiteboard;
 
+import com.xxxx.whiteboard.mapper.ImageMapper;
 import com.xxxx.whiteboard.mapper.OperationMapper;
 import com.xxxx.whiteboard.mapper.PointMapper;
 import com.xxxx.whiteboard.mapper.RoomMapper;
+import com.xxxx.whiteboard.pojo.Image;
 import com.xxxx.whiteboard.pojo.Point;
+import com.xxxx.whiteboard.pojo.Room;
 import com.xxxx.whiteboard.util.MajorUtil;
 import lombok.ToString;
 import org.junit.jupiter.api.Test;
@@ -27,6 +30,11 @@ public class MyTests1 {
 
     @Autowired(required = false)
     private OperationMapper operationMapper;
+
+    @Autowired(required = false)
+    private ImageMapper imageMapper;
+
+
 
     /*
     新建视图
@@ -81,7 +89,22 @@ public class MyTests1 {
         operationMapper.deleteById("1234");
     }
 
+    @Test
+    void imageUpdateById(){
+        Image image = new Image();
+        image.setImageNum(1);
+        image.setRoomId("9999");
+        image.setRotate(20.0F);
+        imageMapper.updateSoftByNumId(image);
+    }
 
+    @Test
+    void roomInsertTest(){
+        Room room = new Room("9999", 99, 9, 9);
+        roomMapper.insert(room);
+        Room room1 = new Room("8888", 88, 8, 8);
+        roomMapper.insertRoom(room1);
+    }
 
 
 }

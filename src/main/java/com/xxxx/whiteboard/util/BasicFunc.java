@@ -4,34 +4,59 @@ import com.xxxx.whiteboard.mapper.*;
 import com.xxxx.whiteboard.mqttConn.MQTTCallback;
 import com.xxxx.whiteboard.mqttConn.MQTTConnect;
 import com.xxxx.whiteboard.pojo.*;
+import com.xxxx.whiteboard.util.DaoUtil;
+import com.xxxx.whiteboard.util.JsonPojo;
+import com.xxxx.whiteboard.util.JsonSubTool;
+import com.xxxx.whiteboard.util.MajorUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.attoparser.AbstractMarkupHandler;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @Author: fan yang
  * @Description:
  */
-public class JsonTool {
+@Slf4j
+@Component
+public class BasicFunc{
 
-    @Autowired(required = false)
-    static RoomMapper roomMapper;
+    private static BasicFunc that;
 
-    @Autowired(required = false)
-    static UserMapper userMapper;
+    @Resource
+    RoomMapper roomMapper;
 
-    @Autowired(required = false)
-    static ColorMapper colorMapper;
+    @Resource
+    UserMapper userMapper;
 
-    @Autowired(required = false)
-    static OperationMapper operationMapper;
+    @Resource
+    ColorMapper colorMapper;
 
-    @Autowired(required = false)
-    static PointMapper pointMapper;
+    @Resource
+    OperationMapper operationMapper;
+
+    @Resource
+    PointMapper pointMapper;
+
+
+    //@PostConstruct
+    //public void init(){
+    //    that = this;
+    //    that.roomMapper = this.roomMapper;
+    //    that.userMapper = this.userMapper;
+    //    that.colorMapper = this.colorMapper;
+    //    that.operationMapper = this.operationMapper;
+    //    that.pointMapper = this.pointMapper;
+    //}
 
 
     /*
@@ -42,8 +67,8 @@ public class JsonTool {
      *  3. operation中记录此次的操作
      *  4. 在map中保留此次的id
      * */
-    public static void touchStart(JSONObject jsonObject) throws JSONException {
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true); // 先获取到所有的
+    public void touchStart(JSONObject jsonObject) throws JSONException {
+        JsonPojo jg = JsonSubTool.initJsonOj(jsonObject, true); // 先获取到所有的
         // user表的操作次数自增，并获取到这一次的id（是用户第几次操作）
         int newUserOpId = DaoUtil.incrAndGetUserOpId(jg.getUserId());// operation表里面，记录用户的此次操作（比如第一次、第二次）
         // Color表查询是否有此颜色，如果没有，插入到color表中
@@ -65,8 +90,8 @@ public class JsonTool {
      * 1. 获取到此次操作id， 的相关参数
      * 2. 把点存在表格里
      * */
-    public static void touching(JSONObject jsonObject) throws JSONException {
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
+    public void touching(JSONObject jsonObject) throws JSONException {
+        JsonPojo jg = JsonSubTool.initJsonOj(jsonObject, true);
         // 取到这次用户的操作id
         int operationId = MajorUtil.map.get(jg.getUserId());
         Operation op = operationMapper.selectById(operationId); // 获取到此次操作
@@ -83,9 +108,9 @@ public class JsonTool {
      * 2. 把点存在表格里
      * 3. 删除此次操作保留的key
      * */
-    public static void touchEnd(JSONObject jsonObject) throws JSONException {
+    public void touchEnd(JSONObject jsonObject) throws JSONException {
         // 最后新建operationId
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
+        JsonPojo jg = JsonSubTool.initJsonOj(jsonObject, true);
         // 取到这次用户的操作id
         int operationId = MajorUtil.map.get(jg.getUserId());
         // 把点存在表格里
@@ -104,8 +129,8 @@ public class JsonTool {
      * 3. 已知当前房间和当前页，把本页所有可视点返回出来
      * 4. 发布到mqtt中
      * */
-    public static void joinRoom(JSONObject jsonObject) throws JSONException, MqttException {
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, true);
+    public void joinRoom(JSONObject jsonObject) throws JSONException, MqttException {
+        JsonPojo jg = JsonSubTool.initJsonOj(jsonObject, true);
 
         // 先把用户添加进去
         User user = new User(jg.getUserId(), jg.getRoomId(), jg.getAuthority(), 0);
@@ -141,12 +166,19 @@ public class JsonTool {
      * 5. 把新建房间的操作放到操作里，相当于此用户第0次操作
      * 6. 订阅以roomId为topic的主题
      * */
-    public static void createRoom(JSONObject jsonObject) throws JSONException, MqttException {
+    public void createRoom(JSONObject jsonObject) throws JSONException, MqttException {
         int pageCount = 1, currentPage = 1, peopleNum = 1;
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
+
+        //JsonPojo jg = JsonSubTool.initJsonOj(jsonObject, true);
+        JsonPojo jg = new JsonPojo();
+        jg.setRoomId(jsonObject.getString("roomId"));
+        jg.setAuthority(Integer.parseInt(jsonObject.getString("authority")));
+        jg.setUserId(jsonObject.getString("userId"));
+        System.out.println(jg);
         // 在room表中对房间记录在册
-        Room room = new Room(jg.getRoomId(), currentPage, pageCount, peopleNum);
-        roomMapper.insert(room);
+        Room room = new Room(jg.getRoomId(), pageCount, currentPage, peopleNum);
+        System.out.println(room);
+        roomMapper.insertRoom(room);
 
         // 在user表中记录在册
         int authority = 1, operationNum = 0;
@@ -155,7 +187,7 @@ public class JsonTool {
 
         // 新建一个第一页 & 此页的视图
         pointMapper.createPage(MajorUtil.getTableName(jg.getRoomId(), currentPage));
-        pointMapper.createPointsViewAll(MajorUtil.getTableName(jg.getRoomId(), currentPage));
+        //pointMapper.createPointsViewAll(MajorUtil.getTableName(jg.getRoomId(), currentPage));
         pointMapper.createPointViewSightSeeing(MajorUtil.getTableName(jg.getRoomId(), currentPage));
 
         // 把这个建表操作放到记录里：因为数据库中初始化这个用户的初始信息，例如operationId从 0 开始
@@ -179,8 +211,8 @@ public class JsonTool {
      * 2. user从user表中删除
      * 3. user走了之后，如果房间人数变为0，删除掉此房间
      * */
-    public static void leaveRoom(JSONObject jsonObject) throws JSONException {
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
+    public void leaveRoom(JSONObject jsonObject) throws JSONException {
+        JsonPojo jg = JsonSubTool.initJsonOj(jsonObject, false);
         // 房间人数自动递减
         roomMapper.personNumDecr(jg.getRoomId());
         if (roomMapper.selectById(jg.getRoomId()).getPeopleNum() == 0) {
@@ -196,8 +228,8 @@ public class JsonTool {
      * 2. 新建这一页的点集表存放点集
      * 3. 创建此页的查询视图
      * */
-    public static void addPage(JSONObject jsonObject) throws JSONException {
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
+    public void addPage(JSONObject jsonObject) throws JSONException {
+        JsonPojo jg = JsonSubTool.initJsonOj(jsonObject, false);
         // room里面ageCount + 1
         roomMapper.roomPageIncr(jg.getRoomId());
 
@@ -208,7 +240,7 @@ public class JsonTool {
         pointMapper.createPage(MajorUtil.getTableName(jg.getRoomId(), pageCount + 1));
 
         // 创建此页数的查询视图
-        pointMapper.createPointsViewAll(MajorUtil.getTableName(jg.getRoomId(), pageCount + 1));
+        //pointMapper.createPointsViewAll(MajorUtil.getTableName(jg.getRoomId(), pageCount + 1));
         pointMapper.createPointViewSightSeeing(MajorUtil.getTableName(jg.getRoomId(), pageCount + 1));
     }
 
@@ -219,8 +251,8 @@ public class JsonTool {
     3. 再把operation所有大于currentPage的currentPage - 1
     4. 再把room中的总页数递减
     * */
-    public static void deletePage(JSONObject jsonObject) throws JSONException {
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
+    public void deletePage(JSONObject jsonObject) throws JSONException {
+        JsonPojo jg = JsonSubTool.initJsonOj(jsonObject, false);
         // 删除此页点集points
         pointMapper.dropPage(MajorUtil.getTableName(jg.getRoomId(), jg.getCurrentPage()));
         pointMapper.dropPointsViewAll(MajorUtil.getTableName(jg.getRoomId(), jg.getCurrentPage()));
@@ -238,9 +270,9 @@ public class JsonTool {
      * 其实就是currentPage改变：
      * 获取到pageCount和currentPage，如果相等，就变成1，否则 + 1
      * */
-    public static void nextPage(JSONObject jsonObject) throws JSONException {
+    public void nextPage(JSONObject jsonObject) throws JSONException {
         // 向下翻页
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
+        JsonPojo jg = JsonSubTool.initJsonOj(jsonObject, false);
         Room room = roomMapper.selectById(jg.getRoomId());
         int currentPage = room.getCurrentPage();
         int pageCount = room.getPageCount();
@@ -254,9 +286,9 @@ public class JsonTool {
         roomMapper.updateById(room);
     }
 
-    public static void upPage(JSONObject jsonObject) throws JSONException {
+    public void upPage(JSONObject jsonObject) throws JSONException {
         // 向上翻页
-        JsonGetter jg = JsonSubTool.initJsonObject(jsonObject, false);
+        JsonPojo jg = JsonSubTool.initJsonOj(jsonObject, false);
         Room room = roomMapper.selectById(jg.getRoomId());
 
         int currentPage = room.getCurrentPage(); // 获取到当前页
