@@ -107,25 +107,6 @@ public class AdvancedFunc {
         imageMapper.updateById(img);
     }
 
-    public static void zoomImage(JSONObject jsonObject) {
-
-    }
-
-    public static void undo(JSONObject jsonObject) {
-
-    }
-
-    public static void redo(JSONObject jsonObject) {
-
-    }
-
-    public static void clearAll(JSONObject jsonObject) {
-
-    }
-
-    public static void readWriteAuthority(JSONObject jsonObject) {
-
-    }
 
 
 }
