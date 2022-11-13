@@ -13,6 +13,7 @@
 ## demo演示视频地址
 
 iOS ：
+https://www.bilibili.com/video/BV14P411c7HA/?vd_source=1557a985d12dac6cc75a22a9ae36409c
 
 Android ：
 https://www.bilibili.com/video/BV1Gd4y1b78V/?vd_source=1557a985d12dac6cc75a22a9ae36409c
