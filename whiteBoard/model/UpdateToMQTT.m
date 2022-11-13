@@ -52,7 +52,7 @@
     
     
     MQTTCFSocketTransport *tranport = [[MQTTCFSocketTransport alloc]init];
-    tranport.host = @"39.105.149.69";
+    tranport.host = @"101.201.78.109";
     tranport.port = 1883;
     self.mySession = [[MQTTSession alloc]init];
     self.mySession.transport = tranport;
