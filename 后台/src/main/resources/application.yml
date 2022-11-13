@@ -1,0 +1,17 @@
+spring:
+  # 数据源配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/white_board1?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 12345678
+
+
+# mybatis-plus配置
+mybatis-plus:
+  # 配置Mapper.xml映射文件
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  # 配置Mybatis数据返回类型别名（默认别名是类名）
+  type-aliases-package: com.xxxx.seckill.pojo
+
+
