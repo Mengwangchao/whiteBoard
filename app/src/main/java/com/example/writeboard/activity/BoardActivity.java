@@ -45,8 +45,6 @@ import java.util.Random;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
     Rect outSize = new Rect();
-
-
     private static BoardPaint mBoardPaint = BoardPaint.getmBoardPaint();
     private TextView pensizeTv;
     private TextView roomIdTv;
@@ -66,6 +64,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private ImageView lastPageView;
     private ImageView nextPageView;
     private ImageView addPageView;
+    private ImageView removePageView;
     private TextView currentTv;
     private TextView allItemTv;
     private User user;
@@ -73,8 +72,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private AlertDialog penSizeDialog;
     private AlertDialog penColorDialog;
     private View penSizeView;
-
-
     private View penColorView;
     private TextView color_a;
     private TextView color_r;
@@ -85,10 +82,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private SeekBar color_r_Sk;
     private SeekBar color_g_Sk;
     private SeekBar color_b_Sk;
-
-
-    private View boardImageView;
-
     private String roomId = "";
     private String modeString;
 
@@ -140,6 +133,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         lastPageView.setOnClickListener(this);
         nextPageView.setOnClickListener(this);
         addPageView.setOnClickListener(this);
+        removePageView.setOnClickListener(this);
 
     }
 
@@ -198,7 +192,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         "\"userId\":" + "\"" + mqttClient.getUserId() + "\",\n" +
                         "\"authority\":" + "\"" + 2 + "\"\n" +
                         "}", false);
-                Toast.makeText(this, "图片已经保存", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.size_bt:
                 penSizeDialog.show();
@@ -239,6 +232,15 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 addPage();
                 Toast.makeText(this, "当前的页数：" + (boardPage.getCurrentItem() + 1), Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.removePage:
+                mqttClient.subscribe("deletePage");
+                mqttClient.publish("deletePage", "{\n" +
+                        "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
+                        "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + ",\n" +
+                        "\"pageNum\":" + "\"" + boardPage.getCurrentItem() + "\",\n" +
+                        "}", false
+                );
+                removePage();
             default:
                 break;
         }
@@ -248,15 +250,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
      * initMattClient
      */
     private void initMqttClient() {
-//    实例化Mqtt对象
         mqttClient = new MqttClient();
-//        规定的一个用户Id（user+12位随机数）
         mqttClient.setUserId(user.getUserId());
-//        mqtt连接
         mqttClient.connect(BoardActivity.this);
-//        设置QOS
         mqttClient.setQos(2);
-//        加入用户名和密码
         mqttClient.setUsername(user.getUserName());
         mqttClient.setPassword(user.getPassWord());
 
@@ -292,6 +289,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         currentTv = findViewById(R.id.currentItem_tv);
         allItemTv = findViewById(R.id.allItem_tv);
         addPageView = findViewById(R.id.addPage);
+        removePageView = findViewById(R.id.removePage);
 
         penSizeView = LayoutInflater.from(this).inflate(R.layout.pen_size, null);
         pensizeSk = penSizeView.findViewById(R.id.pensizesk);
@@ -404,12 +402,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                 colorView.setBackgroundColor(Color.argb(a, progress, g, b));
                 mBoardPaint.setPenColor(a, progress, g, b);
-
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
@@ -476,6 +472,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mqttClient.subscribe("leaveRoom");
+        mqttClient.publish("clearAll", "{\n" +
+                "\"roomId\":" + "\"" + roomId + "\",\n" +
+                "\"userId\":" + "\"" + mqttClient.getUserId() + "\"," +
+                "}", false);
         mqttClient.diconnect();
     }
 
@@ -494,7 +495,20 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         boardPage.setCurrentItem(currentItem);
         currentTv.setText(boardList.size() + "");
         allItemTv.setText(boardPage.getCurrentItem() + 1 + "");
+    }
 
+    private void removePage() {
+        if (boardPage.getCurrentItem() >= 1) {
+            boardList.remove(boardPage.getCurrentItem());
+            boardAdapter = new BoardAdapter(boardList);
+            currentItem = boardList.size() - 1;
+            boardPage.setCurrentItem(currentItem);
+            currentTv.setText(boardList.size() + "");
+            allItemTv.setText(boardPage.getCurrentItem() + 1 + "");
+            Toast.makeText(this, "删除了一页", Toast.LENGTH_SHORT).show();
+
+        }
+        Toast.makeText(this, "删除失败", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -513,6 +527,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             currentTv.setText(currentItem + 1 + "");
         }
     }
+
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
