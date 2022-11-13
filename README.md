@@ -2,13 +2,19 @@
 
 ## 跨平台--- iOS和Android
 
-1.iOS平台
+1.iOS平台 ---  iOS分支
 
-2.Android平台
+2.Android平台  ---  Android分支
 
-3.后台数据处理
+3.后台数据处理  ---  web分支
 
 4.数据传输：MQTT
+
+## demo演示视频地址
+
+iOS ：
+
+Android ：
 
 ## 功能汇总
 
