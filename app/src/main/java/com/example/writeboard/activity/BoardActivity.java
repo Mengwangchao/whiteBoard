@@ -8,16 +8,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,6 +44,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
+    Rect outSize = new Rect();
+
+
     private static BoardPaint mBoardPaint = BoardPaint.getmBoardPaint();
     private TextView pensizeTv;
     private TextView roomIdTv;
@@ -90,6 +97,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("roomAction");
+        registerReceiver(broadcastReceiver, intentFilter);
         setContentView(R.layout.activity_board);
         Intent intent = getIntent();
         modeString = intent.getStringExtra("mode");
@@ -102,6 +112,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         PaletteView paletteView = new PaletteView(this);
         paletteView.setBoardPaint(mBoardPaint);
         paletteView.setRoomId(roomId);
+        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        int hight = wm.getDefaultDisplay().getHeight();
+        int width = wm.getDefaultDisplay().getWidth();
+        paletteView.setViewHeight(hight);
+        paletteView.setViewWidth(width);
 
         boardList.add(paletteView);
         boardList.get(boardList.size() - 1).setMqttClient(mqttClient);
@@ -138,9 +153,23 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.redo_bt:
                 boardList.get(boardPage.getCurrentItem()).redo();
+                mqttClient.subscribe("redo");
+                mqttClient.publish("redo", "{\n" +
+                        "\"roomId\":" + "\"" + roomId + "\",\n" +
+                        "\"userId\":" + "\"" + mqttClient.getUserId() + "\",\n" +
+                        "\"graaphical\":" + "\"" + 1 + "\",\n" +
+                        "\"currentPage\":" + "\"" + boardPage.getCurrentItem() + "\"\n" +
+                        "}", false);
                 break;
             case R.id.undo_bt:
                 boardList.get(boardPage.getCurrentItem()).undo();
+                mqttClient.subscribe("undo");
+                mqttClient.publish("undo", "{\n" +
+                        "\"roomId\":" + "\"" + roomId + "\",\n" +
+                        "\"userId\":" + "\"" + mqttClient.getUserId() + "\",\n" +
+                        "\"graaphical\":" + "\"" + 1 + "\",\n" +
+                        "\"currentPage\":" + "\"" + boardPage.getCurrentItem() + "\"\n" +
+                        "}", false);
                 break;
             case R.id.eraser_bt:
                 if (mode) {
@@ -155,8 +184,20 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.clear_bt:
                 boardList.get(boardPage.getCurrentItem()).clear();
+                mqttClient.subscribe("clearAll");
+                mqttClient.publish("clearAll", "{\n" +
+                        "\"roomId\":" + "\"" + roomId + "\",\n" +
+                        "\"userId\":" + "\"" + mqttClient.getUserId() + "\",\n" +
+                        "\"currentPage\":" + "\"" + boardPage.getCurrentItem() + "\"\n" +
+                        "}", false);
                 break;
             case R.id.save_bt:
+                mqttClient.subscribe("joinRoom");
+                mqttClient.publish("joinRoom", "{\n" +
+                        "\"roomId\":" + "\"" + roomId + "\",\n" +
+                        "\"userId\":" + "\"" + mqttClient.getUserId() + "\",\n" +
+                        "\"authority\":" + "\"" + 2 + "\"\n" +
+                        "}", false);
                 Toast.makeText(this, "图片已经保存", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.size_bt:
@@ -168,35 +209,34 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 penColorDialog.show();
                 break;
             case R.id.lastPage_bt:
-                if (0 < currentItem && currentItem < boardList.size()) {
-                    --currentItem;
-                    boardPage.setCurrentItem(currentItem);
-                    currentTv.setText(currentItem + 1 + "");
-                }
+                mqttClient.subscribe("upPage");
+                mqttClient.publish("upPage", "{\n" +
+                        "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
+                        "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + "\n" +
+                        "}", false
+                );
+                lastPage();
                 break;
             case R.id.nextPage_bt:
-                if (0 <= currentItem && currentItem < boardList.size() - 1) {
-                    currentItem++;
-                    boardPage.setCurrentItem(currentItem);
-                    currentTv.setText(currentItem + 1 + "");
-                }
+                mqttClient.subscribe("nextPage");
+                mqttClient.publish("nextPage", "{\n" +
+                        "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
+                        "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + "\n" +
+                        "}", false
+                );
+                nextPage();
+
                 Toast.makeText(this, "当前页数:" + boardPage.getCurrentItem() + "\n当前总页数大小：" + boardList.size(), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.addPage:
                 Toast.makeText(this, "添加了新的一页", Toast.LENGTH_SHORT).show();
-                PaletteView paletteView = new PaletteView(this);
-                paletteView.setBoardPaint(mBoardPaint);
-                paletteView.setCurrentPage(boardPage.getCurrentItem() + 1 + "");
-                paletteView.setRoomId(roomId);
-                boardList.add(paletteView);
-                boardList.get(boardList.size() - 1).setMqttClient(mqttClient);
-                boardAdapter = new BoardAdapter(boardList);
-                boardPage.setAdapter(boardAdapter);
-                currentItem = boardList.size() - 1;
-
-                boardPage.setCurrentItem(currentItem);
-                currentTv.setText(boardList.size() + "");
-                allItemTv.setText(boardPage.getCurrentItem() + 1 + "");
+                mqttClient.subscribe("addPage");
+                mqttClient.publish("addPage", "{\n" +
+                        "\"roomId\":" + "\"" + roomId + "\"" + ",\n" +
+                        "\"userId\":" + "\"" + mqttClient.getUserId() + "\"" + "\n" +
+                        "}", false
+                );
+                addPage();
                 Toast.makeText(this, "当前的页数：" + (boardPage.getCurrentItem() + 1), Toast.LENGTH_SHORT).show();
                 break;
             default:
@@ -438,4 +478,58 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         super.onDestroy();
         mqttClient.diconnect();
     }
+
+    private void addPage() {
+        PaletteView paletteView = new PaletteView(this);
+        paletteView.setBoardPaint(mBoardPaint);
+        paletteView.setCurrentPage(boardPage.getCurrentItem() + 1 + "");
+        paletteView.setRoomId(roomId);
+        paletteView.setViewHeight(paletteView.getHeight());
+        paletteView.setViewWidth(paletteView.getWidth());
+        boardList.add(paletteView);
+        boardList.get(boardList.size() - 1).setMqttClient(mqttClient);
+        boardAdapter = new BoardAdapter(boardList);
+        boardPage.setAdapter(boardAdapter);
+        currentItem = boardList.size() - 1;
+        boardPage.setCurrentItem(currentItem);
+        currentTv.setText(boardList.size() + "");
+        allItemTv.setText(boardPage.getCurrentItem() + 1 + "");
+
+
+    }
+
+    private void nextPage() {
+        if (0 <= currentItem && currentItem < boardList.size() - 1) {
+            currentItem++;
+            boardPage.setCurrentItem(currentItem);
+            currentTv.setText(currentItem + 1 + "");
+        }
+    }
+
+    private void lastPage() {
+        if (0 < currentItem && currentItem < boardList.size()) {
+            --currentItem;
+            boardPage.setCurrentItem(currentItem);
+            currentTv.setText(currentItem + 1 + "");
+        }
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String d = intent.getAction();
+            if (intent.getAction().equals("roomAction")) {
+                String roomaction = intent.getStringExtra("roomaction");
+                if (roomaction.equals("1")) {
+                    addPage();
+                }
+                if (roomaction.equals("2")) {
+                    nextPage();
+                }
+                if (roomaction.equals("3")) {
+                    lastPage();
+                }
+            }
+        }
+    };
 }

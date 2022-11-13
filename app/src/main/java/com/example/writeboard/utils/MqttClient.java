@@ -73,13 +73,37 @@ public class MqttClient implements InMqttClientNotify {
         mqttAndroidClient.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
-                Log.d(TAG, "connection lost" + cause.toString());
             }
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 Log.d(TAG, "收到的消息：" + message.toString() + "--from topic:" + topic);
                 Log.i("AndroidMqttClient", "获得的消息是" + message.toString());
+                String msg = new String(message.getPayload());
+                JsonParser jp = new JsonParser();
+                JsonObject jo = jp.parse(msg).getAsJsonObject();
+                String userId_ve = jo.get("userId").getAsString();
+                String t=topic;
+                if (!userId.equals(userId_ve)) {
+                    if (topic.equals("addPage")) {
+                        Intent addpage = new Intent();
+                        addpage.setAction("roomAction");
+                        addpage.putExtra("roomaction", "1");
+                        mcontext.sendBroadcast(addpage);
+                    }
+                    if (topic.equals("nextPage")) {
+                        Intent addpage = new Intent();
+                        addpage.setAction("roomAction");
+                        addpage.putExtra("roomaction", "2");
+                        mcontext.sendBroadcast(addpage);
+                    }
+                    if (topic.equals("upPage")) {
+                        Intent addpage = new Intent();
+                        addpage.setAction("roomAction");
+                        addpage.putExtra("roomaction", "3");
+                        mcontext.sendBroadcast(addpage);
+                    }
+                }
                 notifyDrawMessage(message, topic);
             }
 
@@ -199,6 +223,7 @@ public class MqttClient implements InMqttClientNotify {
         JsonParser jp = new JsonParser();
         JsonObject jo = jp.parse(msg).getAsJsonObject();
         String userId_ve = jo.get("userId").getAsString();
+        String roomId = jo.get("roomId").getAsString();
         JsonObject point = jo.getAsJsonObject("point");
         Float x = point.get("x").getAsFloat();
         Float y = point.get("y").getAsFloat();
@@ -224,7 +249,10 @@ public class MqttClient implements InMqttClientNotify {
             intent.putExtra("graphical", graphical);
             intent.putExtra("mode", topic);
             mcontext.sendBroadcast(intent);
+
         }
+
+
 //        int mode = jo.get("mode").getAsInt();
 //        Float a = jo.get("a").getAsFloat();
 //        Float b = jo.get("b").getAsFloat();

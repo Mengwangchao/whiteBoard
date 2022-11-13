@@ -104,7 +104,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void createRoom() {
         Random random = new Random();
-
         for (int i = 0; i < 12; i++) {
             if (i == 0) {
                 roomId = (random.nextInt(9) + 1)+"";
